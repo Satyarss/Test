@@ -1,0 +1,47 @@
+I'm not sure why it wouldn't work, but here's the values.yaml example I was trying to share - I highlighted the service account line:
+ 
+analyze:
+  scan:
+    enabled: false
+build:
+  scan:
+    enabled: false
+  image: 'python:3.8-buster'
+bake:
+  scan:
+    enabled: false
+test:
+  skip: true
+  scan:
+    enabled: false
+docker:
+  dockerfile: gunicorn.dockerfile
+  buildArgs:
+    bin: uvicorn
+    gunicorn_cmd_args: --bind=0.0.0.0:8000 --workers=8 --threads=8 --timeout=600 --log-level=info
+    fromImage: 'python:3.8-buster'
+deploy:
+  prefixWithTenant: true
+  port: 8000
+  ingress:
+    annotations:
+      nginx.ingress.kubernetes.io/proxy-connect-timeout: "600"
+      nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
+      nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
+      nginx.ingress.kubernetes.io/send-timeout: "600"
+serviceAccountName: decrypt
+  readinessProbe:
+    httpGet:
+      path: /health
+    timeoutSeconds: 10
+  livenessProbe:
+    httpGet:
+      path: /health
+    timeoutSeconds: 10
+#  secrets:
+#    JWT_SECRET_KEY: auth/jwtSecretKey
+#    JWT_ALGORITHM: auth/jwtAlgo
+#    JWT_ACCESS_TOKEN_EXPIRE_MINUTES: auth/jwtExpMin
+  env:
+    UVICORN_HOST: 0.0.0.0
+    KEY_1: k8s-val-one
