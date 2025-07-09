@@ -1,0 +1,145 @@
+Update the Swagger Documentation upon Revising the Cost API Request Payload
+
+Add
+
+Apps
+Story
+Definition of Done
+My Feature
+Jira Align
+Integration Info
+Description
+
+Add a description...
+Change Implemented
+
+
+@Salla, Akhil 
+
+Can you pelase work with @Ananth, Jyoti  and check why we are getting below error when Cost API Service is calling Calc Service 
+
+{
+
+    "correlationId": "069d197a-1e14-453f-8cf4-63f74eb626ff",
+
+    "type": "RFC 7231: Hypertext Transfer Protocol (HTTP/1.1): Semantics and Content ,
+
+    "title": "One or more validation errors occurred",
+
+    "status": 400,
+
+    "detail": "Malformed request",
+
+    "errors": {
+
+        "Missing fields": [
+
+            "membershipId",
+
+            "zipCode",
+
+            "benefitProductType",
+
+            "languageCode",
+
+            "service",
+
+            "providerInfo"
+
+        ]
+
+    },
+
+    "message": "Additional details"
+
+Please make sure below Cost API should work fine without any error 
+
+{
+  "membershipId": "5~186103331+10+7+20240101+793854+BA+829",
+  "zipCode": "85305",
+  "benefitProductType": "Medical",
+  "languageCode": "11",
+  "service": {
+    "code": "99214",
+    "type": "CPT4",
+    "description": "Adult Office visit Age 30-39",
+    "supportingService": {
+      "code": "470",
+      "type": "DRG"
+    },
+    "modifier": {
+      "modifierCode": "E1"
+    },
+    "diagnosisCode": "F33 40",
+    "placeOfService": {
+      "code": "11"
+    }
+  },
+  "providerInfo": [
+    {
+      "serviceLocation": "000761071",
+      "providerType": "HO",
+      "speciality": {
+        "code": "91017"
+      },
+      "taxIdentificationNumber": "0000431173518",
+      "taxIdQualifier": "SN",
+      "providerNetworks": {
+        "networkID": "58921"
+      },
+      "providerIdentificationNumber": "0004000317",
+      "nationalProviderId": "1386660504",
+      "providerNetworkParticipation": {
+        "providerTier": "1"
+      }
+    }
+  ]
+}
+
+Below payload is working fine in master branch 
+{
+  "membershipId": "5~265642286+34+44+20250101+784461+AM+39",
+  "zipCode": "85305",
+  "benefitProductType": "Medical",
+  "languageCode": "11",
+  "service": {
+    "code": "47000",
+    "type": "CPT4",
+    "description": "Adult Office visit Age 30-39",
+    "supportingService": {
+      "code": "470",
+      "type": "DRG"
+    },
+    "modifier": {
+      "modifierCode": "E1"
+    },
+    "diagnosisCode": "F33 40",
+    "placeOfService": {
+      "code": "22"
+    }
+  },
+  "providerInfo": [
+    {
+      "serviceLocation": "000761071",
+      "providerType": "HO",
+      "specialty": {
+        "code": "91017"
+      },
+      "taxIdentificationNumber": "0000431173518",
+      "taxIdQualifier": "SN",
+      "providerNetworks": {
+        "networkID": "00636"
+      },
+      "providerIdentificationNumber": "6510350",
+      "nationalProviderIdentifier": {
+        "nationalProviderId": "1386660504"
+      },
+      "providerNetworkParticipation": {
+        "providerTier": "1"
+      }
+    }
+  ]
+}
+
+
+
