@@ -1,0 +1,30 @@
+      2025-07-09 14:44:33,197 | INFO | cost_estimator_calc_service | Async SpannerClient initialized for database: projects/anbc-hcb-dev/instances/provider-de/databases/cost-estimator-secure
+2025-07-09 14:44:33,197 | INFO | cost_estimator_calc_service | Connection pool size: 10, Max workers: 20
+benefit_request benefitProductType='Medical' membershipID='5~186103331+10+7+20240101+793854+BA+829' planIdentifier='3~' serviceInfo=[ServiceInfo(serviceCodeInfo=ServiceCodeInfo(providerType=[ProviderType(code='HO')], placeOfService=[PlaceOfService(code='11')], providerSpecialty=[ProviderSpecialty(code='91017')], code='99214', type='CPT4'))]
+CostEstimatorRateCriteria fields: {'providerIdentificationNumber': <class 'str'>, 'serviceCode': <class 'str'>, 'serviceType': <class 'str'>, 'serviceLocationNumber': <class 'str'>, 'networkId': <class 'str'>, 'placeOfService': <class 'str'>, 'zipCode': <class 'str'>, 'isOutofNetwork': <class 'bool'>}
+rate_criteria CostEstimatorRateCriteria(providerIdentificationNumber='0004000317', serviceCode='99214', serviceType='CPT4', serviceLocationNumber='000761071', networkId='58921', placeOfService='11', zipCode='85305', isOutofNetwork=False)
+2025-07-09 14:44:33,200 | INFO | cost_estimator_calc_service | Executing async query: SELECT MAX(RATE) AS RATE FROM CET_CLAIM_BASED_AMOUNTS WHERE PROVIDER_IDENTIFICATION_NBR = @provideridentificationnumber AND NETWORK_ID = @networkid AND PLACE_OF_SERVICE_CD = @placeofservice AND SERVICE_CD = @servicecd AND SERVICE_TYPE_CD = @servicetype
+2025-07-09 14:44:33,200 | INFO | cost_estimator_calc_service | Query params: {'servicecd': '99214', 'provideridentificationnumber': '0004000317', 'placeofservice': '11', 'servicetype': 'CPT4', 'networkid': '58921', 'servicelocationnumber': '000761071'}
+2025-07-09 14:44:34,810 | INFO | cost_estimator_calc_service | Successfully retrieved new token
+2025-07-09 14:44:34,823 | INFO | cost_estimator_calc_service | Successfully retrieved new token
+2025-07-09 14:44:35,963 | ERROR | cost_estimator_calc_service | Accumulator request failed with status 555: Service Error - [3000|Backend Service Error : BE 3002 : Member V2 Service Error][400|Bad Request:ResponseCompute : CUMB-ID SRCH MBR NOT FOUND; Service Name: /member/api/v2/edb/member/members/{id}|9493e454686ec6a300219101|240a32b5-cb14-4cc1-980d-65c7ada31614][TransactionID:9493e454686ec6a300219101]
+2025-07-09 14:44:35,964 | ERROR | cost_estimator_calc_service | Error in get_accumulator: Accumulator request failed with status 555: Service Error - [3000|Backend Service Error : BE 3002 : Member V2 Service Error][400|Bad Request:ResponseCompute : CUMB-ID SRCH MBR NOT FOUND; Service Name: /member/api/v2/edb/member/members/{id}|9493e454686ec6a300219101|240a32b5-cb14-4cc1-980d-65c7ada31614][TransactionID:9493e454686ec6a300219101]
+2025-07-09 14:44:35,964 | ERROR | cost_estimator_calc_service | Error in get_rate: Accumulator request failed with status 555: Service Error - [3000|Backend Service Error : BE 3002 : Member V2 Service Error][400|Bad Request:ResponseCompute : CUMB-ID SRCH MBR NOT FOUND; Service Name: /member/api/v2/edb/member/members/{id}|9493e454686ec6a300219101|240a32b5-cb14-4cc1-980d-65c7ada31614][TransactionID:9493e454686ec6a300219101]
+INFO:     127.0.0.1:57028 - "POST /costestimator/v1/rate HTTP/1.1" 200 OK
+2025-07-09 14:44:37,009 | ERROR | cost_estimator_calc_service | Benefit request failed with status 400: 9PB1-012 - getPatientBnftwithCOB:ACTIVE MEMBER COVERAGE NOT FOUND IN ACMBRH
+2025-07-09 14:44:37,013 | ERROR | cost_estimator_calc_service | Error in get_benefit: Benefit request failed with status 400: 9PB1-012 - getPatientBnftwithCOB:ACTIVE MEMBER COVERAGE NOT FOUND IN ACMBRH
+2025-07-09 14:44:37,300 | INFO | cost_estimator_calc_service | Claim-based rate result: [[None]]
+2025-07-09 14:44:37,300 | INFO | cost_estimator_calc_service | Extracted value: None
+2025-07-09 14:44:37,300 | INFO | cost_estimator_calc_service | Value is None, returning default
+2025-07-09 14:44:37,300 | INFO | cost_estimator_calc_service | No claim-based rate found, proceeding to get provider info
+2025-07-09 14:44:37,300 | INFO | cost_estimator_calc_service | Executing async query: SELECT DISTINCT PROVIDER_BUSINESS_GROUP_NBR,PRODUCT_CD,RATING_SYSTEM_CD,EPDB_GEOGRAPHIC_AREA_CD FROM CET_PROVIDERS p WHERE p.PROVIDER_IDENTIFICATION_NBR = @provideridentificationnumber AND p.NETWORK_ID = @networkid AND p.SERVICE_LOCATION_NBR = @servicelocationnumber
+2025-07-09 14:44:37,300 | INFO | cost_estimator_calc_service | Query params: {'servicecd': '99214', 'provideridentificationnumber': '0004000317', 'placeofservice': '11', 'servicetype': 'CPT4', 'networkid': '58921', 'servicelocationnumber': '000761071'}
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1752090278.480141 6820671 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+E0000 00:00:1752090278.584901 6822367 ssl_transport_security_utils.cc:114] Corruption detected.
+E0000 00:00:1752090278.584929 6822367 ssl_transport_security_utils.cc:71] error:100003fc:SSL routines:OPENSSL_internal:SSLV3_ALERT_BAD_RECORD_MAC
+E0000 00:00:1752090278.584932 6822367 secure_endpoint.cc:234] Decryption error: TSI_DATA_CORRUPTED
+2025-07-09 14:44:41,288 | INFO | cost_estimator_calc_service | Provider info result: []
+2025-07-09 14:44:41,288 | INFO | cost_estimator_calc_service | No provider info results found
+INFO:     127.0.0.1:57143 - "GET /docs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57143 - "GET /openapi.json HTTP/1.1" 200 OK
