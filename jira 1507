@@ -1,0 +1,19 @@
+Calc Service - Fix Unit test and Behavioral Test
+
+Add
+
+Apps
+Story
+Definition of Done
+My Feature
+Jira Align
+Integration Info
+Description
+
+Need unit test for exception handling and need unit test for criteria object.
+
+Fix any broken behave tests. 
+
+We need unit test for Benefit Request and Benefit Response.
+
+We need unit test for Accum Request and Accum Response.
