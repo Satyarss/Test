@@ -1,3 +1,5 @@
+N133723@MACL2KVFV33RR cost-estimator-calc-service % python3 -m pytest tests
+===================================================================================== test session starts =====================================================================================
 platform darwin -- Python 3.12.4, pytest-8.4.1, pluggy-1.6.0
 rootdir: /Users/N133723/Desktop/TLABCHAAT-354/cost-estimator-calc-service
 configfile: pytest.ini
@@ -5,7 +7,7 @@ plugins: anyio-4.9.0, asyncio-1.1.0
 asyncio: mode=Mode.STRICT, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
 collected 32 items                                                                                                                                                                            
 
-tests/test_integration.py ..F.F.                                                                                                                                                        [ 18%]
+tests/test_integration.py ..F...                                                                                                                                                        [ 18%]
 tests/test_integration_real.py sssss                                                                                                                                                    [ 34%]
 tests/test_main.py .....                                                                                                                                                                [ 50%]
 tests/test_repository.py ......F                                                                                                                                                        [ 71%]
@@ -14,7 +16,7 @@ tests/test_service.py .........                                                 
 ========================================================================================== FAILURES ===========================================================================================
 ___________________________________________________________________________________ test_api_error_handling ___________________________________________________________________________________
 
-client = <starlette.testclient.TestClient object at 0x108747320>
+client = <starlette.testclient.TestClient object at 0x10412ad80>
 
     @pytest.mark.integration
     def test_api_error_handling(client):
@@ -60,12 +62,12 @@ E            +  where 200 = <Response [200 OK]>.status_code
 
 tests/test_integration.py:124: AssertionError
 ------------------------------------------------------------------------------------ Captured stdout call -------------------------------------------------------------------------------------
-2025-07-16 09:57:16,721 | INFO | cost_estimator_calc_service | Async SpannerClient initialized for database: projects/anbc-hcb-dev/instances/provider-de/databases/cost-estimator-secure
-2025-07-16 09:57:16,722 | INFO | cost_estimator_calc_service | Connection pool size: 10, Max workers: 20
+2025-07-16 10:08:07,414 | INFO | cost_estimator_calc_service | Async SpannerClient initialized for database: projects/anbc-hcb-dev/instances/provider-de/databases/cost-estimator-secure
+2025-07-16 10:08:07,414 | INFO | cost_estimator_calc_service | Connection pool size: 10, Max workers: 20
 benefit_request benefitProductType='Medical' membershipID='5~186103331+10+7+20240101+793854+8A+829' planIdentifier='3~' serviceInfo=[ServiceInfo(serviceCodeInfo=ServiceCodeInfo(providerType=[ProviderType(code='HO')], placeOfService=[PlaceOfService(code='11')], providerSpecialty=[ProviderSpecialty(code='91017')], code='99214', type='CPT4'))]
 CostEstimatorRateCriteria fields: {'providerIdentificationNumber': <class 'str'>, 'serviceCode': <class 'str'>, 'serviceType': <class 'str'>, 'serviceLocationNumber': typing.Optional[str], 'networkId': typing.Optional[str], 'placeOfService': <class 'str'>, 'zipCode': <class 'str'>, 'isOutofNetwork': <class 'bool'>, 'providerSpecialtyCode': typing.Optional[str], 'providerType': typing.Optional[str]}
 rate_criteria CostEstimatorRateCriteria(providerIdentificationNumber='0004000317', serviceCode='99214', serviceType='CPT4', serviceLocationNumber='000761071', networkId='58921', placeOfService='11', zipCode='85305', isOutofNetwork=False, providerSpecialtyCode='91017', providerType='HO')
-2025-07-16 09:57:16,722 | INFO | cost_estimator_calc_service | Executing async query: SELECT MAX(RATE) AS RATE
+2025-07-16 10:08:07,415 | INFO | cost_estimator_calc_service | Executing async query: SELECT MAX(RATE) AS RATE
 FROM CET_CLAIM_BASED_AMOUNTS
 WHERE
     PROVIDER_IDENTIFICATION_NBR = @provideridentificationnumber
@@ -73,10 +75,10 @@ WHERE
     AND PLACE_OF_SERVICE_CD = @placeofservice
     AND SERVICE_CD = @servicecd
     AND SERVICE_TYPE_CD = @servicetype
-2025-07-16 09:57:16,722 | INFO | cost_estimator_calc_service | Query params: {'servicecd': '99214', 'provideridentificationnumber': '0004000317', 'placeofservice': '11', 'servicetype': 'CPT4', 'networkid': '58921', 'servicelocationnumber': '000761071'}
-2025-07-16 09:57:17,928 | ERROR | cost_estimator_calc_service | Error in get_rate: Benefit service unavailable
-2025-07-16 09:57:17,929 | ERROR | cost_estimator_calc_service | Error in get_new_token: Cannot connect to host qaapi10.int.cvshealth.com:443 ssl:default [nodename nor servname provided, or not known]
-2025-07-16 09:57:17,929 | ERROR | cost_estimator_calc_service | Error in get_accumulator: Cannot connect to host qaapi10.int.cvshealth.com:443 ssl:default [nodename nor servname provided, or not known]
+2025-07-16 10:08:07,415 | INFO | cost_estimator_calc_service | Query params: {'servicecd': '99214', 'provideridentificationnumber': '0004000317', 'placeofservice': '11', 'servicetype': 'CPT4', 'networkid': '58921', 'servicelocationnumber': '000761071'}
+2025-07-16 10:08:07,947 | ERROR | cost_estimator_calc_service | Error in get_rate: Benefit service unavailable
+2025-07-16 10:08:07,948 | ERROR | cost_estimator_calc_service | Error in get_new_token: Cannot connect to host qaapi10.int.cvshealth.com:443 ssl:default [nodename nor servname provided, or not known]
+2025-07-16 10:08:07,948 | ERROR | cost_estimator_calc_service | Error in get_accumulator: Cannot connect to host qaapi10.int.cvshealth.com:443 ssl:default [nodename nor servname provided, or not known]
 -------------------------------------------------------------------------------------- Captured log call --------------------------------------------------------------------------------------
 INFO     cost_estimator_calc_service:spanner_client.py:43 Async SpannerClient initialized for database: projects/anbc-hcb-dev/instances/provider-de/databases/cost-estimator-secure
 INFO     cost_estimator_calc_service:spanner_client.py:46 Connection pool size: 10, Max workers: 20
@@ -92,56 +94,6 @@ INFO     cost_estimator_calc_service:spanner_client.py:70 Query params: {'servic
 ERROR    cost_estimator_calc_service:cost_estimation_service_impl.py:53 Error in get_rate: Benefit service unavailable
 ERROR    cost_estimator_calc_service:token_service.py:59 Error in get_new_token: Cannot connect to host qaapi10.int.cvshealth.com:443 ssl:default [nodename nor servname provided, or not known]
 ERROR    cost_estimator_calc_service:accumulator_service_impl.py:118 Error in get_accumulator: Cannot connect to host qaapi10.int.cvshealth.com:443 ssl:default [nodename nor servname provided, or not known]
-___________________________________________________________________________________ test_mapper_integration ___________________________________________________________________________________
-
-    @pytest.mark.integration
-    def test_mapper_integration():
-        """Test the complete mapper integration."""
-        from app.mappers.cost_estimator_mapper import CostEstimatorMapper
-        from app.schemas.cost_estimator_request import CostEstimatorRequest
-    
-        # Test data
-        request_data = {
-            "membershipId": "5~186103331+10+7+20240101+793854+8A+829",
-            "zipCode": "85305",
-            "benefitProductType": "Medical",
-            "languageCode": "11",
-            "service": {
-                "code": "99214",
-                "type": "CPT4",
-                "description": "Adult Office visit Age 30-39",
-                "supportingService": {"code": "470", "type": "DRG"},
-                "modifier": {"modifierCode": "E1"},
-                "diagnosisCode": "F33 40",
-                "placeOfService": {"code": "11"}
-            },
-            "providerInfo": [
-                {
-                    "serviceLocation": "000761071",
-                    "providerType": "HO",
-                    "speciality": {"code": "91017"},
-                    "taxIdentificationNumber": "0000431173518",
-                    "taxIdQualifier": "SN",
-                    "providerNetworks": {"networkID": "58921"},
-                    "providerIdentificationNumber": "0004000317",
-                    "nationalProviderId": "1386660504",
-                    "providerNetworkParticipation": {"providerTier": "1"}
-                }
-            ]
-        }
-    
-        request = CostEstimatorRequest(**request_data)
-    
-        # Test benefit request mapping
-        benefit_request = CostEstimatorMapper.to_benefit_request(request)
-        assert benefit_request.benefitProductType == "Medical"
-        assert benefit_request.membershipID == "5~186103331+10+7+20240101+793854+8A+829"
-        assert len(benefit_request.serviceInfo) == 1
->       assert benefit_request.serviceInfo[0]["serviceCodeInfo"]["code"] == "99214"
-               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-E       TypeError: 'ServiceInfo' object is not subscriptable
-
-tests/test_integration.py:238: TypeError
 __________________________________________________________________________________ test_extract_single_value __________________________________________________________________________________
 
     @pytest.mark.repository
@@ -166,13 +118,17 @@ ________________________________________________________________________________
                 result = [[150.75]]
                 value = repository._extract_single_value(result) or 0.0
                 assert float(value) == 150.75
->               assert isinstance(value, float)
-E               AssertionError: assert False
-E                +  where False = isinstance('150.75', float)
+                assert isinstance(float(value), float)
+    
+                # Test with empty result
+                empty_result = []
+>               value = repository._extract_single_value(empty_result, default_value=0.0)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E               TypeError: CostEstimatorRepositoryImpl._extract_single_value() got an unexpected keyword argument 'default_value'
 
-tests/test_repository.py:116: AssertionError
+tests/test_repository.py:120: TypeError
 ------------------------------------------------------------------------------------ Captured stdout call -------------------------------------------------------------------------------------
-2025-07-16 09:57:17,972 | INFO | cost_estimator_calc_service | Extracted value: 150.75
+2025-07-16 10:08:07,988 | INFO | cost_estimator_calc_service | Extracted value: 150.75
 -------------------------------------------------------------------------------------- Captured log call --------------------------------------------------------------------------------------
 INFO     cost_estimator_calc_service:cost_estimator_repository_impl.py:210 Extracted value: 150.75
 ====================================================================================== warnings summary =======================================================================================
@@ -183,7 +139,6 @@ tests/test_integration_real.py::test_real_database_integration
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
 =================================================================================== short test summary info ===================================================================================
 FAILED tests/test_integration.py::test_api_error_handling - assert 200 == 400
-FAILED tests/test_integration.py::test_mapper_integration - TypeError: 'ServiceInfo' object is not subscriptable
-FAILED tests/test_repository.py::test_extract_single_value - AssertionError: assert False
-===================================================================== 3 failed, 24 passed, 5 skipped, 1 warning in 1.30s ======================================================================
+FAILED tests/test_repository.py::test_extract_single_value - TypeError: CostEstimatorRepositoryImpl._extract_single_value() got an unexpected keyword argument 'default_value'
+===================================================================== 2 failed, 25 passed, 5 skipped, 1 warning in 0.63s ======================================================================
 N133723@MACL2KVFV33RR cost-estimator-calc-service % 
