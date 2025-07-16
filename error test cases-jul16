@@ -1,0 +1,476 @@
+N133723@MACL2KVFV33RR cost-estimator-calc-service % python3 -m pytest tests              
+===================================================================================== test session starts =====================================================================================
+platform darwin -- Python 3.12.4, pytest-8.4.1, pluggy-1.6.0
+rootdir: /Users/N133723/Desktop/TLABCHAAT-354/cost-estimator-calc-service
+configfile: pytest.ini
+plugins: anyio-4.9.0, asyncio-1.1.0
+asyncio: mode=Mode.STRICT, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collected 32 items                                                                                                                                                                            
+
+tests/test_integration.py ..FFFF                                                                                                                                                        [ 18%]
+tests/test_integration_real.py sssss                                                                                                                                                    [ 34%]
+tests/test_main.py .....                                                                                                                                                                [ 50%]
+tests/test_repository.py ...EEEF                                                                                                                                                        [ 71%]
+tests/test_service.py ......FFF                                                                                                                                                         [100%]
+
+=========================================================================================== ERRORS ============================================================================================
+________________________________________________________________________ ERROR at setup of test_rate_criteria_creation ________________________________________________________________________
+
+fixturedef = <FixtureDef argname='rate_criteria' scope='function' baseid='tests'>, request = <SubRequest 'rate_criteria' for <Function test_rate_criteria_creation>>
+
+    @pytest.hookimpl(wrapper=True)
+    def pytest_fixture_setup(fixturedef: FixtureDef, request) -> object | None:
+        asyncio_mode = _get_asyncio_mode(request.config)
+        if not _is_asyncio_fixture_function(fixturedef.func):
+            if asyncio_mode == Mode.STRICT:
+                # Ignore async fixtures without explicit asyncio mark in strict mode
+                # This applies to pytest_trio fixtures, for example
+>               return (yield)
+                        ^^^^^
+
+../../../Library/Python/3.12/lib/python/site-packages/pytest_asyncio/plugin.py:681: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    @pytest.fixture
+    def rate_criteria():
+        """Provide rate criteria for testing."""
+        from app.models.rate_criteria import CostEstimatorRateCriteria
+    
+>       return CostEstimatorRateCriteria(
+            serviceCode="99213",
+            providerIdentificationNumber="1234567890",
+            placeOfService="11",
+            serviceType="1",
+            networkId="NET001",
+            serviceLocationNumber="LOC001",
+            zipCode="85305",
+            isOutofNetwork=False,
+            providerType="HO",
+            providerSpecialty="91017",
+        )
+E       TypeError: CostEstimatorRateCriteria.__init__() got an unexpected keyword argument 'providerSpecialty'
+
+tests/conftest.py:88: TypeError
+______________________________________________________________________ ERROR at setup of test_repository_initialization _______________________________________________________________________
+
+fixturedef = <FixtureDef argname='rate_criteria' scope='function' baseid='tests'>, request = <SubRequest 'rate_criteria' for <Function test_repository_initialization>>
+
+    @pytest.hookimpl(wrapper=True)
+    def pytest_fixture_setup(fixturedef: FixtureDef, request) -> object | None:
+        asyncio_mode = _get_asyncio_mode(request.config)
+        if not _is_asyncio_fixture_function(fixturedef.func):
+            if asyncio_mode == Mode.STRICT:
+                # Ignore async fixtures without explicit asyncio mark in strict mode
+                # This applies to pytest_trio fixtures, for example
+>               return (yield)
+                        ^^^^^
+
+../../../Library/Python/3.12/lib/python/site-packages/pytest_asyncio/plugin.py:681: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    @pytest.fixture
+    def rate_criteria():
+        """Provide rate criteria for testing."""
+        from app.models.rate_criteria import CostEstimatorRateCriteria
+    
+>       return CostEstimatorRateCriteria(
+            serviceCode="99213",
+            providerIdentificationNumber="1234567890",
+            placeOfService="11",
+            serviceType="1",
+            networkId="NET001",
+            serviceLocationNumber="LOC001",
+            zipCode="85305",
+            isOutofNetwork=False,
+            providerType="HO",
+            providerSpecialty="91017",
+        )
+E       TypeError: CostEstimatorRateCriteria.__init__() got an unexpected keyword argument 'providerSpecialty'
+
+tests/conftest.py:88: TypeError
+__________________________________________________________________________ ERROR at setup of test_build_rate_params ___________________________________________________________________________
+
+fixturedef = <FixtureDef argname='rate_criteria' scope='function' baseid='tests'>, request = <SubRequest 'rate_criteria' for <Function test_build_rate_params>>
+
+    @pytest.hookimpl(wrapper=True)
+    def pytest_fixture_setup(fixturedef: FixtureDef, request) -> object | None:
+        asyncio_mode = _get_asyncio_mode(request.config)
+        if not _is_asyncio_fixture_function(fixturedef.func):
+            if asyncio_mode == Mode.STRICT:
+                # Ignore async fixtures without explicit asyncio mark in strict mode
+                # This applies to pytest_trio fixtures, for example
+>               return (yield)
+                        ^^^^^
+
+../../../Library/Python/3.12/lib/python/site-packages/pytest_asyncio/plugin.py:681: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    @pytest.fixture
+    def rate_criteria():
+        """Provide rate criteria for testing."""
+        from app.models.rate_criteria import CostEstimatorRateCriteria
+    
+>       return CostEstimatorRateCriteria(
+            serviceCode="99213",
+            providerIdentificationNumber="1234567890",
+            placeOfService="11",
+            serviceType="1",
+            networkId="NET001",
+            serviceLocationNumber="LOC001",
+            zipCode="85305",
+            isOutofNetwork=False,
+            providerType="HO",
+            providerSpecialty="91017",
+        )
+E       TypeError: CostEstimatorRateCriteria.__init__() got an unexpected keyword argument 'providerSpecialty'
+
+tests/conftest.py:88: TypeError
+========================================================================================== FAILURES ===========================================================================================
+___________________________________________________________________________________ test_api_error_handling ___________________________________________________________________________________
+
+client = <starlette.testclient.TestClient object at 0x110eada90>
+
+    @pytest.mark.integration
+    def test_api_error_handling(client):
+        """Test API error handling when external services fail."""
+        request_data = {
+            "membershipId": "5~186103331+10+7+20240101+793854+8A+829",
+            "zipCode": "85305",
+            "benefitProductType": "Medical",
+            "languageCode": "11",
+            "service": {
+                "code": "99214",
+                "type": "CPT4",
+                "description": "Adult Office visit Age 30-39",
+                "placeOfService": {"code": "11"}
+            },
+            "providerInfo": [
+                {
+                    "serviceLocation": "000761071",
+                    "providerType": "HO",
+                    "specialty": {"code": "91017"},
+                    "taxIdentificationNumber": "0000431173518",
+                    "taxIdQualifier": "SN",
+                    "providerNetworks": {"networkID": "58921"},
+                    "providerIdentificationNumber": "0004000317",
+                    "nationalProviderIdentifier": {"nationalProviderId": "1386660504"},
+                    "providerNetworkParticipation": {"providerTier": "1"}
+                }
+            ]
+        }
+    
+        # Mock external service to raise an exception
+        with patch("app.services.impl.benefit_service_impl.BenefitServiceImpl.get_benefit") as mock_benefit:
+            mock_benefit.side_effect = Exception("Benefit service unavailable")
+    
+            response = client.post("/costestimator/v1/rate", json=request_data)
+            assert response.status_code == 400  # Service handles errors gracefully
+            result = response.json()
+            assert "message" in result
+>           assert "rate" in result
+E           AssertionError: assert 'rate' in {'correlationId': '069d197a-1e14-453f-8cf4-63f74eb626ff', 'detail': 'Malformed request', 'errors': {'Missing fields': ...agnosisCode', 'providerInfo.0.speciality', 'providerInfo.0.nationalProviderId']}, 'message': 'Additional details', ...}
+
+tests/test_integration.py:124: AssertionError
+------------------------------------------------------------------------------------ Captured stdout call -------------------------------------------------------------------------------------
+2025-07-16 09:27:47,516 | INFO | cost_estimator_calc_service | Async SpannerClient initialized for database: projects/anbc-hcb-dev/instances/provider-de/databases/cost-estimator-secure
+2025-07-16 09:27:47,516 | INFO | cost_estimator_calc_service | Connection pool size: 10, Max workers: 20
+-------------------------------------------------------------------------------------- Captured log call --------------------------------------------------------------------------------------
+INFO     cost_estimator_calc_service:spanner_client.py:43 Async SpannerClient initialized for database: projects/anbc-hcb-dev/instances/provider-de/databases/cost-estimator-secure
+INFO     cost_estimator_calc_service:spanner_client.py:46 Connection pool size: 10, Max workers: 20
+___________________________________________________________________________ test_service_integration_with_real_data ___________________________________________________________________________
+
+    @pytest.mark.integration
+    @pytest.mark.asyncio
+    async def test_service_integration_with_real_data():
+        """Test service integration with real data structures."""
+        from app.services.impl.cost_estimation_service_impl import CostEstimationServiceImpl
+        from app.schemas.cost_estimator_request import CostEstimatorRequest
+    
+        # Create real request object
+        request_data = {
+            "membershipId": "5~186103331+10+7+20240101+793854+8A+829",
+            "zipCode": "85305",
+            "benefitProductType": "Medical",
+            "languageCode": "11",
+            "service": {
+                "code": "99214",
+                "type": "CPT4",
+                "description": "Adult Office visit Age 30-39",
+                "supportingService": {"code": "470", "type": "DRG"},
+                "modifier": {"modifierCode": "E1"},
+                "diagnosisCode": "F33 40",
+                "placeOfService": {"code": "11"}
+            },
+            "providerInfo": [
+                {
+                    "serviceLocation": "000761071",
+                    "providerType": "HO",
+                    "specialty": {"code": "91017"},
+                    "taxIdentificationNumber": "0000431173518",
+                    "taxIdQualifier": "SN",
+                    "providerNetworks": {"networkID": "58921"},
+                    "providerIdentificationNumber": "0004000317",
+                    "nationalProviderIdentifier": {"nationalProviderId": "1386660504"},
+                    "providerNetworkParticipation": {"providerTier": "1"}
+                }
+            ]
+        }
+    
+>       request = CostEstimatorRequest(**request_data)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       pydantic_core._pydantic_core.ValidationError: 2 validation errors for CostEstimatorRequest
+E       providerInfo.0.speciality
+E         Field required [type=missing, input_value={'serviceLocation': '0007...: {'providerTier': '1'}}, input_type=dict]
+E           For further information visit https://errors.pydantic.dev/2.11/v/missing
+E       providerInfo.0.nationalProviderId
+E         Field required [type=missing, input_value={'serviceLocation': '0007...: {'providerTier': '1'}}, input_type=dict]
+E           For further information visit https://errors.pydantic.dev/2.11/v/missing
+
+tests/test_integration.py:169: ValidationError
+___________________________________________________________________________________ test_mapper_integration ___________________________________________________________________________________
+
+    @pytest.mark.integration
+    def test_mapper_integration():
+        """Test the complete mapper integration."""
+        from app.mappers.cost_estimator_mapper import CostEstimatorMapper
+        from app.schemas.cost_estimator_request import CostEstimatorRequest
+    
+        # Test data
+        request_data = {
+            "membershipId": "5~186103331+10+7+20240101+793854+8A+829",
+            "zipCode": "85305",
+            "benefitProductType": "Medical",
+            "languageCode": "11",
+            "service": {
+                "code": "99214",
+                "type": "CPT4",
+                "description": "Adult Office visit Age 30-39",
+                "supportingService": {"code": "470", "type": "DRG"},
+                "modifier": {"modifierCode": "E1"},
+                "diagnosisCode": "F33 40",
+                "placeOfService": {"code": "11"}
+            },
+            "providerInfo": [
+                {
+                    "serviceLocation": "000761071",
+                    "providerType": "HO",
+                    "specialty": {"code": "91017"},
+                    "taxIdentificationNumber": "0000431173518",
+                    "taxIdQualifier": "SN",
+                    "providerNetworks": {"networkID": "58921"},
+                    "providerIdentificationNumber": "0004000317",
+                    "nationalProviderIdentifier": {"nationalProviderId": "1386660504"},
+                    "providerNetworkParticipation": {"providerTier": "1"}
+                }
+            ]
+        }
+    
+>       request = CostEstimatorRequest(**request_data)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       pydantic_core._pydantic_core.ValidationError: 2 validation errors for CostEstimatorRequest
+E       providerInfo.0.speciality
+E         Field required [type=missing, input_value={'serviceLocation': '0007...: {'providerTier': '1'}}, input_type=dict]
+E           For further information visit https://errors.pydantic.dev/2.11/v/missing
+E       providerInfo.0.nationalProviderId
+E         Field required [type=missing, input_value={'serviceLocation': '0007...: {'providerTier': '1'}}, input_type=dict]
+E           For further information visit https://errors.pydantic.dev/2.11/v/missing
+
+tests/test_integration.py:228: ValidationError
+____________________________________________________________________________________ test_end_to_end_flow _____________________________________________________________________________________
+
+    @pytest.mark.integration
+    def test_end_to_end_flow():
+        """Test the complete end-to-end flow from request to response."""
+        from app.services.impl.cost_estimation_service_impl import CostEstimationServiceImpl
+        from app.schemas.cost_estimator_request import CostEstimatorRequest
+        from app.mappers.cost_estimator_mapper import CostEstimatorMapper
+    
+        # Test data
+        request_data = {
+            "membershipId": "5~186103331+10+7+20240101+793854+8A+829",
+            "zipCode": "85305",
+            "benefitProductType": "Medical",
+            "languageCode": "11",
+            "service": {
+                "code": "99214",
+                "type": "CPT4",
+                "description": "Adult Office visit Age 30-39",
+                "placeOfService": {"code": "11"}
+            },
+            "providerInfo": [
+                {
+                    "serviceLocation": "000761071",
+                    "providerType": "HO",
+                    "specialty": {"code": "91017"},
+                    "taxIdentificationNumber": "0000431173518",
+                    "taxIdQualifier": "SN",
+                    "providerNetworks": {"networkID": "58921"},
+                    "providerIdentificationNumber": "0004000317",
+                    "nationalProviderIdentifier": {"nationalProviderId": "1386660504"},
+                    "providerNetworkParticipation": {"providerTier": "1"}
+                }
+            ]
+        }
+    
+        # Create request object
+>       request = CostEstimatorRequest(**request_data)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       pydantic_core._pydantic_core.ValidationError: 5 validation errors for CostEstimatorRequest
+E       service.supportingService
+E         Field required [type=missing, input_value={'code': '99214', 'type':...ervice': {'code': '11'}}, input_type=dict]
+E           For further information visit https://errors.pydantic.dev/2.11/v/missing
+E       service.modifier
+E         Field required [type=missing, input_value={'code': '99214', 'type':...ervice': {'code': '11'}}, input_type=dict]
+E           For further information visit https://errors.pydantic.dev/2.11/v/missing
+E       service.diagnosisCode
+E         Field required [type=missing, input_value={'code': '99214', 'type':...ervice': {'code': '11'}}, input_type=dict]
+E           For further information visit https://errors.pydantic.dev/2.11/v/missing
+E       providerInfo.0.speciality
+E         Field required [type=missing, input_value={'serviceLocation': '0007...: {'providerTier': '1'}}, input_type=dict]
+E           For further information visit https://errors.pydantic.dev/2.11/v/missing
+E       providerInfo.0.nationalProviderId
+E         Field required [type=missing, input_value={'serviceLocation': '0007...: {'providerTier': '1'}}, input_type=dict]
+E           For further information visit https://errors.pydantic.dev/2.11/v/missing
+
+tests/test_integration.py:280: ValidationError
+__________________________________________________________________________________ test_extract_single_value __________________________________________________________________________________
+
+    @pytest.mark.repository
+    def test_extract_single_value():
+        """Test the _extract_single_value method."""
+        from app.repository.impl.cost_estimator_repository_impl import (
+            CostEstimatorRepositoryImpl,
+        )
+    
+        with patch(
+            "app.repository.impl.cost_estimator_repository_impl.spanner_config"
+        ) as mock_config:
+            mock_config.is_valid.return_value = True
+            mock_config.project_id = "test-project"
+            mock_config.instance_id = "test-instance"
+            mock_config.database_id = "test-database"
+    
+            with patch("app.repository.impl.cost_estimator_repository_impl.SpannerClient"):
+                repository = CostEstimatorRepositoryImpl()
+    
+                # Test with numeric result
+                result = [[150.75]]
+                value = repository._extract_single_value(result) or 0.0
+>               assert value == 150.75
+E               AssertionError: assert '150.75' == 150.75
+
+tests/test_repository.py:115: AssertionError
+------------------------------------------------------------------------------------ Captured stdout call -------------------------------------------------------------------------------------
+2025-07-16 09:27:47,571 | INFO | cost_estimator_calc_service | Extracted value: 150.75
+-------------------------------------------------------------------------------------- Captured log call --------------------------------------------------------------------------------------
+INFO     cost_estimator_calc_service:cost_estimator_repository_impl.py:210 Extracted value: 150.75
+_______________________________________________________________________________ test_mapper_to_benefit_request ________________________________________________________________________________
+
+valid_request_data = {'benefitProductType': 'Medical', 'languageCode': '11', 'membershipId': '5~186103331+10+7+20240101+793854+8A+829', 'pr...000317', 'providerNetworkParticipation': {'providerTier': '1'}, 'providerNetworks': {'networkID': '58921'}, ...}], ...}
+
+    @pytest.mark.service
+    def test_mapper_to_benefit_request(valid_request_data):
+        """Test the mapper's to_benefit_request method."""
+        from app.mappers.cost_estimator_mapper import CostEstimatorMapper
+        from app.schemas.cost_estimator_request import CostEstimatorRequest
+    
+        # Create a request object from the data
+>       request = CostEstimatorRequest(**valid_request_data)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       pydantic_core._pydantic_core.ValidationError: 2 validation errors for CostEstimatorRequest
+E       providerInfo.0.speciality
+E         Field required [type=missing, input_value={'serviceLocation': '0007...: {'providerTier': '1'}}, input_type=dict]
+E           For further information visit https://errors.pydantic.dev/2.11/v/missing
+E       providerInfo.0.nationalProviderId
+E         Field required [type=missing, input_value={'serviceLocation': '0007...: {'providerTier': '1'}}, input_type=dict]
+E           For further information visit https://errors.pydantic.dev/2.11/v/missing
+
+tests/test_service.py:69: ValidationError
+________________________________________________________________________________ test_mapper_to_rate_criteria _________________________________________________________________________________
+
+valid_request_data = {'benefitProductType': 'Medical', 'languageCode': '11', 'membershipId': '5~186103331+10+7+20240101+793854+8A+829', 'pr...000317', 'providerNetworkParticipation': {'providerTier': '1'}, 'providerNetworks': {'networkID': '58921'}, ...}], ...}
+
+    @pytest.mark.service
+    def test_mapper_to_rate_criteria(valid_request_data):
+        """Test the mapper's to_rate_criteria method."""
+        from app.mappers.cost_estimator_mapper import CostEstimatorMapper
+        from app.schemas.cost_estimator_request import CostEstimatorRequest
+    
+        # Create a request object from the data
+>       request = CostEstimatorRequest(**valid_request_data)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       pydantic_core._pydantic_core.ValidationError: 2 validation errors for CostEstimatorRequest
+E       providerInfo.0.speciality
+E         Field required [type=missing, input_value={'serviceLocation': '0007...: {'providerTier': '1'}}, input_type=dict]
+E           For further information visit https://errors.pydantic.dev/2.11/v/missing
+E       providerInfo.0.nationalProviderId
+E         Field required [type=missing, input_value={'serviceLocation': '0007...: {'providerTier': '1'}}, input_type=dict]
+E           For further information visit https://errors.pydantic.dev/2.11/v/missing
+
+tests/test_service.py:83: ValidationError
+_________________________________________________________________________________ test_service_estimate_cost __________________________________________________________________________________
+
+mock_repo = <MagicMock name='CostEstimatorRepositoryImpl' id='4580156304'>, mock_accumulator = <MagicMock name='AccumulatorServiceImpl' id='4580152128'>
+mock_benefit = <MagicMock name='BenefitServiceImpl' id='4579722640'>
+valid_request_data = {'benefitProductType': 'Medical', 'languageCode': '11', 'membershipId': '5~186103331+10+7+20240101+793854+8A+829', 'pr...000317', 'providerNetworkParticipation': {'providerTier': '1'}, 'providerNetworks': {'networkID': '58921'}, ...}], ...}
+
+    @pytest.mark.service
+    @pytest.mark.asyncio
+    @patch("app.services.impl.cost_estimation_service_impl.BenefitServiceImpl")
+    @patch("app.services.impl.cost_estimation_service_impl.AccumulatorServiceImpl")
+    @patch("app.services.impl.cost_estimation_service_impl.CostEstimatorRepositoryImpl")
+    async def test_service_estimate_cost(
+        mock_repo, mock_accumulator, mock_benefit, valid_request_data
+    ):
+        """Test the service's estimate_cost method."""
+        from app.services.impl.cost_estimation_service_impl import CostEstimationServiceImpl
+        from app.schemas.cost_estimator_request import CostEstimatorRequest
+    
+        # Setup mocks
+        mock_repo_instance = Mock()
+        mock_repo_instance.get_rate = AsyncMock(return_value=150.50)
+        mock_repo.return_value = mock_repo_instance
+    
+        mock_benefit_instance = Mock()
+        mock_benefit_instance.get_benefit = AsyncMock(return_value={"benefit": "data"})
+        mock_benefit.return_value = mock_benefit_instance
+    
+        mock_accumulator_instance = Mock()
+        mock_accumulator_instance.get_accumulator = AsyncMock(
+            return_value={"accumulator": "data"}
+        )
+        mock_accumulator.return_value = mock_accumulator_instance
+    
+        # Create service and test
+        service = CostEstimationServiceImpl()
+>       request = CostEstimatorRequest(**valid_request_data)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       pydantic_core._pydantic_core.ValidationError: 2 validation errors for CostEstimatorRequest
+E       providerInfo.0.speciality
+E         Field required [type=missing, input_value={'serviceLocation': '0007...: {'providerTier': '1'}}, input_type=dict]
+E           For further information visit https://errors.pydantic.dev/2.11/v/missing
+E       providerInfo.0.nationalProviderId
+E         Field required [type=missing, input_value={'serviceLocation': '0007...: {'providerTier': '1'}}, input_type=dict]
+E           For further information visit https://errors.pydantic.dev/2.11/v/missing
+
+tests/test_service.py:121: ValidationError
+====================================================================================== warnings summary =======================================================================================
+tests/test_integration_real.py::test_real_database_integration
+  tests/test_integration_real.py:206: PytestWarning: The test <Function test_real_database_integration> is marked with '@pytest.mark.asyncio' but it is not an async function. Please remove the asyncio mark. If the test is not marked explicitly, check for global marks applied via 'pytestmark'.
+    @pytest.mark.integration
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=================================================================================== short test summary info ===================================================================================
+FAILED tests/test_integration.py::test_api_error_handling - AssertionError: assert 'rate' in {'correlationId': '069d197a-1e14-453f-8cf4-63f74eb626ff', 'detail': 'Malformed request', 'errors': {'Missing fields': ...agnosisCode', 'providerInfo.0.sp...
+FAILED tests/test_integration.py::test_service_integration_with_real_data - pydantic_core._pydantic_core.ValidationError: 2 validation errors for CostEstimatorRequest
+FAILED tests/test_integration.py::test_mapper_integration - pydantic_core._pydantic_core.ValidationError: 2 validation errors for CostEstimatorRequest
+FAILED tests/test_integration.py::test_end_to_end_flow - pydantic_core._pydantic_core.ValidationError: 5 validation errors for CostEstimatorRequest
+FAILED tests/test_repository.py::test_extract_single_value - AssertionError: assert '150.75' == 150.75
+FAILED tests/test_service.py::test_mapper_to_benefit_request - pydantic_core._pydantic_core.ValidationError: 2 validation errors for CostEstimatorRequest
+FAILED tests/test_service.py::test_mapper_to_rate_criteria - pydantic_core._pydantic_core.ValidationError: 2 validation errors for CostEstimatorRequest
+FAILED tests/test_service.py::test_service_estimate_cost - pydantic_core._pydantic_core.ValidationError: 2 validation errors for CostEstimatorRequest
+ERROR tests/test_repository.py::test_rate_criteria_creation - TypeError: CostEstimatorRateCriteria.__init__() got an unexpected keyword argument 'providerSpecialty'
+ERROR tests/test_repository.py::test_repository_initialization - TypeError: CostEstimatorRateCriteria.__init__() got an unexpected keyword argument 'providerSpecialty'
+ERROR tests/test_repository.py::test_build_rate_params - TypeError: CostEstimatorRateCriteria.__init__() got an unexpected keyword argument 'providerSpecialty'
+================================================================ 8 failed, 16 passed, 5 skipped, 1 warning, 3 errors in 0.12s =================================================================
+N133723@MACL2KVFV33RR cost-estimator-calc-service % 
