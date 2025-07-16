@@ -1,0 +1,97 @@
+import pytest
+from app.schemas.accumulator_response import (
+    AccumulatorResponse,
+    EffectivePeriod,
+    Accumulator,
+    MembershipIdentifier,
+    Dependent,
+    Memberships,
+    ReadAccumulatorsResponse,
+)
+
+
+def test_accumulator_response_parsing_and_methods():
+    mock_data = {
+        "readAccumulatorsResponse": {
+            "memberships": {
+                "dependents": [
+                    {
+                        "privacyRestriction": "N",
+                        "membershipIdentifier": {
+                            "idSource": "SRC",
+                            "idValue": "ID123",
+                            "idType": "Member",
+                            "resourceId": "R123"
+                        },
+                        "accumulators": [
+                            {
+                                "level": "1",
+                                "frequency": "Annual",
+                                "relationshipToSubscriber": "Self",
+                                "suffix": "A",
+                                "benefitProductType": "Medical",
+                                "description": "Deductible",
+                                "currentValue": "200.00",
+                                "limitValue": "1000.00",
+                                "code": "Deductible",
+                                "effectivePeriod": {
+                                    "datetimeBegin": "2024-01-01",
+                                    "datetimeEnd": "2024-12-31"
+                                },
+                                "calculatedValue": "200.00",
+                                "savingsLevel": "High",
+                                "networkIndicator": "InNetwork",
+                                "accumExCode": "AE001",
+                                "limitType": "Overall",
+                                "networkIndicatorCode": "IN"
+                            },
+                            {
+                                "level": "1",
+                                "frequency": "Annual",
+                                "relationshipToSubscriber": "Self",
+                                "suffix": "A",
+                                "benefitProductType": "Medical",
+                                "description": "OOP Max",
+                                "currentValue": "500.00",
+                                "limitValue": "5000.00",
+                                "code": "OOP Max",
+                                "effectivePeriod": {
+                                    "datetimeBegin": "2024-01-01",
+                                    "datetimeEnd": "2024-12-31"
+                                },
+                                "calculatedValue": "500.00",
+                                "savingsLevel": "Medium",
+                                "networkIndicator": "InNetwork",
+                                "accumExCode": "AE002",
+                                "limitType": "Overall",
+                                "networkIndicatorCode": "IN"
+                            }
+                        ]
+                    }
+                ]
+            }
+        }
+    }
+
+    response = AccumulatorResponse(mock_data)
+
+    deductible = response.get_deductible()
+    assert deductible is not None
+    assert deductible.code == "Deductible"
+    assert deductible.currentValue == "200.00"
+
+    oop_max = response.get_out_of_pocket_max()
+    assert oop_max.code == "OOP Max"
+    assert oop_max.limitValue == "5000.00"
+
+    annual_max = response.get_annual_maximum()
+    assert annual_max is None  # Not present in mock
+
+    by_desc = response.get_accumulator_by_description("Deductible")
+    assert by_desc.code == "Deductible"
+
+    by_accum_ex = response.get_accumulator_by_accum_ex_code("AE001")
+    assert by_accum_ex.code == "Deductible"
+
+    all_accums = response.get_accumulators_by_network("InNetwork")
+    assert len(all_accums) == 2
