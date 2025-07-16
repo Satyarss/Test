@@ -10,125 +10,13 @@ collected 32 items
 tests/test_integration.py ..FFFF                                                                                                                                                        [ 18%]
 tests/test_integration_real.py sssss                                                                                                                                                    [ 34%]
 tests/test_main.py .....                                                                                                                                                                [ 50%]
-tests/test_repository.py ...EEEF                                                                                                                                                        [ 71%]
+tests/test_repository.py ......F                                                                                                                                                        [ 71%]
 tests/test_service.py ......FFF                                                                                                                                                         [100%]
 
-=========================================================================================== ERRORS ============================================================================================
-________________________________________________________________________ ERROR at setup of test_rate_criteria_creation ________________________________________________________________________
-
-fixturedef = <FixtureDef argname='rate_criteria' scope='function' baseid='tests'>, request = <SubRequest 'rate_criteria' for <Function test_rate_criteria_creation>>
-
-    @pytest.hookimpl(wrapper=True)
-    def pytest_fixture_setup(fixturedef: FixtureDef, request) -> object | None:
-        asyncio_mode = _get_asyncio_mode(request.config)
-        if not _is_asyncio_fixture_function(fixturedef.func):
-            if asyncio_mode == Mode.STRICT:
-                # Ignore async fixtures without explicit asyncio mark in strict mode
-                # This applies to pytest_trio fixtures, for example
->               return (yield)
-                        ^^^^^
-
-../../../Library/Python/3.12/lib/python/site-packages/pytest_asyncio/plugin.py:681: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
-
-    @pytest.fixture
-    def rate_criteria():
-        """Provide rate criteria for testing."""
-        from app.models.rate_criteria import CostEstimatorRateCriteria
-    
->       return CostEstimatorRateCriteria(
-            serviceCode="99213",
-            providerIdentificationNumber="1234567890",
-            placeOfService="11",
-            serviceType="1",
-            networkId="NET001",
-            serviceLocationNumber="LOC001",
-            zipCode="85305",
-            isOutofNetwork=False,
-            providerType="HO",
-            providerSpeciality="91017",
-        )
-E       TypeError: CostEstimatorRateCriteria.__init__() got an unexpected keyword argument 'providerSpeciality'
-
-tests/conftest.py:88: TypeError
-______________________________________________________________________ ERROR at setup of test_repository_initialization _______________________________________________________________________
-
-fixturedef = <FixtureDef argname='rate_criteria' scope='function' baseid='tests'>, request = <SubRequest 'rate_criteria' for <Function test_repository_initialization>>
-
-    @pytest.hookimpl(wrapper=True)
-    def pytest_fixture_setup(fixturedef: FixtureDef, request) -> object | None:
-        asyncio_mode = _get_asyncio_mode(request.config)
-        if not _is_asyncio_fixture_function(fixturedef.func):
-            if asyncio_mode == Mode.STRICT:
-                # Ignore async fixtures without explicit asyncio mark in strict mode
-                # This applies to pytest_trio fixtures, for example
->               return (yield)
-                        ^^^^^
-
-../../../Library/Python/3.12/lib/python/site-packages/pytest_asyncio/plugin.py:681: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
-
-    @pytest.fixture
-    def rate_criteria():
-        """Provide rate criteria for testing."""
-        from app.models.rate_criteria import CostEstimatorRateCriteria
-    
->       return CostEstimatorRateCriteria(
-            serviceCode="99213",
-            providerIdentificationNumber="1234567890",
-            placeOfService="11",
-            serviceType="1",
-            networkId="NET001",
-            serviceLocationNumber="LOC001",
-            zipCode="85305",
-            isOutofNetwork=False,
-            providerType="HO",
-            providerSpeciality="91017",
-        )
-E       TypeError: CostEstimatorRateCriteria.__init__() got an unexpected keyword argument 'providerSpeciality'
-
-tests/conftest.py:88: TypeError
-__________________________________________________________________________ ERROR at setup of test_build_rate_params ___________________________________________________________________________
-
-fixturedef = <FixtureDef argname='rate_criteria' scope='function' baseid='tests'>, request = <SubRequest 'rate_criteria' for <Function test_build_rate_params>>
-
-    @pytest.hookimpl(wrapper=True)
-    def pytest_fixture_setup(fixturedef: FixtureDef, request) -> object | None:
-        asyncio_mode = _get_asyncio_mode(request.config)
-        if not _is_asyncio_fixture_function(fixturedef.func):
-            if asyncio_mode == Mode.STRICT:
-                # Ignore async fixtures without explicit asyncio mark in strict mode
-                # This applies to pytest_trio fixtures, for example
->               return (yield)
-                        ^^^^^
-
-../../../Library/Python/3.12/lib/python/site-packages/pytest_asyncio/plugin.py:681: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
-
-    @pytest.fixture
-    def rate_criteria():
-        """Provide rate criteria for testing."""
-        from app.models.rate_criteria import CostEstimatorRateCriteria
-    
->       return CostEstimatorRateCriteria(
-            serviceCode="99213",
-            providerIdentificationNumber="1234567890",
-            placeOfService="11",
-            serviceType="1",
-            networkId="NET001",
-            serviceLocationNumber="LOC001",
-            zipCode="85305",
-            isOutofNetwork=False,
-            providerType="HO",
-            providerSpeciality="91017",
-        )
-E       TypeError: CostEstimatorRateCriteria.__init__() got an unexpected keyword argument 'providerSpeciality'
-
-tests/conftest.py:88: TypeError
 ========================================================================================== FAILURES ===========================================================================================
 ___________________________________________________________________________________ test_api_error_handling ___________________________________________________________________________________
 
-client = <starlette.testclient.TestClient object at 0x111f82990>
+client = <starlette.testclient.TestClient object at 0x106ca36e0>
 
     @pytest.mark.integration
     def test_api_error_handling(client):
@@ -172,8 +60,8 @@ E           AssertionError: assert 'rate' in {'correlationId': '069d197a-1e14-45
 
 tests/test_integration.py:124: AssertionError
 ------------------------------------------------------------------------------------ Captured stdout call -------------------------------------------------------------------------------------
-2025-07-16 09:40:38,766 | INFO | cost_estimator_calc_service | Async SpannerClient initialized for database: projects/anbc-hcb-dev/instances/provider-de/databases/cost-estimator-secure
-2025-07-16 09:40:38,766 | INFO | cost_estimator_calc_service | Connection pool size: 10, Max workers: 20
+2025-07-16 09:45:06,719 | INFO | cost_estimator_calc_service | Async SpannerClient initialized for database: projects/anbc-hcb-dev/instances/provider-de/databases/cost-estimator-secure
+2025-07-16 09:45:06,719 | INFO | cost_estimator_calc_service | Connection pool size: 10, Max workers: 20
 -------------------------------------------------------------------------------------- Captured log call --------------------------------------------------------------------------------------
 INFO     cost_estimator_calc_service:spanner_client.py:43 Async SpannerClient initialized for database: projects/anbc-hcb-dev/instances/provider-de/databases/cost-estimator-secure
 INFO     cost_estimator_calc_service:spanner_client.py:46 Connection pool size: 10, Max workers: 20
@@ -363,7 +251,7 @@ E                +  where False = isinstance('150.75', float)
 
 tests/test_repository.py:116: AssertionError
 ------------------------------------------------------------------------------------ Captured stdout call -------------------------------------------------------------------------------------
-2025-07-16 09:40:38,825 | INFO | cost_estimator_calc_service | Extracted value: 150.75
+2025-07-16 09:45:06,770 | INFO | cost_estimator_calc_service | Extracted value: 150.75
 -------------------------------------------------------------------------------------- Captured log call --------------------------------------------------------------------------------------
 INFO     cost_estimator_calc_service:cost_estimator_repository_impl.py:210 Extracted value: 150.75
 _______________________________________________________________________________ test_mapper_to_benefit_request ________________________________________________________________________________
@@ -412,8 +300,8 @@ E           For further information visit https://errors.pydantic.dev/2.11/v/mis
 tests/test_service.py:83: ValidationError
 _________________________________________________________________________________ test_service_estimate_cost __________________________________________________________________________________
 
-mock_repo = <MagicMock name='CostEstimatorRepositoryImpl' id='4596213584'>, mock_accumulator = <MagicMock name='AccumulatorServiceImpl' id='4606713808'>
-mock_benefit = <MagicMock name='BenefitServiceImpl' id='4606711456'>
+mock_repo = <MagicMock name='CostEstimatorRepositoryImpl' id='4410470480'>, mock_accumulator = <MagicMock name='AccumulatorServiceImpl' id='4410689152'>
+mock_benefit = <MagicMock name='BenefitServiceImpl' id='4407621680'>
 valid_request_data = {'benefitProductType': 'Medical', 'languageCode': '11', 'membershipId': '5~186103331+10+7+20240101+793854+8A+829', 'pr...000317', 'providerNetworkParticipation': {'providerTier': '1'}, 'providerNetworks': {'networkID': '58921'}, ...}], ...}
 
     @pytest.mark.service
@@ -471,8 +359,5 @@ FAILED tests/test_repository.py::test_extract_single_value - AssertionError: ass
 FAILED tests/test_service.py::test_mapper_to_benefit_request - pydantic_core._pydantic_core.ValidationError: 2 validation errors for CostEstimatorRequest
 FAILED tests/test_service.py::test_mapper_to_rate_criteria - pydantic_core._pydantic_core.ValidationError: 2 validation errors for CostEstimatorRequest
 FAILED tests/test_service.py::test_service_estimate_cost - pydantic_core._pydantic_core.ValidationError: 2 validation errors for CostEstimatorRequest
-ERROR tests/test_repository.py::test_rate_criteria_creation - TypeError: CostEstimatorRateCriteria.__init__() got an unexpected keyword argument 'providerSpeciality'
-ERROR tests/test_repository.py::test_repository_initialization - TypeError: CostEstimatorRateCriteria.__init__() got an unexpected keyword argument 'providerSpeciality'
-ERROR tests/test_repository.py::test_build_rate_params - TypeError: CostEstimatorRateCriteria.__init__() got an unexpected keyword argument 'providerSpeciality'
-================================================================ 8 failed, 16 passed, 5 skipped, 1 warning, 3 errors in 0.13s =================================================================
+===================================================================== 8 failed, 19 passed, 5 skipped, 1 warning in 0.10s ======================================================================
 N133723@MACL2KVFV33RR cost-estimator-calc-service % 
