@@ -1,0 +1,66 @@
+import pytest 
+from app.schemas.benefit_reponse import (BenefitApiResponse, ServiceInfoItem, ServiceCodeInfoItem, PlaceOfServiceItem, ProviderTypeItem, ProviderSpecialtyItem, Benefit, BenefitTier, Prerequisite, ServiceProviderItem, Coverage, RelatedAccumulator, )
+def test_benefit_api_reponse():
+    response = BenefitApiResponse(
+        serviceInfo=[
+            ServiceInfoItem(
+                serviceCodeInfo=[
+                    ServiceCodeInfoItem(
+                        code="99214",
+                        type="CPT4",
+                    )
+                ],
+                placeOfService=[PlaceOfServiceItem(code="POS1")],
+                providerType=[ProviderTypeItem(code="PT1")],
+                providerSpecialty=[ProviderSpecialtyItem(code="PS1")],
+                benefit=[
+                    Benefit(
+                        benefitName="Test Benefit",
+                        benefitCode=1001,
+                        isInitialBenefit="Yes",
+                        benefitTier=BenefitTier(name="Tier 1"),
+                        networkCategory="Network A",
+                        prerequisites=[Prerequisite(type=" " , isRequired="Yes")],
+                        benefitProvider="Provider A",
+                        serviceProvider=[ServiceProviderItem(providerdesignation="Primary Care")],
+                        coverages=[
+                            Coverage(
+                                sequenceNumber=1,
+                                benefitDescription="Coverage Description",
+                                costShareCopay=10.0,
+                                costShareCoinsurance=5.0,
+                                copayAppliesOutOfPocket="Yes",
+                                coinsAppliesOutOfPocket="No",
+                                deductibleAppliesOutOfPocket="Yes",
+                                deductibleAppliesOutOfPocketOtherIndicator="No",
+                                copayCountToDeductibleIndicator="Yes",
+                                copayContinueWhenDeductibleMetIndicator="No",
+                                copayContinueWhenOutOfPocketMaxMetIndicator="Yes",
+                                coinsuranceToOutOfPocketOtherIndicator="No",
+                                copayToOutofPocketOtherIndicator="Yes",
+                                isDeductibleBeforeCopay="No",
+                                benefitLimitation="None",
+                                isServiceCovered="Yes",
+                                relatedAccumulators=[
+                                    RelatedAccumulator(
+                                        code="ACC1",
+                                        level="Level 1",
+                                        deductibleCode="Deductible1",
+                                        accumExCode="AccumEx1",
+                                        networkIndicatorCode="Network1"
+                                    )
+                                ]
+
+                            )
+                        ]
+                    )
+                ]
+            )
+        ]
+    )
+
+
+
+   
+
+            
