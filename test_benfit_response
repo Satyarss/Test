@@ -58,7 +58,16 @@ def test_benefit_api_reponse():
             )
         ]
     )
-
+assert response.serviceInfo[0].benefit[0].benefitName == "Test Benefit"
+assert response.serviceInfo[0].benefit[0].benefitTier.name == "Tier 1"
+assert response.serviceInfo[0].benefit[0].coverages[0].costShareCopay == 10.0
+assert response.serviceInfo[0].benefit[0].coverages[0].relatedAccumulators[0].code == "ACC1"
+assert response.serviceInfo[0].placeOfService[0].code == "11"
+assert response.serviceInfo[0].providerType[0].code == "HO"
+assert response.serviceInfo[0].providerSpecialty[0].code == "91017"
+assert response.serviceInfo[0].benefit[0].coverages[0].benefitDescription == "General consultation"
+assert response.serviceInfo[0].benefit[0].coverages[0].copayAppliesOutOfPocket == "Y"
+    
 
 
    
