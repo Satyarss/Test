@@ -1,4 +1,4 @@
-N133723@MACL2KVFV33RR cost-estimator-calc-service % python3 -m pytest tests              
+N133723@MACL2KVFV33RR cost-estimator-calc-service % python3 -m pytest tests
 ===================================================================================== test session starts =====================================================================================
 platform darwin -- Python 3.12.4, pytest-8.4.1, pluggy-1.6.0
 rootdir: /Users/N133723/Desktop/TLABCHAAT-354/cost-estimator-calc-service
@@ -46,9 +46,9 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
             zipCode="85305",
             isOutofNetwork=False,
             providerType="HO",
-            providerSpecialty="91017",
+            providerSpeciality="91017",
         )
-E       TypeError: CostEstimatorRateCriteria.__init__() got an unexpected keyword argument 'providerSpecialty'
+E       TypeError: CostEstimatorRateCriteria.__init__() got an unexpected keyword argument 'providerSpeciality'
 
 tests/conftest.py:88: TypeError
 ______________________________________________________________________ ERROR at setup of test_repository_initialization _______________________________________________________________________
@@ -83,9 +83,9 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
             zipCode="85305",
             isOutofNetwork=False,
             providerType="HO",
-            providerSpecialty="91017",
+            providerSpeciality="91017",
         )
-E       TypeError: CostEstimatorRateCriteria.__init__() got an unexpected keyword argument 'providerSpecialty'
+E       TypeError: CostEstimatorRateCriteria.__init__() got an unexpected keyword argument 'providerSpeciality'
 
 tests/conftest.py:88: TypeError
 __________________________________________________________________________ ERROR at setup of test_build_rate_params ___________________________________________________________________________
@@ -120,15 +120,15 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
             zipCode="85305",
             isOutofNetwork=False,
             providerType="HO",
-            providerSpecialty="91017",
+            providerSpeciality="91017",
         )
-E       TypeError: CostEstimatorRateCriteria.__init__() got an unexpected keyword argument 'providerSpecialty'
+E       TypeError: CostEstimatorRateCriteria.__init__() got an unexpected keyword argument 'providerSpeciality'
 
 tests/conftest.py:88: TypeError
 ========================================================================================== FAILURES ===========================================================================================
 ___________________________________________________________________________________ test_api_error_handling ___________________________________________________________________________________
 
-client = <starlette.testclient.TestClient object at 0x110eada90>
+client = <starlette.testclient.TestClient object at 0x111f82990>
 
     @pytest.mark.integration
     def test_api_error_handling(client):
@@ -172,8 +172,8 @@ E           AssertionError: assert 'rate' in {'correlationId': '069d197a-1e14-45
 
 tests/test_integration.py:124: AssertionError
 ------------------------------------------------------------------------------------ Captured stdout call -------------------------------------------------------------------------------------
-2025-07-16 09:27:47,516 | INFO | cost_estimator_calc_service | Async SpannerClient initialized for database: projects/anbc-hcb-dev/instances/provider-de/databases/cost-estimator-secure
-2025-07-16 09:27:47,516 | INFO | cost_estimator_calc_service | Connection pool size: 10, Max workers: 20
+2025-07-16 09:40:38,766 | INFO | cost_estimator_calc_service | Async SpannerClient initialized for database: projects/anbc-hcb-dev/instances/provider-de/databases/cost-estimator-secure
+2025-07-16 09:40:38,766 | INFO | cost_estimator_calc_service | Connection pool size: 10, Max workers: 20
 -------------------------------------------------------------------------------------- Captured log call --------------------------------------------------------------------------------------
 INFO     cost_estimator_calc_service:spanner_client.py:43 Async SpannerClient initialized for database: projects/anbc-hcb-dev/instances/provider-de/databases/cost-estimator-secure
 INFO     cost_estimator_calc_service:spanner_client.py:46 Connection pool size: 10, Max workers: 20
@@ -356,12 +356,14 @@ ________________________________________________________________________________
                 # Test with numeric result
                 result = [[150.75]]
                 value = repository._extract_single_value(result) or 0.0
->               assert value == 150.75
-E               AssertionError: assert '150.75' == 150.75
+                assert float(value) == 150.75
+>               assert isinstance(value, float)
+E               AssertionError: assert False
+E                +  where False = isinstance('150.75', float)
 
-tests/test_repository.py:115: AssertionError
+tests/test_repository.py:116: AssertionError
 ------------------------------------------------------------------------------------ Captured stdout call -------------------------------------------------------------------------------------
-2025-07-16 09:27:47,571 | INFO | cost_estimator_calc_service | Extracted value: 150.75
+2025-07-16 09:40:38,825 | INFO | cost_estimator_calc_service | Extracted value: 150.75
 -------------------------------------------------------------------------------------- Captured log call --------------------------------------------------------------------------------------
 INFO     cost_estimator_calc_service:cost_estimator_repository_impl.py:210 Extracted value: 150.75
 _______________________________________________________________________________ test_mapper_to_benefit_request ________________________________________________________________________________
@@ -410,8 +412,8 @@ E           For further information visit https://errors.pydantic.dev/2.11/v/mis
 tests/test_service.py:83: ValidationError
 _________________________________________________________________________________ test_service_estimate_cost __________________________________________________________________________________
 
-mock_repo = <MagicMock name='CostEstimatorRepositoryImpl' id='4580156304'>, mock_accumulator = <MagicMock name='AccumulatorServiceImpl' id='4580152128'>
-mock_benefit = <MagicMock name='BenefitServiceImpl' id='4579722640'>
+mock_repo = <MagicMock name='CostEstimatorRepositoryImpl' id='4596213584'>, mock_accumulator = <MagicMock name='AccumulatorServiceImpl' id='4606713808'>
+mock_benefit = <MagicMock name='BenefitServiceImpl' id='4606711456'>
 valid_request_data = {'benefitProductType': 'Medical', 'languageCode': '11', 'membershipId': '5~186103331+10+7+20240101+793854+8A+829', 'pr...000317', 'providerNetworkParticipation': {'providerTier': '1'}, 'providerNetworks': {'networkID': '58921'}, ...}], ...}
 
     @pytest.mark.service
@@ -465,12 +467,12 @@ FAILED tests/test_integration.py::test_api_error_handling - AssertionError: asse
 FAILED tests/test_integration.py::test_service_integration_with_real_data - pydantic_core._pydantic_core.ValidationError: 2 validation errors for CostEstimatorRequest
 FAILED tests/test_integration.py::test_mapper_integration - pydantic_core._pydantic_core.ValidationError: 2 validation errors for CostEstimatorRequest
 FAILED tests/test_integration.py::test_end_to_end_flow - pydantic_core._pydantic_core.ValidationError: 5 validation errors for CostEstimatorRequest
-FAILED tests/test_repository.py::test_extract_single_value - AssertionError: assert '150.75' == 150.75
+FAILED tests/test_repository.py::test_extract_single_value - AssertionError: assert False
 FAILED tests/test_service.py::test_mapper_to_benefit_request - pydantic_core._pydantic_core.ValidationError: 2 validation errors for CostEstimatorRequest
 FAILED tests/test_service.py::test_mapper_to_rate_criteria - pydantic_core._pydantic_core.ValidationError: 2 validation errors for CostEstimatorRequest
 FAILED tests/test_service.py::test_service_estimate_cost - pydantic_core._pydantic_core.ValidationError: 2 validation errors for CostEstimatorRequest
-ERROR tests/test_repository.py::test_rate_criteria_creation - TypeError: CostEstimatorRateCriteria.__init__() got an unexpected keyword argument 'providerSpecialty'
-ERROR tests/test_repository.py::test_repository_initialization - TypeError: CostEstimatorRateCriteria.__init__() got an unexpected keyword argument 'providerSpecialty'
-ERROR tests/test_repository.py::test_build_rate_params - TypeError: CostEstimatorRateCriteria.__init__() got an unexpected keyword argument 'providerSpecialty'
-================================================================ 8 failed, 16 passed, 5 skipped, 1 warning, 3 errors in 0.12s =================================================================
+ERROR tests/test_repository.py::test_rate_criteria_creation - TypeError: CostEstimatorRateCriteria.__init__() got an unexpected keyword argument 'providerSpeciality'
+ERROR tests/test_repository.py::test_repository_initialization - TypeError: CostEstimatorRateCriteria.__init__() got an unexpected keyword argument 'providerSpeciality'
+ERROR tests/test_repository.py::test_build_rate_params - TypeError: CostEstimatorRateCriteria.__init__() got an unexpected keyword argument 'providerSpeciality'
+================================================================ 8 failed, 16 passed, 5 skipped, 1 warning, 3 errors in 0.13s =================================================================
 N133723@MACL2KVFV33RR cost-estimator-calc-service % 
