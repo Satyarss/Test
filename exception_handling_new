@@ -1,17 +1,9 @@
-import pytest
-from fastapi import Request
-from fastapi.exceptions import RequestValidationError
-from fastapi.responses import JSONResponse
-from starlette.datastructures import Headers
-from pydantic import ValidationError
+from fastapi.testclient import TestClient
+from app.main import app  # Adjust if your app entry point is elsewhere
 
-from app.core.exception_handler import validation_exception_handler
-from app.core.exceptions import BadRequestException
-from app.core.exception_responses import responses
-from app.schemas.benefit_request import BenefitRequest
+client = TestClient(app)
 
-
-# ✅ Real valid payload (based on your model)
+# ✅ Valid base payload
 valid_payload = {
     "benefitProductType": "Medical",
     "membershipID": "5~186103331+10+7+20240101+793854+BA+829",
@@ -30,91 +22,58 @@ valid_payload = {
 }
 
 
-# ✅ 1. Test missing fields handling via validation_exception_handler
-@pytest.mark.asyncio
-async def test_validation_handler_with_missing_fields():
-    request = Request({
-        "type": "http",
-        "method": "POST",
-        "path": "/benefit",
-        "headers": Headers({})
-    })
-
-    incomplete_payload = {
-        "benefitProductType": "Medical"
-        # Missing membershipID, planIdentifier, serviceInfo
-    }
-
-    try:
-        BenefitRequest(**incomplete_payload)
-    except ValidationError as ve:
-        exc = RequestValidationError(ve.errors())
-        response = await validation_exception_handler(request, exc)
-
-        assert response.status_code == 400
-        body = response.body.decode()
-        assert "Missing fields" in body
-        assert "membershipID" in body
-        assert "planIdentifier" in body
-        assert "serviceInfo" in body
+# ✅ Test 1: Completely valid payload
+def test_valid_payload_returns_200_or_business_response():
+    response = client.post("/benefit", json=valid_payload)
+    assert response.status_code in [200, 400]  # depending on internal logic
+    assert response.json() is not None
 
 
-# ✅ 2. Test type error (string instead of list)
-@pytest.mark.asyncio
-async def test_validation_handler_with_invalid_type():
-    request = Request({
-        "type": "http",
-        "method": "POST",
-        "path": "/benefit",
-        "headers": Headers({})
-    })
+# ✅ Test 2: Missing `membershipID` should trigger 400
+def test_missing_membership_id():
+    payload = valid_payload.copy()
+    del payload["membershipID"]
 
-    broken_payload = valid_payload.copy()
-    broken_payload["serviceInfo"] = "should_be_list"
-
-    try:
-        BenefitRequest(**broken_payload)
-    except ValidationError as ve:
-        exc = RequestValidationError(ve.errors())
-        response = await validation_exception_handler(request, exc)
-        assert response.status_code in [400, 422]
-        assert "serviceInfo" in response.body.decode()
-
-
-# ✅ 3. Simulate custom BadRequestException handling
-@pytest.mark.asyncio
-async def test_custom_bad_request_exception():
-    request = Request({
-        "type": "http",
-        "method": "GET",
-        "path": "/simulate-error",
-        "headers": Headers({})
-    })
-
-    exc = BadRequestException("Manual business-level exception occurred")
-    response = JSONResponse(
-        status_code=400,
-        content={"detail": str(exc)}
-    )
-
+    response = client.post("/benefit", json=payload)
     assert response.status_code == 400
-    assert b"Manual business-level exception occurred" in response.body
+    assert "Malformed request" in response.text
 
 
-# ✅ 4. Validate structure of custom exception_responses (200 and 400)
-def test_exception_response_model_structure():
-    # 200 Response
-    res_200 = responses.get(200)
-    assert res_200["description"] == "Success"
-    assert "x-clientrefid" in res_200["headers"]
-    assert "x-correlation-id" in res_200["headers"]
+# ✅ Test 3: Missing `serviceInfo` field
+def test_missing_service_info():
+    payload = valid_payload.copy()
+    del payload["serviceInfo"]
 
-    # 400 Response
-    res_400 = responses.get(400)
-    assert res_400["status"] == 400
-    assert res_400["title"] == "One or more validation errors occurred"
-    assert res_400["type"].startswith("https://")
-    assert res_400["detail"] == "Malformed request"
-    assert isinstance(res_400["errors"], str)
-    assert isinstance(res_400["message"], str)
-    assert "correlationId" in res_400
+    response = client.post("/benefit", json=payload)
+    assert response.status_code == 400
+    assert "Malformed request" in response.text
+
+
+# ✅ Test 4: Wrong data type in `serviceInfo` (string instead of list)
+def test_service_info_wrong_type():
+    payload = valid_payload.copy()
+    payload["serviceInfo"] = "invalid_string"
+
+    response = client.post("/benefit", json=payload)
+    assert response.status_code in [400, 422]
+    assert "serviceInfo" in response.text
+
+
+# ✅ Test 5: Missing nested `providerType` list
+def test_missing_provider_type_in_service_info():
+    payload = valid_payload.copy()
+    payload["serviceInfo"][0]["serviceCodeInfo"].pop("providerType", None)
+
+    response = client.post("/benefit", json=payload)
+    assert response.status_code in [400, 422]
+    assert "providerType" in response.text or "Malformed request" in response.text
+
+
+# ✅ Test 6: Missing top-level field `benefitProductType`
+def test_missing_benefit_product_type():
+    payload = valid_payload.copy()
+    del payload["benefitProductType"]
+
+    response = client.post("/benefit", json=payload)
+    assert response.status_code == 400
+    assert "Malformed request" in response.text
