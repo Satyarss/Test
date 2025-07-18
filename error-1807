@@ -1,0 +1,45 @@
+N133723@MACL2KVFV33RR cost-estimator-calc-service % python3 -m pytest tests/core/test_exceptionhandlingend.py
+============================================================================== test session starts ==============================================================================
+platform darwin -- Python 3.12.4, pytest-8.4.1, pluggy-1.6.0
+rootdir: /Users/N133723/Desktop/TLABCHAAT-354/cost-estimator-calc-service
+configfile: pytest.ini
+plugins: anyio-4.9.0, asyncio-1.1.0
+asyncio: mode=Mode.STRICT, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collected 5 items                                                                                                                                                               
+
+tests/core/test_exceptionhandlingend.py .FFF.                                                                                                                             [100%]
+
+=================================================================================== FAILURES ====================================================================================
+__________________________________________________________________________ test_missing_membership_id ___________________________________________________________________________
+
+    def test_missing_membership_id():
+        payload = valid_payload.copy()
+>       del payload["membershipID"]
+            ^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'membershipID'
+
+tests/core/test_exceptionhandlingend.py:60: KeyError
+___________________________________________________________________________ test_missing_service_info ___________________________________________________________________________
+
+    def test_missing_service_info():
+        payload = valid_payload.copy()
+>       del payload["serviceInfo"]
+            ^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'serviceInfo'
+
+tests/core/test_exceptionhandlingend.py:70: KeyError
+__________________________________________________________________ test_missing_provider_type_in_service_info ___________________________________________________________________
+
+    def test_missing_provider_type_in_service_info():
+        payload = valid_payload.copy()
+>       payload["serviceInfo"][0]["serviceCodeInfo"].pop("providerType", None)
+        ^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'serviceInfo'
+
+tests/core/test_exceptionhandlingend.py:80: KeyError
+============================================================================ short test summary info ============================================================================
+FAILED tests/core/test_exceptionhandlingend.py::test_missing_membership_id - KeyError: 'membershipID'
+FAILED tests/core/test_exceptionhandlingend.py::test_missing_service_info - KeyError: 'serviceInfo'
+FAILED tests/core/test_exceptionhandlingend.py::test_missing_provider_type_in_service_info - KeyError: 'serviceInfo'
+========================================================================== 3 failed, 2 passed in 0.06s ==========================================================================
+N133723@MACL2KVFV33RR cost-estimator-calc-service % 
