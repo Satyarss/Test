@@ -1,0 +1,94 @@
+import pytest
+import pytest_asyncio
+from unittest.mock import AsyncMock, patch, MagicMock
+from app.repository.cost_estimator_repository_impl import CostEstimatorRepositoryImpl
+from app.models.rate_criteria import CostEstimatorRateCriteria
+
+
+@pytest_asyncio.fixture
+def sample_rate_criteria():
+    return CostEstimatorRateCriteria(
+        serviceCode="SVC123",
+        placeOfService="11",
+        serviceType="CPT4",
+        zipCode="85305",
+        providerIdentificationNumber="123456",
+        networkId="58921",
+        serviceLocationNumber="LOC001",
+        isOutofNetwork=False,
+        providerSpecialtyCode="91017",
+        providerType="HO"
+    )
+
+
+@pytest.mark.asyncio
+@patch("app.repository.cost_estimator_repository_impl.SpannerClient")
+@patch("app.repository.cost_estimator_repository_impl.spanner_config")
+async def test_get_rate_claim_based_success(mock_config, mock_client_class, sample_rate_criteria):
+    mock_config.is_valid.return_value = True
+    mock_client = AsyncMock()
+    mock_client.execute_query.return_value = [["250.00"]]
+    mock_client_class.return_value = mock_client
+
+    repo = CostEstimatorRepositoryImpl()
+    result = await repo.get_rate(sample_rate_criteria)
+
+    assert result == "250.00"
+
+
+@pytest.mark.asyncio
+@patch("app.repository.cost_estimator_repository_impl.SpannerClient")
+@patch("app.repository.cost_estimator_repository_impl.spanner_config")
+async def test_get_rate_all_na_fallback_to_na(mock_config, mock_client_class, sample_rate_criteria):
+    mock_config.is_valid.return_value = True
+    mock_client = AsyncMock()
+    # Simulate fallback path returning NA
+    mock_client.execute_query.side_effect = [
+        [],  # Claim-based
+        [],  # Provider Info
+        [],  # Standard
+    ]
+    mock_client_class.return_value = mock_client
+
+    repo = CostEstimatorRepositoryImpl()
+    result = await repo.get_rate(sample_rate_criteria)
+
+    assert result == "NA"
+
+
+@pytest.mark.asyncio
+@patch("app.repository.cost_estimator_repository_impl.SpannerClient")
+@patch("app.repository.cost_estimator_repository_impl.spanner_config")
+async def test_get_rate_out_of_network_success(mock_config, mock_client_class, sample_rate_criteria):
+    mock_config.is_valid.return_value = True
+    sample_rate_criteria.isOutofNetwork = True
+
+    mock_client = AsyncMock()
+    mock_client.execute_query.side_effect = [
+        [["300.00"]],  # Out-of-network
+    ]
+    mock_client_class.return_value = mock_client
+
+    repo = CostEstimatorRepositoryImpl()
+    result = await repo.get_rate(sample_rate_criteria)
+
+    assert result == "300.00"
+
+
+@pytest.mark.asyncio
+@patch("app.repository.cost_estimator_repository_impl.SpannerClient")
+@patch("app.repository.cost_estimator_repository_impl.spanner_config")
+async def test_get_rate_provider_info_to_standard_rate(mock_config, mock_client_class, sample_rate_criteria):
+    mock_config.is_valid.return_value = True
+    mock_client = AsyncMock()
+    mock_client.execute_query.side_effect = [
+        [],  # Claim-based
+        [["", "PROD1", "RS1", "GA1"]],  # Provider info => contract_type S
+        [["200.00"]]  # Standard rate
+    ]
+    mock_client_class.return_value = mock_client
+
+    repo = CostEstimatorRepositoryImpl()
+    result = await repo.get_rate(sample_rate_criteria)
+
+    assert result == "200.00"
