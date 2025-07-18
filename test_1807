@@ -1,0 +1,93 @@
+from fastapi.testclient import TestClient
+from app.main import app  
+
+client = TestClient(app)
+
+
+valid_payload = {
+     "membershipId": "5~265642286+34+44+20250101+784461+AM+39",
+     "zipCode": "85305",
+     "benefitProductType": "Medical",
+     "languageCode": "11",
+     "service": {
+       "code": "73000",
+       "type": "CPT",
+       "description": "Adult Office visit Age 30-39",
+       "supportingService": {
+         "code": "470",
+         "type": "DRG"
+       },
+       "modifier": {
+         "modifierCode": "E1"
+       },
+       "diagnosisCode": "F33 40",
+       "placeOfService": {
+         "code": "11"
+       }
+     },
+     "providerInfo": [{
+       "serviceLocation": "000761071",
+       "providerType": "HO",
+       "specialty": {
+         "code": "91017"
+       },
+       "taxIdentificationNumber": "0000431173518",
+       "taxIdQualifier": "SN",
+       "providerNetworks": {
+         "networkID": "11624"
+       },
+       "providerIdentificationNumber": "0009864111",
+       "nationalProviderIdentifier": {
+         "nationalProviderId": "1386660504"
+       },
+       "providerNetworkParticipation": {
+         "providerTier": "1"
+       }
+     }]
+   }
+
+
+
+def test_valid_payload_returns_200_or_business_response():
+    response = client.post("/costestimator/v1/rate", json=valid_payload)
+    assert response.status_code in [200, 400]  
+    assert response.json() is not None
+
+
+
+def test_missing_membership_id():
+    payload = valid_payload.copy()
+    del payload["membershipID"]
+    
+    response = client.post("/costestimator/v1/rate", json=payload)
+    assert response.status_code == 400
+    assert "Malformed request" in response.text
+
+
+
+def test_missing_service_info():
+    payload = valid_payload.copy()
+    del payload["serviceInfo"]
+
+    response = client.post("/costestimator/v1/rate", json=payload)
+    assert response.status_code == 400
+    assert "Malformed request" in response.text
+
+
+
+def test_missing_provider_type_in_service_info():
+    payload = valid_payload.copy()
+    payload["serviceInfo"][0]["serviceCodeInfo"].pop("providerType", None)
+
+    response = client.post("/costestimator/v1/rate", json=payload)
+    assert response.status_code in [400, 422]
+    assert "providerType" in response.text or "Malformed request" in response.text
+
+
+def test_missing_benefit_product_type():
+    payload = valid_payload.copy()
+    del payload["benefitProductType"]
+    
+    response = client.post("/costestimator/v1/rate", json=payload)
+    assert response.status_code == 400
+    assert "Malformed request" in response.text
