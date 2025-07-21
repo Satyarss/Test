@@ -1,6 +1,6 @@
 import pytest
 import pytest_asyncio
-from unittest.mock import AsyncMock, patch, MagicMock
+from unittest.mock import AsyncMock, patch
 from app.repository.cost_estimator_repository_impl import CostEstimatorRepositoryImpl
 from app.models.rate_criteria import CostEstimatorRateCriteria
 
@@ -8,13 +8,13 @@ from app.models.rate_criteria import CostEstimatorRateCriteria
 @pytest_asyncio.fixture
 def sample_rate_criteria():
     return CostEstimatorRateCriteria(
-        serviceCode="SVC123",
+        serviceCode="99214",
         placeOfService="11",
         serviceType="CPT4",
         zipCode="85305",
-        providerIdentificationNumber="123456",
+        providerIdentificationNumber="0004000317",
         networkId="58921",
-        serviceLocationNumber="LOC001",
+        serviceLocationNumber="000761071",
         isOutofNetwork=False,
         providerSpecialtyCode="91017",
         providerType="HO"
@@ -42,7 +42,6 @@ async def test_get_rate_claim_based_success(mock_config, mock_client_class, samp
 async def test_get_rate_all_na_fallback_to_na(mock_config, mock_client_class, sample_rate_criteria):
     mock_config.is_valid.return_value = True
     mock_client = AsyncMock()
-    # Simulate fallback path returning NA
     mock_client.execute_query.side_effect = [
         [],  # Claim-based
         [],  # Provider Info
@@ -65,7 +64,7 @@ async def test_get_rate_out_of_network_success(mock_config, mock_client_class, s
 
     mock_client = AsyncMock()
     mock_client.execute_query.side_effect = [
-        [["300.00"]],  # Out-of-network
+        [["300.00"]],
     ]
     mock_client_class.return_value = mock_client
 
@@ -83,7 +82,7 @@ async def test_get_rate_provider_info_to_standard_rate(mock_config, mock_client_
     mock_client = AsyncMock()
     mock_client.execute_query.side_effect = [
         [],  # Claim-based
-        [["", "PROD1", "RS1", "GA1"]],  # Provider info => contract_type S
+        [["", "PROD1", "RS1", "GA1"]],  # Provider info -> contract_type = S
         [["200.00"]]  # Standard rate
     ]
     mock_client_class.return_value = mock_client
