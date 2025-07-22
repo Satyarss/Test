@@ -1,0 +1,19 @@
+Pull rate when more than one payment method exist for Non Standard Contract/default contract
+
+
+Story
+Definition of Done
+My Feature
+Jira Align
+Integration Info
+Description
+
+When retrieving rates, we need to consider the payment method hierarchy if multiple payment methods are available.
+
+Payment method hierarchy table exist in spanner and we need to keep in cache. 
+
+payment method hierarchy available only for non standard contract and default contract rates. 
+
+If you are getting two payment method in result, we need to select lowest score and return rate for that payment method
+
+ 
