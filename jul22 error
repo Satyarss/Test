@@ -1,0 +1,275 @@
+N133723@MACL2KVFV33RR cost-estimator-calc-service % export ENABLE_REAL_INTEGRATION_TESTS=1
+N133723@MACL2KVFV33RR cost-estimator-calc-service % python3 -m pytest tests               
+======================================================================================== test session starts =========================================================================================
+platform darwin -- Python 3.12.4, pytest-8.4.1, pluggy-1.6.0
+rootdir: /Users/N133723/Desktop/TLABCHAAT-354/cost-estimator-calc-service
+configfile: pytest.ini
+plugins: anyio-4.9.0, asyncio-1.1.0
+asyncio: mode=Mode.STRICT, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collected 49 items                                                                                                                                                                                   
+
+tests/Repository/test_costestimator_impl.py ....                                                                                                                                               [  8%]
+tests/core/test_exception.py .                                                                                                                                                                 [ 10%]
+tests/core/test_exception_response.py ...                                                                                                                                                      [ 16%]
+tests/core/test_exceptionhandlingend.py .....                                                                                                                                                  [ 26%]
+tests/schemas/test_accumulator_reponse.py .                                                                                                                                                    [ 28%]
+tests/schemas/test_benfit_reponse.py .                                                                                                                                                         [ 30%]
+tests/schemas/test_benfit_request.py .                                                                                                                                                         [ 32%]
+tests/services/test_cost_estimation_service_impl.py .                                                                                                                                          [ 34%]
+tests/test_integration.py ......                                                                                                                                                               [ 46%]
+tests/test_integration_real.py .F.FF                                                                                                                                                           [ 57%]
+tests/test_main.py .....                                                                                                                                                                       [ 67%]
+tests/test_repository.py .......                                                                                                                                                               [ 81%]
+tests/test_service.py .........                                                                                                                                                                [100%]
+
+============================================================================================== FAILURES ==============================================================================================
+___________________________________________________________________________________ test_real_service_integration ____________________________________________________________________________________
+
+    @pytest.mark.integration
+    @pytest.mark.real_services
+    @pytest.mark.asyncio
+    async def test_real_service_integration():
+        """Test service integration with real external services."""
+        # Skip if real services are not configured
+        if not os.getenv("ENABLE_REAL_INTEGRATION_TESTS"):
+            pytest.skip("Real integration tests not enabled. Set ENABLE_REAL_INTEGRATION_TESTS=1 to run.")
+    
+        from app.services.impl.cost_estimation_service_impl import CostEstimationServiceImpl
+        from app.schemas.cost_estimator_request import CostEstimatorRequest
+    
+        # Create real request object
+        request_data = {
+            "membershipId": "5~186103331+10+7+20240101+793854+8A+829",
+            "zipCode": "85305",
+            "benefitProductType": "Medical",
+            "languageCode": "11",
+            "service": {
+                "code": "99214",
+                "type": "CPT4",
+                "description": "Adult Office visit Age 30-39",
+                "placeOfService": {"code": "11"}
+            },
+            "providerInfo": [
+                {
+                    "serviceLocation": "000761071",
+                    "providerType": "HO",
+                    "specialty": {"code": "91017"},
+                    "taxIdentificationNumber": "0000431173518",
+                    "taxIdQualifier": "SN",
+                    "providerNetworks": {"networkID": "58921"},
+                    "providerIdentificationNumber": "0004000317",
+                    "nationalProviderIdentifier": {"nationalProviderId": "1386660504"},
+                    "providerNetworkParticipation": {"providerTier": "1"}
+                }
+            ]
+        }
+    
+>       request = CostEstimatorRequest(**request_data)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       pydantic_core._pydantic_core.ValidationError: 5 validation errors for CostEstimatorRequest
+E       service.supportingService
+E         Field required [type=missing, input_value={'code': '99214', 'type':...ervice': {'code': '11'}}, input_type=dict]
+E           For further information visit https://errors.pydantic.dev/2.11/v/missing
+E       service.modifier
+E         Field required [type=missing, input_value={'code': '99214', 'type':...ervice': {'code': '11'}}, input_type=dict]
+E           For further information visit https://errors.pydantic.dev/2.11/v/missing
+E       service.diagnosisCode
+E         Field required [type=missing, input_value={'code': '99214', 'type':...ervice': {'code': '11'}}, input_type=dict]
+E           For further information visit https://errors.pydantic.dev/2.11/v/missing
+E       providerInfo.0.speciality
+E         Field required [type=missing, input_value={'serviceLocation': '0007...: {'providerTier': '1'}}, input_type=dict]
+E           For further information visit https://errors.pydantic.dev/2.11/v/missing
+E       providerInfo.0.nationalProviderId
+E         Field required [type=missing, input_value={'serviceLocation': '0007...: {'providerTier': '1'}}, input_type=dict]
+E           For further information visit https://errors.pydantic.dev/2.11/v/missing
+
+tests/test_integration_real.py:106: ValidationError
+___________________________________________________________________________________ test_real_accumulator_service ____________________________________________________________________________________
+
+    @pytest.mark.integration
+    @pytest.mark.real_services
+    def test_real_accumulator_service():
+        """Test real accumulator service integration."""
+        if not os.getenv("ENABLE_REAL_INTEGRATION_TESTS"):
+            pytest.skip("Real integration tests not enabled. Set ENABLE_REAL_INTEGRATION_TESTS=1 to run.")
+    
+        from app.services.impl.accumulator_service_impl import AccumulatorServiceImpl
+        from app.schemas.cost_estimator_request import CostEstimatorRequest
+    
+        async def test_accumulator_service():
+            service = AccumulatorServiceImpl()
+    
+            # Create a real request
+            request_data = {
+                "membershipId": "5~186103331+10+7+20240101+793854+8A+829",
+                "zipCode": "85305",
+                "benefitProductType": "Medical",
+                "languageCode": "11",
+                "service": {
+                    "code": "99214",
+                    "type": "CPT4",
+                    "description": "Adult Office visit Age 30-39",
+                    "placeOfService": {"code": "11"}
+                },
+                "providerInfo": [
+                    {
+                        "serviceLocation": "000761071",
+                        "providerType": "HO",
+                        "speciality": {"code": "91017"},
+                        "taxIdentificationNumber": "0000431173518",
+                        "taxIdQualifier": "SN",
+                        "providerNetworks": {"networkID": "58921"},
+                        "providerIdentificationNumber": "0004000317",
+                        "nationalProviderId": "1386660504",
+                        "providerNetworkParticipation": {"providerTier": "1"}
+                    }
+                ]
+            }
+    
+            request = CostEstimatorRequest(**request_data)
+    
+            try:
+                result = await service.get_accumulator(request)
+                assert result is not None
+            except Exception as e:
+                # Service might be unavailable, which is acceptable for integration tests
+                assert "error" in str(e).lower() or "unavailable" in str(e).lower()
+    
+>       asyncio.run(test_accumulator_service())
+
+tests/test_integration_real.py:203: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/runners.py:194: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/base_events.py:687: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    async def test_accumulator_service():
+        service = AccumulatorServiceImpl()
+    
+        # Create a real request
+        request_data = {
+            "membershipId": "5~186103331+10+7+20240101+793854+8A+829",
+            "zipCode": "85305",
+            "benefitProductType": "Medical",
+            "languageCode": "11",
+            "service": {
+                "code": "99214",
+                "type": "CPT4",
+                "description": "Adult Office visit Age 30-39",
+                "placeOfService": {"code": "11"}
+            },
+            "providerInfo": [
+                {
+                    "serviceLocation": "000761071",
+                    "providerType": "HO",
+                    "speciality": {"code": "91017"},
+                    "taxIdentificationNumber": "0000431173518",
+                    "taxIdQualifier": "SN",
+                    "providerNetworks": {"networkID": "58921"},
+                    "providerIdentificationNumber": "0004000317",
+                    "nationalProviderId": "1386660504",
+                    "providerNetworkParticipation": {"providerTier": "1"}
+                }
+            ]
+        }
+    
+>       request = CostEstimatorRequest(**request_data)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       pydantic_core._pydantic_core.ValidationError: 3 validation errors for CostEstimatorRequest
+E       service.supportingService
+E         Field required [type=missing, input_value={'code': '99214', 'type':...ervice': {'code': '11'}}, input_type=dict]
+E           For further information visit https://errors.pydantic.dev/2.11/v/missing
+E       service.modifier
+E         Field required [type=missing, input_value={'code': '99214', 'type':...ervice': {'code': '11'}}, input_type=dict]
+E           For further information visit https://errors.pydantic.dev/2.11/v/missing
+E       service.diagnosisCode
+E         Field required [type=missing, input_value={'code': '99214', 'type':...ervice': {'code': '11'}}, input_type=dict]
+E           For further information visit https://errors.pydantic.dev/2.11/v/missing
+
+tests/test_integration_real.py:194: ValidationError
+___________________________________________________________________________________ test_real_database_integration ___________________________________________________________________________________
+
+    @pytest.mark.integration
+    @pytest.mark.real_services
+    def test_real_database_integration():
+        """Test real database integration."""
+        if not os.getenv("ENABLE_REAL_INTEGRATION_TESTS"):
+            pytest.skip("Real integration tests not enabled. Set ENABLE_REAL_INTEGRATION_TESTS=1 to run.")
+    
+        from app.repository.impl.cost_estimator_repository_impl import CostEstimatorRepositoryImpl
+        from app.models.rate_criteria import CostEstimatorRateCriteria
+    
+        async def test_database():
+            repository = CostEstimatorRepositoryImpl()
+    
+            # Create real rate criteria
+            rate_criteria = CostEstimatorRateCriteria(
+                serviceCode="99214",
+                providerIdentificationNumber="0004000317",
+                placeOfService="11",
+                serviceType="CPT4",
+                networkId="58921",
+                serviceLocationNumber="000761071",
+                zipCode="85305",
+                isOutofNetwork=False
+            )
+    
+            try:
+                result = await repository.get_rate(rate_criteria=rate_criteria)
+                assert result is not None
+                assert isinstance(result, (int, float))
+            except Exception as e:
+                # Database might be unavailable, which is acceptable for integration tests
+                assert "error" in str(e).lower() or "unavailable" in str(e).lower()
+    
+>       asyncio.run(test_database())
+
+tests/test_integration_real.py:239: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/runners.py:194: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/base_events.py:687: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    async def test_database():
+        repository = CostEstimatorRepositoryImpl()
+    
+        # Create real rate criteria
+>       rate_criteria = CostEstimatorRateCriteria(
+            serviceCode="99214",
+            providerIdentificationNumber="0004000317",
+            placeOfService="11",
+            serviceType="CPT4",
+            networkId="58921",
+            serviceLocationNumber="000761071",
+            zipCode="85305",
+            isOutofNetwork=False
+        )
+E       TypeError: CostEstimatorRateCriteria.__init__() missing 2 required positional arguments: 'providerSpecialtyCode' and 'providerType'
+
+tests/test_integration_real.py:220: TypeError
+---------------------------------------------------------------------------------------- Captured stdout call ----------------------------------------------------------------------------------------
+2025-07-22 12:53:07,108 | INFO | cost_estimator_calc_service | Async SpannerClient initialized for database: projects/anbc-hcb-dev/instances/provider-de/databases/cost-estimator-secure
+2025-07-22 12:53:07,108 | INFO | cost_estimator_calc_service | Connection pool size: 10, Max workers: 20
+----------------------------------------------------------------------------------------- Captured log call ------------------------------------------------------------------------------------------
+INFO     cost_estimator_calc_service:spanner_client.py:43 Async SpannerClient initialized for database: projects/anbc-hcb-dev/instances/provider-de/databases/cost-estimator-secure
+INFO     cost_estimator_calc_service:spanner_client.py:46 Connection pool size: 10, Max workers: 20
+====================================================================================== short test summary info =======================================================================================
+FAILED tests/test_integration_real.py::test_real_service_integration - pydantic_core._pydantic_core.ValidationError: 5 validation errors for CostEstimatorRequest
+FAILED tests/test_integration_real.py::test_real_accumulator_service - pydantic_core._pydantic_core.ValidationError: 3 validation errors for CostEstimatorRequest
+FAILED tests/test_integration_real.py::test_real_database_integration - TypeError: CostEstimatorRateCriteria.__init__() missing 2 required positional arguments: 'providerSpecialtyCode' and 'providerType'
+==================================================================================== 3 failed, 46 passed in 8.78s ====================================================================================
+N133723@MACL2KVFV33RR cost-estimator-calc-service % 
