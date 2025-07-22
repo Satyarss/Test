@@ -1,34 +1,4 @@
-N133723@MACL2KVFV33RR cost-estimator-calc-service % export ENABLE_REAL_INTEGRATION_TESTS=1
-N133723@MACL2KVFV33RR cost-estimator-calc-service % python3 -m pytest tests               
-======================================================================================== test session starts =========================================================================================
-platform darwin -- Python 3.12.4, pytest-8.4.1, pluggy-1.6.0
-rootdir: /Users/N133723/Desktop/TLABCHAAT-354/cost-estimator-calc-service
-configfile: pytest.ini
-plugins: anyio-4.9.0, asyncio-1.1.0
-asyncio: mode=Mode.STRICT, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
-collected 49 items                                                                                                                                                                                   
-
-tests/Repository/test_costestimator_impl.py ....                                                                                                                                               [  8%]
-tests/core/test_exception.py .                                                                                                                                                                 [ 10%]
-tests/core/test_exception_response.py ...                                                                                                                                                      [ 16%]
-tests/core/test_exceptionhandlingend.py .....                                                                                                                                                  [ 26%]
-tests/schemas/test_accumulator_reponse.py .                                                                                                                                                    [ 28%]
-tests/schemas/test_benfit_reponse.py .                                                                                                                                                         [ 30%]
-tests/schemas/test_benfit_request.py .                                                                                                                                                         [ 32%]
-tests/services/test_cost_estimation_service_impl.py .                                                                                                                                          [ 34%]
-tests/test_integration.py ......                                                                                                                                                               [ 46%]
-tests/test_integration_real.py .F.FF                                                                                                                                                           [ 57%]
-tests/test_main.py .....                                                                                                                                                                       [ 67%]
-tests/test_repository.py .......                                                                                                                                                               [ 81%]
-tests/test_service.py .........                                                                                                                                                                [100%]
-
-============================================================================================== FAILURES ==============================================================================================
-___________________________________________________________________________________ test_real_service_integration ____________________________________________________________________________________
-
-    @pytest.mark.integration
-    @pytest.mark.real_services
-    @pytest.mark.asyncio
-    async def test_real_service_integration():
+  async def test_real_service_integration():
         """Test service integration with real external services."""
         # Skip if real services are not configured
         if not os.getenv("ENABLE_REAL_INTEGRATION_TESTS"):
@@ -53,12 +23,12 @@ ________________________________________________________________________________
                 {
                     "serviceLocation": "000761071",
                     "providerType": "HO",
-                    "specialty": {"code": "91017"},
+                    "speciality": {"code": "91017"},
                     "taxIdentificationNumber": "0000431173518",
                     "taxIdQualifier": "SN",
                     "providerNetworks": {"networkID": "58921"},
                     "providerIdentificationNumber": "0004000317",
-                    "nationalProviderIdentifier": {"nationalProviderId": "1386660504"},
+                    "nationalProviderId": {"nationalProviderId": "1386660504"},
                     "providerNetworkParticipation": {"providerTier": "1"}
                 }
             ]
@@ -66,7 +36,7 @@ ________________________________________________________________________________
     
 >       request = CostEstimatorRequest(**request_data)
                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-E       pydantic_core._pydantic_core.ValidationError: 5 validation errors for CostEstimatorRequest
+E       pydantic_core._pydantic_core.ValidationError: 4 validation errors for CostEstimatorRequest
 E       service.supportingService
 E         Field required [type=missing, input_value={'code': '99214', 'type':...ervice': {'code': '11'}}, input_type=dict]
 E           For further information visit https://errors.pydantic.dev/2.11/v/missing
@@ -76,12 +46,9 @@ E           For further information visit https://errors.pydantic.dev/2.11/v/mis
 E       service.diagnosisCode
 E         Field required [type=missing, input_value={'code': '99214', 'type':...ervice': {'code': '11'}}, input_type=dict]
 E           For further information visit https://errors.pydantic.dev/2.11/v/missing
-E       providerInfo.0.speciality
-E         Field required [type=missing, input_value={'serviceLocation': '0007...: {'providerTier': '1'}}, input_type=dict]
-E           For further information visit https://errors.pydantic.dev/2.11/v/missing
 E       providerInfo.0.nationalProviderId
-E         Field required [type=missing, input_value={'serviceLocation': '0007...: {'providerTier': '1'}}, input_type=dict]
-E           For further information visit https://errors.pydantic.dev/2.11/v/missing
+E         Input should be a valid string [type=string_type, input_value={'nationalProviderId': '1386660504'}, input_type=dict]
+E           For further information visit https://errors.pydantic.dev/2.11/v/string_type
 
 tests/test_integration_real.py:106: ValidationError
 ___________________________________________________________________________________ test_real_accumulator_service ____________________________________________________________________________________
@@ -115,7 +82,7 @@ ________________________________________________________________________________
                     {
                         "serviceLocation": "000761071",
                         "providerType": "HO",
-                        "speciality": {"code": "91017"},
+                        "specialty": {"code": "91017"},
                         "taxIdentificationNumber": "0000431173518",
                         "taxIdQualifier": "SN",
                         "providerNetworks": {"networkID": "58921"},
@@ -169,7 +136,7 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
                 {
                     "serviceLocation": "000761071",
                     "providerType": "HO",
-                    "speciality": {"code": "91017"},
+                    "specialty": {"code": "91017"},
                     "taxIdentificationNumber": "0000431173518",
                     "taxIdQualifier": "SN",
                     "providerNetworks": {"networkID": "58921"},
@@ -182,7 +149,7 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
     
 >       request = CostEstimatorRequest(**request_data)
                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-E       pydantic_core._pydantic_core.ValidationError: 3 validation errors for CostEstimatorRequest
+E       pydantic_core._pydantic_core.ValidationError: 4 validation errors for CostEstimatorRequest
 E       service.supportingService
 E         Field required [type=missing, input_value={'code': '99214', 'type':...ervice': {'code': '11'}}, input_type=dict]
 E           For further information visit https://errors.pydantic.dev/2.11/v/missing
@@ -192,9 +159,40 @@ E           For further information visit https://errors.pydantic.dev/2.11/v/mis
 E       service.diagnosisCode
 E         Field required [type=missing, input_value={'code': '99214', 'type':...ervice': {'code': '11'}}, input_type=dict]
 E           For further information visit https://errors.pydantic.dev/2.11/v/missing
+E       providerInfo.0.speciality
+E         Field required [type=missing, input_value={'serviceLocation': '0007...: {'providerTier': '1'}}, input_type=dict]
+E           For further information visit https://errors.pydantic.dev/2.11/v/missing
 
 tests/test_integration_real.py:194: ValidationError
 ___________________________________________________________________________________ test_real_database_integration ___________________________________________________________________________________
+
+    async def test_database():
+        repository = CostEstimatorRepositoryImpl()
+    
+        # Create real rate criteria
+        rate_criteria = CostEstimatorRateCriteria(
+            serviceCode="99214",
+            providerIdentificationNumber="0004000317",
+            placeOfService="11",
+            serviceType="CPT4",
+            networkId="58921",
+            serviceLocationNumber="000761071",
+            zipCode="85305",
+            isOutofNetwork=False,
+            providerSpecialtyCode="91017",
+            providerType="HO"
+        )
+    
+        try:
+            result = await repository.get_rate(rate_criteria=rate_criteria)
+            assert result is not None
+>           assert isinstance(result, (int, float))
+E           AssertionError: assert False
+E            +  where False = isinstance('NA', (<class 'int'>, <class 'float'>))
+
+tests/test_integration_real.py:236: AssertionError
+
+During handling of the above exception, another exception occurred:
 
     @pytest.mark.integration
     @pytest.mark.real_services
@@ -218,7 +216,9 @@ ________________________________________________________________________________
                 networkId="58921",
                 serviceLocationNumber="000761071",
                 zipCode="85305",
-                isOutofNetwork=False
+                isOutofNetwork=False,
+                providerSpecialtyCode="91017",
+                providerType="HO"
             )
     
             try:
@@ -231,7 +231,7 @@ ________________________________________________________________________________
     
 >       asyncio.run(test_database())
 
-tests/test_integration_real.py:239: 
+tests/test_integration_real.py:241: 
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
 /Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/runners.py:194: in run
     return runner.run(main)
@@ -248,7 +248,7 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
         repository = CostEstimatorRepositoryImpl()
     
         # Create real rate criteria
->       rate_criteria = CostEstimatorRateCriteria(
+        rate_criteria = CostEstimatorRateCriteria(
             serviceCode="99214",
             providerIdentificationNumber="0004000317",
             placeOfService="11",
@@ -256,20 +256,752 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
             networkId="58921",
             serviceLocationNumber="000761071",
             zipCode="85305",
-            isOutofNetwork=False
+            isOutofNetwork=False,
+            providerSpecialtyCode="91017",
+            providerType="HO"
         )
-E       TypeError: CostEstimatorRateCriteria.__init__() missing 2 required positional arguments: 'providerSpecialtyCode' and 'providerType'
+    
+        try:
+            result = await repository.get_rate(rate_criteria=rate_criteria)
+            assert result is not None
+            assert isinstance(result, (int, float))
+        except Exception as e:
+            # Database might be unavailable, which is acceptable for integration tests
+>           assert "error" in str(e).lower() or "unavailable" in str(e).lower()
+E           assert ('error' in "assert false\n +  where false = isinstance('na', (<class 'int'>, <class 'float'>))" or 'unavailable' in "assert false\n +  where false = isinstance('na', (<class 'int'>, <class 'float'>))")
+E            +  where "assert false\n +  where false = isinstance('na', (<class 'int'>, <class 'float'>))" = <built-in method lower of str object at 0x1087f08b0>()
+E            +    where <built-in method lower of str object at 0x1087f08b0> = "assert False\n +  where False = isinstance('NA', (<class 'int'>, <class 'float'>))".lower
+E            +      where "assert False\n +  where False = isinstance('NA', (<class 'int'>, <class 'float'>))" = str(AssertionError("assert False\n +  where False = isinstance('NA', (<class 'int'>, <class 'float'>))"))
+E            +  and   "assert false\n +  where false = isinstance('na', (<class 'int'>, <class 'float'>))" = <built-in method lower of str object at 0x1087f08b0>()
+E            +    where <built-in method lower of str object at 0x1087f08b0> = "assert False\n +  where False = isinstance('NA', (<class 'int'>, <class 'float'>))".lower
+E            +      where "assert False\n +  where False = isinstance('NA', (<class 'int'>, <class 'float'>))" = str(AssertionError("assert False\n +  where False = isinstance('NA', (<class 'int'>, <class 'float'>))"))
 
-tests/test_integration_real.py:220: TypeError
+tests/test_integration_real.py:239: AssertionError
 ---------------------------------------------------------------------------------------- Captured stdout call ----------------------------------------------------------------------------------------
-2025-07-22 12:53:07,108 | INFO | cost_estimator_calc_service | Async SpannerClient initialized for database: projects/anbc-hcb-dev/instances/provider-de/databases/cost-estimator-secure
-2025-07-22 12:53:07,108 | INFO | cost_estimator_calc_service | Connection pool size: 10, Max workers: 20
+2025-07-22 13:14:59,709 | INFO | cost_estimator_calc_service | Async SpannerClient initialized for database: projects/anbc-hcb-dev/instances/provider-de/databases/cost-estimator-secure
+2025-07-22 13:14:59,709 | INFO | cost_estimator_calc_service | Connection pool size: 10, Max workers: 20
+2025-07-22 13:14:59,709 | INFO | cost_estimator_calc_service | Executing async query: SELECT MAX(RATE) AS RATE
+FROM CET_CLAIM_BASED_AMOUNTS
+WHERE
+    PROVIDER_IDENTIFICATION_NBR = @provideridentificationnumber
+    AND NETWORK_ID = @networkid
+    AND PLACE_OF_SERVICE_CD = @placeofservice
+    AND SERVICE_CD = @servicecd
+    AND SERVICE_TYPE_CD = @servicetype
+2025-07-22 13:14:59,709 | INFO | cost_estimator_calc_service | Query params: {'servicecd': '99214', 'provideridentificationnumber': '0004000317', 'placeofservice': '11', 'servicetype': 'CPT4', 'networkid': '58921', 'servicelocationnumber': '000761071'}
+2025-07-22 13:15:26,890 | ERROR | cost_estimator_calc_service | Error executing async read-only query: Timeout of 30.0s exceeded, last exception: 503 Getting metadata from plugin failed with error: Reauthentication is needed. Please run `gcloud auth application-default login` to reauthenticate.
+2025-07-22 13:15:26,890 | ERROR | cost_estimator_calc_service | Query: SELECT MAX(RATE) AS RATE
+FROM CET_CLAIM_BASED_AMOUNTS
+WHERE
+    PROVIDER_IDENTIFICATION_NBR = @provideridentificationnumber
+    AND NETWORK_ID = @networkid
+    AND PLACE_OF_SERVICE_CD = @placeofservice
+    AND SERVICE_CD = @servicecd
+    AND SERVICE_TYPE_CD = @servicetype
+2025-07-22 13:15:26,890 | ERROR | cost_estimator_calc_service | Params: {'servicecd': '99214', 'provideridentificationnumber': '0004000317', 'placeofservice': '11', 'servicetype': 'CPT4', 'networkid': '58921', 'servicelocationnumber': '000761071'}
+2025-07-22 13:15:26,890 | ERROR | cost_estimator_calc_service | Exception type: <class 'google.api_core.exceptions.RetryError'>
+2025-07-22 13:15:26,891 | ERROR | cost_estimator_calc_service | Exception details: Timeout of 30.0s exceeded, last exception: 503 Getting metadata from plugin failed with error: Reauthentication is needed. Please run `gcloud auth application-default login` to reauthenticate.
+2025-07-22 13:15:26,891 | INFO | cost_estimator_calc_service | Claim-based rate result: []
+2025-07-22 13:15:26,891 | INFO | cost_estimator_calc_service | No results found
+2025-07-22 13:15:26,891 | INFO | cost_estimator_calc_service | No claim-based rate found, proceeding to get provider info
+2025-07-22 13:15:26,891 | INFO | cost_estimator_calc_service | Executing async query: SELECT DISTINCT PROVIDER_BUSINESS_GROUP_NBR, PRODUCT_CD, RATING_SYSTEM_CD, EPDB_GEOGRAPHIC_AREA_CD
+FROM CET_PROVIDERS
+WHERE
+    PROVIDER_IDENTIFICATION_NBR = @provideridentificationnumber
+    AND NETWORK_ID = @networkid
+    AND SERVICE_LOCATION_NBR = @servicelocationnumber
+2025-07-22 13:15:26,891 | INFO | cost_estimator_calc_service | Query params: {'servicecd': '99214', 'provideridentificationnumber': '0004000317', 'placeofservice': '11', 'servicetype': 'CPT4', 'networkid': '58921', 'servicelocationnumber': '000761071'}
+2025-07-22 13:15:57,468 | ERROR | cost_estimator_calc_service | Error executing async read-only query: Timeout of 30.0s exceeded, last exception: 503 Getting metadata from plugin failed with error: Reauthentication is needed. Please run `gcloud auth application-default login` to reauthenticate.
+2025-07-22 13:15:57,469 | ERROR | cost_estimator_calc_service | Query: SELECT DISTINCT PROVIDER_BUSINESS_GROUP_NBR, PRODUCT_CD, RATING_SYSTEM_CD, EPDB_GEOGRAPHIC_AREA_CD
+FROM CET_PROVIDERS
+WHERE
+    PROVIDER_IDENTIFICATION_NBR = @provideridentificationnumber
+    AND NETWORK_ID = @networkid
+    AND SERVICE_LOCATION_NBR = @servicelocationnumber
+2025-07-22 13:15:57,469 | ERROR | cost_estimator_calc_service | Params: {'servicecd': '99214', 'provideridentificationnumber': '0004000317', 'placeofservice': '11', 'servicetype': 'CPT4', 'networkid': '58921', 'servicelocationnumber': '000761071'}
+2025-07-22 13:15:57,469 | ERROR | cost_estimator_calc_service | Exception type: <class 'google.api_core.exceptions.RetryError'>
+2025-07-22 13:15:57,469 | ERROR | cost_estimator_calc_service | Exception details: Timeout of 30.0s exceeded, last exception: 503 Getting metadata from plugin failed with error: Reauthentication is needed. Please run `gcloud auth application-default login` to reauthenticate.
+2025-07-22 13:15:57,469 | INFO | cost_estimator_calc_service | Provider info result: []
+2025-07-22 13:15:57,469 | INFO | cost_estimator_calc_service | No provider info results found
+---------------------------------------------------------------------------------------- Captured stderr call ----------------------------------------------------------------------------------------
+I0000 00:00:1753208099.710211 6461677 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+I0000 00:00:1753208129.898526 6461677 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
 ----------------------------------------------------------------------------------------- Captured log call ------------------------------------------------------------------------------------------
 INFO     cost_estimator_calc_service:spanner_client.py:43 Async SpannerClient initialized for database: projects/anbc-hcb-dev/instances/provider-de/databases/cost-estimator-secure
 INFO     cost_estimator_calc_service:spanner_client.py:46 Connection pool size: 10, Max workers: 20
+INFO     cost_estimator_calc_service:spanner_client.py:69 Executing async query: SELECT MAX(RATE) AS RATE
+FROM CET_CLAIM_BASED_AMOUNTS
+WHERE
+    PROVIDER_IDENTIFICATION_NBR = @provideridentificationnumber
+    AND NETWORK_ID = @networkid
+    AND PLACE_OF_SERVICE_CD = @placeofservice
+    AND SERVICE_CD = @servicecd
+    AND SERVICE_TYPE_CD = @servicetype
+INFO     cost_estimator_calc_service:spanner_client.py:70 Query params: {'servicecd': '99214', 'provideridentificationnumber': '0004000317', 'placeofservice': '11', 'servicetype': 'CPT4', 'networkid': '58921', 'servicelocationnumber': '000761071'}
+ERROR    grpc._plugin_wrapping:_plugin_wrapping.py:109 AuthMetadataPluginCallback "<google.auth.transport.grpc.AuthMetadataPlugin object at 0x10800ca40>" raised exception!
+Traceback (most recent call last):
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/grpc/_plugin_wrapping.py", line 105, in __call__
+    self._metadata_plugin(
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/transport/grpc.py", line 95, in __call__
+    callback(self._get_authorization_headers(context), None)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/transport/grpc.py", line 81, in _get_authorization_headers
+    self._credentials.before_request(
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/credentials.py", line 239, in before_request
+    self._blocking_refresh(request)
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/credentials.py", line 202, in _blocking_refresh
+    self.refresh(request)
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/oauth2/credentials.py", line 409, in refresh
+    ) = reauth.refresh_grant(
+        ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/oauth2/reauth.py", line 349, in refresh_grant
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: Reauthentication is needed. Please run `gcloud auth application-default login` to reauthenticate.
+ERROR    grpc._plugin_wrapping:_plugin_wrapping.py:109 AuthMetadataPluginCallback "<google.auth.transport.grpc.AuthMetadataPlugin object at 0x10800ca40>" raised exception!
+Traceback (most recent call last):
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/grpc/_plugin_wrapping.py", line 105, in __call__
+    self._metadata_plugin(
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/transport/grpc.py", line 95, in __call__
+    callback(self._get_authorization_headers(context), None)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/transport/grpc.py", line 81, in _get_authorization_headers
+    self._credentials.before_request(
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/credentials.py", line 239, in before_request
+    self._blocking_refresh(request)
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/credentials.py", line 202, in _blocking_refresh
+    self.refresh(request)
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/oauth2/credentials.py", line 409, in refresh
+    ) = reauth.refresh_grant(
+        ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/oauth2/reauth.py", line 349, in refresh_grant
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: Reauthentication is needed. Please run `gcloud auth application-default login` to reauthenticate.
+ERROR    grpc._plugin_wrapping:_plugin_wrapping.py:109 AuthMetadataPluginCallback "<google.auth.transport.grpc.AuthMetadataPlugin object at 0x10800ca40>" raised exception!
+Traceback (most recent call last):
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/grpc/_plugin_wrapping.py", line 105, in __call__
+    self._metadata_plugin(
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/transport/grpc.py", line 95, in __call__
+    callback(self._get_authorization_headers(context), None)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/transport/grpc.py", line 81, in _get_authorization_headers
+    self._credentials.before_request(
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/credentials.py", line 239, in before_request
+    self._blocking_refresh(request)
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/credentials.py", line 202, in _blocking_refresh
+    self.refresh(request)
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/oauth2/credentials.py", line 409, in refresh
+    ) = reauth.refresh_grant(
+        ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/oauth2/reauth.py", line 349, in refresh_grant
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: Reauthentication is needed. Please run `gcloud auth application-default login` to reauthenticate.
+ERROR    grpc._plugin_wrapping:_plugin_wrapping.py:109 AuthMetadataPluginCallback "<google.auth.transport.grpc.AuthMetadataPlugin object at 0x10800ca40>" raised exception!
+Traceback (most recent call last):
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/grpc/_plugin_wrapping.py", line 105, in __call__
+    self._metadata_plugin(
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/transport/grpc.py", line 95, in __call__
+    callback(self._get_authorization_headers(context), None)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/transport/grpc.py", line 81, in _get_authorization_headers
+    self._credentials.before_request(
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/credentials.py", line 239, in before_request
+    self._blocking_refresh(request)
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/credentials.py", line 202, in _blocking_refresh
+    self.refresh(request)
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/oauth2/credentials.py", line 409, in refresh
+    ) = reauth.refresh_grant(
+        ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/oauth2/reauth.py", line 349, in refresh_grant
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: Reauthentication is needed. Please run `gcloud auth application-default login` to reauthenticate.
+ERROR    grpc._plugin_wrapping:_plugin_wrapping.py:109 AuthMetadataPluginCallback "<google.auth.transport.grpc.AuthMetadataPlugin object at 0x10800ca40>" raised exception!
+Traceback (most recent call last):
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/grpc/_plugin_wrapping.py", line 105, in __call__
+    self._metadata_plugin(
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/transport/grpc.py", line 95, in __call__
+    callback(self._get_authorization_headers(context), None)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/transport/grpc.py", line 81, in _get_authorization_headers
+    self._credentials.before_request(
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/credentials.py", line 239, in before_request
+    self._blocking_refresh(request)
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/credentials.py", line 202, in _blocking_refresh
+    self.refresh(request)
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/oauth2/credentials.py", line 409, in refresh
+    ) = reauth.refresh_grant(
+        ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/oauth2/reauth.py", line 349, in refresh_grant
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: Reauthentication is needed. Please run `gcloud auth application-default login` to reauthenticate.
+ERROR    grpc._plugin_wrapping:_plugin_wrapping.py:109 AuthMetadataPluginCallback "<google.auth.transport.grpc.AuthMetadataPlugin object at 0x10800ca40>" raised exception!
+Traceback (most recent call last):
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/grpc/_plugin_wrapping.py", line 105, in __call__
+    self._metadata_plugin(
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/transport/grpc.py", line 95, in __call__
+    callback(self._get_authorization_headers(context), None)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/transport/grpc.py", line 81, in _get_authorization_headers
+    self._credentials.before_request(
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/credentials.py", line 239, in before_request
+    self._blocking_refresh(request)
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/credentials.py", line 202, in _blocking_refresh
+    self.refresh(request)
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/oauth2/credentials.py", line 409, in refresh
+    ) = reauth.refresh_grant(
+        ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/oauth2/reauth.py", line 349, in refresh_grant
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: Reauthentication is needed. Please run `gcloud auth application-default login` to reauthenticate.
+ERROR    grpc._plugin_wrapping:_plugin_wrapping.py:109 AuthMetadataPluginCallback "<google.auth.transport.grpc.AuthMetadataPlugin object at 0x10800ca40>" raised exception!
+Traceback (most recent call last):
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/grpc/_plugin_wrapping.py", line 105, in __call__
+    self._metadata_plugin(
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/transport/grpc.py", line 95, in __call__
+    callback(self._get_authorization_headers(context), None)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/transport/grpc.py", line 81, in _get_authorization_headers
+    self._credentials.before_request(
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/credentials.py", line 239, in before_request
+    self._blocking_refresh(request)
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/credentials.py", line 202, in _blocking_refresh
+    self.refresh(request)
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/oauth2/credentials.py", line 409, in refresh
+    ) = reauth.refresh_grant(
+        ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/oauth2/reauth.py", line 349, in refresh_grant
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: Reauthentication is needed. Please run `gcloud auth application-default login` to reauthenticate.
+ERROR    grpc._plugin_wrapping:_plugin_wrapping.py:109 AuthMetadataPluginCallback "<google.auth.transport.grpc.AuthMetadataPlugin object at 0x10800ca40>" raised exception!
+Traceback (most recent call last):
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/grpc/_plugin_wrapping.py", line 105, in __call__
+    self._metadata_plugin(
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/transport/grpc.py", line 95, in __call__
+    callback(self._get_authorization_headers(context), None)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/transport/grpc.py", line 81, in _get_authorization_headers
+    self._credentials.before_request(
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/credentials.py", line 239, in before_request
+    self._blocking_refresh(request)
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/credentials.py", line 202, in _blocking_refresh
+    self.refresh(request)
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/oauth2/credentials.py", line 409, in refresh
+    ) = reauth.refresh_grant(
+        ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/oauth2/reauth.py", line 349, in refresh_grant
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: Reauthentication is needed. Please run `gcloud auth application-default login` to reauthenticate.
+ERROR    grpc._plugin_wrapping:_plugin_wrapping.py:109 AuthMetadataPluginCallback "<google.auth.transport.grpc.AuthMetadataPlugin object at 0x10800ca40>" raised exception!
+Traceback (most recent call last):
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/grpc/_plugin_wrapping.py", line 105, in __call__
+    self._metadata_plugin(
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/transport/grpc.py", line 95, in __call__
+    callback(self._get_authorization_headers(context), None)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/transport/grpc.py", line 81, in _get_authorization_headers
+    self._credentials.before_request(
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/credentials.py", line 239, in before_request
+    self._blocking_refresh(request)
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/credentials.py", line 202, in _blocking_refresh
+    self.refresh(request)
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/oauth2/credentials.py", line 409, in refresh
+    ) = reauth.refresh_grant(
+        ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/oauth2/reauth.py", line 349, in refresh_grant
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: Reauthentication is needed. Please run `gcloud auth application-default login` to reauthenticate.
+ERROR    grpc._plugin_wrapping:_plugin_wrapping.py:109 AuthMetadataPluginCallback "<google.auth.transport.grpc.AuthMetadataPlugin object at 0x10800ca40>" raised exception!
+Traceback (most recent call last):
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/grpc/_plugin_wrapping.py", line 105, in __call__
+    self._metadata_plugin(
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/transport/grpc.py", line 95, in __call__
+    callback(self._get_authorization_headers(context), None)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/transport/grpc.py", line 81, in _get_authorization_headers
+    self._credentials.before_request(
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/credentials.py", line 239, in before_request
+    self._blocking_refresh(request)
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/credentials.py", line 202, in _blocking_refresh
+    self.refresh(request)
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/oauth2/credentials.py", line 409, in refresh
+    ) = reauth.refresh_grant(
+        ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/oauth2/reauth.py", line 349, in refresh_grant
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: Reauthentication is needed. Please run `gcloud auth application-default login` to reauthenticate.
+ERROR    grpc._plugin_wrapping:_plugin_wrapping.py:109 AuthMetadataPluginCallback "<google.auth.transport.grpc.AuthMetadataPlugin object at 0x10800ca40>" raised exception!
+Traceback (most recent call last):
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/grpc/_plugin_wrapping.py", line 105, in __call__
+    self._metadata_plugin(
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/transport/grpc.py", line 95, in __call__
+    callback(self._get_authorization_headers(context), None)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/transport/grpc.py", line 81, in _get_authorization_headers
+    self._credentials.before_request(
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/credentials.py", line 239, in before_request
+    self._blocking_refresh(request)
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/credentials.py", line 202, in _blocking_refresh
+    self.refresh(request)
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/oauth2/credentials.py", line 409, in refresh
+    ) = reauth.refresh_grant(
+        ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/oauth2/reauth.py", line 349, in refresh_grant
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: Reauthentication is needed. Please run `gcloud auth application-default login` to reauthenticate.
+ERROR    grpc._plugin_wrapping:_plugin_wrapping.py:109 AuthMetadataPluginCallback "<google.auth.transport.grpc.AuthMetadataPlugin object at 0x10800ca40>" raised exception!
+Traceback (most recent call last):
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/grpc/_plugin_wrapping.py", line 105, in __call__
+    self._metadata_plugin(
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/transport/grpc.py", line 95, in __call__
+    callback(self._get_authorization_headers(context), None)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/transport/grpc.py", line 81, in _get_authorization_headers
+    self._credentials.before_request(
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/credentials.py", line 239, in before_request
+    self._blocking_refresh(request)
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/credentials.py", line 202, in _blocking_refresh
+    self.refresh(request)
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/oauth2/credentials.py", line 409, in refresh
+    ) = reauth.refresh_grant(
+        ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/oauth2/reauth.py", line 349, in refresh_grant
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: Reauthentication is needed. Please run `gcloud auth application-default login` to reauthenticate.
+ERROR    grpc._plugin_wrapping:_plugin_wrapping.py:109 AuthMetadataPluginCallback "<google.auth.transport.grpc.AuthMetadataPlugin object at 0x10800ca40>" raised exception!
+Traceback (most recent call last):
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/grpc/_plugin_wrapping.py", line 105, in __call__
+    self._metadata_plugin(
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/transport/grpc.py", line 95, in __call__
+    callback(self._get_authorization_headers(context), None)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/transport/grpc.py", line 81, in _get_authorization_headers
+    self._credentials.before_request(
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/credentials.py", line 239, in before_request
+    self._blocking_refresh(request)
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/credentials.py", line 202, in _blocking_refresh
+    self.refresh(request)
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/oauth2/credentials.py", line 409, in refresh
+    ) = reauth.refresh_grant(
+        ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/oauth2/reauth.py", line 349, in refresh_grant
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: Reauthentication is needed. Please run `gcloud auth application-default login` to reauthenticate.
+ERROR    grpc._plugin_wrapping:_plugin_wrapping.py:109 AuthMetadataPluginCallback "<google.auth.transport.grpc.AuthMetadataPlugin object at 0x10800ca40>" raised exception!
+Traceback (most recent call last):
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/grpc/_plugin_wrapping.py", line 105, in __call__
+    self._metadata_plugin(
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/transport/grpc.py", line 95, in __call__
+    callback(self._get_authorization_headers(context), None)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/transport/grpc.py", line 81, in _get_authorization_headers
+    self._credentials.before_request(
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/credentials.py", line 239, in before_request
+    self._blocking_refresh(request)
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/credentials.py", line 202, in _blocking_refresh
+    self.refresh(request)
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/oauth2/credentials.py", line 409, in refresh
+    ) = reauth.refresh_grant(
+        ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/oauth2/reauth.py", line 349, in refresh_grant
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: Reauthentication is needed. Please run `gcloud auth application-default login` to reauthenticate.
+ERROR    grpc._plugin_wrapping:_plugin_wrapping.py:109 AuthMetadataPluginCallback "<google.auth.transport.grpc.AuthMetadataPlugin object at 0x10800ca40>" raised exception!
+Traceback (most recent call last):
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/grpc/_plugin_wrapping.py", line 105, in __call__
+    self._metadata_plugin(
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/transport/grpc.py", line 95, in __call__
+    callback(self._get_authorization_headers(context), None)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/transport/grpc.py", line 81, in _get_authorization_headers
+    self._credentials.before_request(
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/credentials.py", line 239, in before_request
+    self._blocking_refresh(request)
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/credentials.py", line 202, in _blocking_refresh
+    self.refresh(request)
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/oauth2/credentials.py", line 409, in refresh
+    ) = reauth.refresh_grant(
+        ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/oauth2/reauth.py", line 349, in refresh_grant
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: Reauthentication is needed. Please run `gcloud auth application-default login` to reauthenticate.
+ERROR    grpc._plugin_wrapping:_plugin_wrapping.py:109 AuthMetadataPluginCallback "<google.auth.transport.grpc.AuthMetadataPlugin object at 0x10800ca40>" raised exception!
+Traceback (most recent call last):
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/grpc/_plugin_wrapping.py", line 105, in __call__
+    self._metadata_plugin(
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/transport/grpc.py", line 95, in __call__
+    callback(self._get_authorization_headers(context), None)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/transport/grpc.py", line 81, in _get_authorization_headers
+    self._credentials.before_request(
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/credentials.py", line 239, in before_request
+    self._blocking_refresh(request)
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/credentials.py", line 202, in _blocking_refresh
+    self.refresh(request)
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/oauth2/credentials.py", line 409, in refresh
+    ) = reauth.refresh_grant(
+        ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/oauth2/reauth.py", line 349, in refresh_grant
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: Reauthentication is needed. Please run `gcloud auth application-default login` to reauthenticate.
+ERROR    cost_estimator_calc_service:spanner_client.py:85 Error executing async read-only query: Timeout of 30.0s exceeded, last exception: 503 Getting metadata from plugin failed with error: Reauthentication is needed. Please run `gcloud auth application-default login` to reauthenticate.
+ERROR    cost_estimator_calc_service:spanner_client.py:86 Query: SELECT MAX(RATE) AS RATE
+FROM CET_CLAIM_BASED_AMOUNTS
+WHERE
+    PROVIDER_IDENTIFICATION_NBR = @provideridentificationnumber
+    AND NETWORK_ID = @networkid
+    AND PLACE_OF_SERVICE_CD = @placeofservice
+    AND SERVICE_CD = @servicecd
+    AND SERVICE_TYPE_CD = @servicetype
+ERROR    cost_estimator_calc_service:spanner_client.py:87 Params: {'servicecd': '99214', 'provideridentificationnumber': '0004000317', 'placeofservice': '11', 'servicetype': 'CPT4', 'networkid': '58921', 'servicelocationnumber': '000761071'}
+ERROR    cost_estimator_calc_service:spanner_client.py:88 Exception type: <class 'google.api_core.exceptions.RetryError'>
+ERROR    cost_estimator_calc_service:spanner_client.py:89 Exception details: Timeout of 30.0s exceeded, last exception: 503 Getting metadata from plugin failed with error: Reauthentication is needed. Please run `gcloud auth application-default login` to reauthenticate.
+INFO     cost_estimator_calc_service:cost_estimator_repository_impl.py:58 Claim-based rate result: []
+INFO     cost_estimator_calc_service:cost_estimator_repository_impl.py:199 No results found
+INFO     cost_estimator_calc_service:cost_estimator_repository_impl.py:66 No claim-based rate found, proceeding to get provider info
+INFO     cost_estimator_calc_service:spanner_client.py:69 Executing async query: SELECT DISTINCT PROVIDER_BUSINESS_GROUP_NBR, PRODUCT_CD, RATING_SYSTEM_CD, EPDB_GEOGRAPHIC_AREA_CD
+FROM CET_PROVIDERS
+WHERE
+    PROVIDER_IDENTIFICATION_NBR = @provideridentificationnumber
+    AND NETWORK_ID = @networkid
+    AND SERVICE_LOCATION_NBR = @servicelocationnumber
+INFO     cost_estimator_calc_service:spanner_client.py:70 Query params: {'servicecd': '99214', 'provideridentificationnumber': '0004000317', 'placeofservice': '11', 'servicetype': 'CPT4', 'networkid': '58921', 'servicelocationnumber': '000761071'}
+ERROR    grpc._plugin_wrapping:_plugin_wrapping.py:109 AuthMetadataPluginCallback "<google.auth.transport.grpc.AuthMetadataPlugin object at 0x108059340>" raised exception!
+Traceback (most recent call last):
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/grpc/_plugin_wrapping.py", line 105, in __call__
+    self._metadata_plugin(
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/transport/grpc.py", line 95, in __call__
+    callback(self._get_authorization_headers(context), None)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/transport/grpc.py", line 81, in _get_authorization_headers
+    self._credentials.before_request(
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/credentials.py", line 239, in before_request
+    self._blocking_refresh(request)
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/credentials.py", line 202, in _blocking_refresh
+    self.refresh(request)
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/oauth2/credentials.py", line 409, in refresh
+    ) = reauth.refresh_grant(
+        ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/oauth2/reauth.py", line 349, in refresh_grant
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: Reauthentication is needed. Please run `gcloud auth application-default login` to reauthenticate.
+ERROR    grpc._plugin_wrapping:_plugin_wrapping.py:109 AuthMetadataPluginCallback "<google.auth.transport.grpc.AuthMetadataPlugin object at 0x108059340>" raised exception!
+Traceback (most recent call last):
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/grpc/_plugin_wrapping.py", line 105, in __call__
+    self._metadata_plugin(
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/transport/grpc.py", line 95, in __call__
+    callback(self._get_authorization_headers(context), None)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/transport/grpc.py", line 81, in _get_authorization_headers
+    self._credentials.before_request(
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/credentials.py", line 239, in before_request
+    self._blocking_refresh(request)
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/credentials.py", line 202, in _blocking_refresh
+    self.refresh(request)
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/oauth2/credentials.py", line 409, in refresh
+    ) = reauth.refresh_grant(
+        ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/oauth2/reauth.py", line 349, in refresh_grant
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: Reauthentication is needed. Please run `gcloud auth application-default login` to reauthenticate.
+ERROR    grpc._plugin_wrapping:_plugin_wrapping.py:109 AuthMetadataPluginCallback "<google.auth.transport.grpc.AuthMetadataPlugin object at 0x108059340>" raised exception!
+Traceback (most recent call last):
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/grpc/_plugin_wrapping.py", line 105, in __call__
+    self._metadata_plugin(
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/transport/grpc.py", line 95, in __call__
+    callback(self._get_authorization_headers(context), None)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/transport/grpc.py", line 81, in _get_authorization_headers
+    self._credentials.before_request(
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/credentials.py", line 239, in before_request
+    self._blocking_refresh(request)
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/credentials.py", line 202, in _blocking_refresh
+    self.refresh(request)
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/oauth2/credentials.py", line 409, in refresh
+    ) = reauth.refresh_grant(
+        ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/oauth2/reauth.py", line 349, in refresh_grant
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: Reauthentication is needed. Please run `gcloud auth application-default login` to reauthenticate.
+ERROR    grpc._plugin_wrapping:_plugin_wrapping.py:109 AuthMetadataPluginCallback "<google.auth.transport.grpc.AuthMetadataPlugin object at 0x108059340>" raised exception!
+Traceback (most recent call last):
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/grpc/_plugin_wrapping.py", line 105, in __call__
+    self._metadata_plugin(
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/transport/grpc.py", line 95, in __call__
+    callback(self._get_authorization_headers(context), None)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/transport/grpc.py", line 81, in _get_authorization_headers
+    self._credentials.before_request(
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/credentials.py", line 239, in before_request
+    self._blocking_refresh(request)
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/credentials.py", line 202, in _blocking_refresh
+    self.refresh(request)
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/oauth2/credentials.py", line 409, in refresh
+    ) = reauth.refresh_grant(
+        ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/oauth2/reauth.py", line 349, in refresh_grant
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: Reauthentication is needed. Please run `gcloud auth application-default login` to reauthenticate.
+ERROR    grpc._plugin_wrapping:_plugin_wrapping.py:109 AuthMetadataPluginCallback "<google.auth.transport.grpc.AuthMetadataPlugin object at 0x108059340>" raised exception!
+Traceback (most recent call last):
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/grpc/_plugin_wrapping.py", line 105, in __call__
+    self._metadata_plugin(
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/transport/grpc.py", line 95, in __call__
+    callback(self._get_authorization_headers(context), None)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/transport/grpc.py", line 81, in _get_authorization_headers
+    self._credentials.before_request(
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/credentials.py", line 239, in before_request
+    self._blocking_refresh(request)
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/credentials.py", line 202, in _blocking_refresh
+    self.refresh(request)
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/oauth2/credentials.py", line 409, in refresh
+    ) = reauth.refresh_grant(
+        ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/oauth2/reauth.py", line 349, in refresh_grant
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: Reauthentication is needed. Please run `gcloud auth application-default login` to reauthenticate.
+ERROR    grpc._plugin_wrapping:_plugin_wrapping.py:109 AuthMetadataPluginCallback "<google.auth.transport.grpc.AuthMetadataPlugin object at 0x108059340>" raised exception!
+Traceback (most recent call last):
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/grpc/_plugin_wrapping.py", line 105, in __call__
+    self._metadata_plugin(
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/transport/grpc.py", line 95, in __call__
+    callback(self._get_authorization_headers(context), None)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/transport/grpc.py", line 81, in _get_authorization_headers
+    self._credentials.before_request(
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/credentials.py", line 239, in before_request
+    self._blocking_refresh(request)
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/credentials.py", line 202, in _blocking_refresh
+    self.refresh(request)
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/oauth2/credentials.py", line 409, in refresh
+    ) = reauth.refresh_grant(
+        ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/oauth2/reauth.py", line 349, in refresh_grant
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: Reauthentication is needed. Please run `gcloud auth application-default login` to reauthenticate.
+ERROR    grpc._plugin_wrapping:_plugin_wrapping.py:109 AuthMetadataPluginCallback "<google.auth.transport.grpc.AuthMetadataPlugin object at 0x108059340>" raised exception!
+Traceback (most recent call last):
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/grpc/_plugin_wrapping.py", line 105, in __call__
+    self._metadata_plugin(
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/transport/grpc.py", line 95, in __call__
+    callback(self._get_authorization_headers(context), None)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/transport/grpc.py", line 81, in _get_authorization_headers
+    self._credentials.before_request(
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/credentials.py", line 239, in before_request
+    self._blocking_refresh(request)
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/credentials.py", line 202, in _blocking_refresh
+    self.refresh(request)
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/oauth2/credentials.py", line 409, in refresh
+    ) = reauth.refresh_grant(
+        ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/oauth2/reauth.py", line 349, in refresh_grant
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: Reauthentication is needed. Please run `gcloud auth application-default login` to reauthenticate.
+ERROR    grpc._plugin_wrapping:_plugin_wrapping.py:109 AuthMetadataPluginCallback "<google.auth.transport.grpc.AuthMetadataPlugin object at 0x108059340>" raised exception!
+Traceback (most recent call last):
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/grpc/_plugin_wrapping.py", line 105, in __call__
+    self._metadata_plugin(
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/transport/grpc.py", line 95, in __call__
+    callback(self._get_authorization_headers(context), None)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/transport/grpc.py", line 81, in _get_authorization_headers
+    self._credentials.before_request(
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/credentials.py", line 239, in before_request
+    self._blocking_refresh(request)
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/credentials.py", line 202, in _blocking_refresh
+    self.refresh(request)
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/oauth2/credentials.py", line 409, in refresh
+    ) = reauth.refresh_grant(
+        ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/oauth2/reauth.py", line 349, in refresh_grant
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: Reauthentication is needed. Please run `gcloud auth application-default login` to reauthenticate.
+ERROR    grpc._plugin_wrapping:_plugin_wrapping.py:109 AuthMetadataPluginCallback "<google.auth.transport.grpc.AuthMetadataPlugin object at 0x108059340>" raised exception!
+Traceback (most recent call last):
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/grpc/_plugin_wrapping.py", line 105, in __call__
+    self._metadata_plugin(
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/transport/grpc.py", line 95, in __call__
+    callback(self._get_authorization_headers(context), None)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/transport/grpc.py", line 81, in _get_authorization_headers
+    self._credentials.before_request(
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/credentials.py", line 239, in before_request
+    self._blocking_refresh(request)
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/credentials.py", line 202, in _blocking_refresh
+    self.refresh(request)
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/oauth2/credentials.py", line 409, in refresh
+    ) = reauth.refresh_grant(
+        ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/oauth2/reauth.py", line 349, in refresh_grant
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: Reauthentication is needed. Please run `gcloud auth application-default login` to reauthenticate.
+ERROR    grpc._plugin_wrapping:_plugin_wrapping.py:109 AuthMetadataPluginCallback "<google.auth.transport.grpc.AuthMetadataPlugin object at 0x108059340>" raised exception!
+Traceback (most recent call last):
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/grpc/_plugin_wrapping.py", line 105, in __call__
+    self._metadata_plugin(
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/transport/grpc.py", line 95, in __call__
+    callback(self._get_authorization_headers(context), None)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/transport/grpc.py", line 81, in _get_authorization_headers
+    self._credentials.before_request(
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/credentials.py", line 239, in before_request
+    self._blocking_refresh(request)
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/credentials.py", line 202, in _blocking_refresh
+    self.refresh(request)
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/oauth2/credentials.py", line 409, in refresh
+    ) = reauth.refresh_grant(
+        ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/oauth2/reauth.py", line 349, in refresh_grant
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: Reauthentication is needed. Please run `gcloud auth application-default login` to reauthenticate.
+ERROR    grpc._plugin_wrapping:_plugin_wrapping.py:109 AuthMetadataPluginCallback "<google.auth.transport.grpc.AuthMetadataPlugin object at 0x108059340>" raised exception!
+Traceback (most recent call last):
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/grpc/_plugin_wrapping.py", line 105, in __call__
+    self._metadata_plugin(
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/transport/grpc.py", line 95, in __call__
+    callback(self._get_authorization_headers(context), None)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/transport/grpc.py", line 81, in _get_authorization_headers
+    self._credentials.before_request(
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/credentials.py", line 239, in before_request
+    self._blocking_refresh(request)
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/credentials.py", line 202, in _blocking_refresh
+    self.refresh(request)
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/oauth2/credentials.py", line 409, in refresh
+    ) = reauth.refresh_grant(
+        ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/oauth2/reauth.py", line 349, in refresh_grant
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: Reauthentication is needed. Please run `gcloud auth application-default login` to reauthenticate.
+ERROR    grpc._plugin_wrapping:_plugin_wrapping.py:109 AuthMetadataPluginCallback "<google.auth.transport.grpc.AuthMetadataPlugin object at 0x108059340>" raised exception!
+Traceback (most recent call last):
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/grpc/_plugin_wrapping.py", line 105, in __call__
+    self._metadata_plugin(
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/transport/grpc.py", line 95, in __call__
+    callback(self._get_authorization_headers(context), None)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/transport/grpc.py", line 81, in _get_authorization_headers
+    self._credentials.before_request(
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/credentials.py", line 239, in before_request
+    self._blocking_refresh(request)
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/credentials.py", line 202, in _blocking_refresh
+    self.refresh(request)
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/oauth2/credentials.py", line 409, in refresh
+    ) = reauth.refresh_grant(
+        ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/oauth2/reauth.py", line 349, in refresh_grant
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: Reauthentication is needed. Please run `gcloud auth application-default login` to reauthenticate.
+ERROR    grpc._plugin_wrapping:_plugin_wrapping.py:109 AuthMetadataPluginCallback "<google.auth.transport.grpc.AuthMetadataPlugin object at 0x108059340>" raised exception!
+Traceback (most recent call last):
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/grpc/_plugin_wrapping.py", line 105, in __call__
+    self._metadata_plugin(
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/transport/grpc.py", line 95, in __call__
+    callback(self._get_authorization_headers(context), None)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/transport/grpc.py", line 81, in _get_authorization_headers
+    self._credentials.before_request(
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/credentials.py", line 239, in before_request
+    self._blocking_refresh(request)
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/credentials.py", line 202, in _blocking_refresh
+    self.refresh(request)
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/oauth2/credentials.py", line 409, in refresh
+    ) = reauth.refresh_grant(
+        ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/oauth2/reauth.py", line 349, in refresh_grant
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: Reauthentication is needed. Please run `gcloud auth application-default login` to reauthenticate.
+ERROR    grpc._plugin_wrapping:_plugin_wrapping.py:109 AuthMetadataPluginCallback "<google.auth.transport.grpc.AuthMetadataPlugin object at 0x108059340>" raised exception!
+Traceback (most recent call last):
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/grpc/_plugin_wrapping.py", line 105, in __call__
+    self._metadata_plugin(
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/transport/grpc.py", line 95, in __call__
+    callback(self._get_authorization_headers(context), None)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/transport/grpc.py", line 81, in _get_authorization_headers
+    self._credentials.before_request(
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/credentials.py", line 239, in before_request
+    self._blocking_refresh(request)
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/credentials.py", line 202, in _blocking_refresh
+    self.refresh(request)
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/oauth2/credentials.py", line 409, in refresh
+    ) = reauth.refresh_grant(
+        ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/oauth2/reauth.py", line 349, in refresh_grant
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: Reauthentication is needed. Please run `gcloud auth application-default login` to reauthenticate.
+ERROR    grpc._plugin_wrapping:_plugin_wrapping.py:109 AuthMetadataPluginCallback "<google.auth.transport.grpc.AuthMetadataPlugin object at 0x108059340>" raised exception!
+Traceback (most recent call last):
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/grpc/_plugin_wrapping.py", line 105, in __call__
+    self._metadata_plugin(
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/transport/grpc.py", line 95, in __call__
+    callback(self._get_authorization_headers(context), None)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/transport/grpc.py", line 81, in _get_authorization_headers
+    self._credentials.before_request(
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/credentials.py", line 239, in before_request
+    self._blocking_refresh(request)
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/credentials.py", line 202, in _blocking_refresh
+    self.refresh(request)
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/oauth2/credentials.py", line 409, in refresh
+    ) = reauth.refresh_grant(
+        ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/oauth2/reauth.py", line 349, in refresh_grant
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: Reauthentication is needed. Please run `gcloud auth application-default login` to reauthenticate.
+ERROR    grpc._plugin_wrapping:_plugin_wrapping.py:109 AuthMetadataPluginCallback "<google.auth.transport.grpc.AuthMetadataPlugin object at 0x108059340>" raised exception!
+Traceback (most recent call last):
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/grpc/_plugin_wrapping.py", line 105, in __call__
+    self._metadata_plugin(
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/transport/grpc.py", line 95, in __call__
+    callback(self._get_authorization_headers(context), None)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/transport/grpc.py", line 81, in _get_authorization_headers
+    self._credentials.before_request(
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/credentials.py", line 239, in before_request
+    self._blocking_refresh(request)
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/credentials.py", line 202, in _blocking_refresh
+    self.refresh(request)
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/oauth2/credentials.py", line 409, in refresh
+    ) = reauth.refresh_grant(
+        ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/oauth2/reauth.py", line 349, in refresh_grant
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: Reauthentication is needed. Please run `gcloud auth application-default login` to reauthenticate.
+ERROR    grpc._plugin_wrapping:_plugin_wrapping.py:109 AuthMetadataPluginCallback "<google.auth.transport.grpc.AuthMetadataPlugin object at 0x108059340>" raised exception!
+Traceback (most recent call last):
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/grpc/_plugin_wrapping.py", line 105, in __call__
+    self._metadata_plugin(
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/transport/grpc.py", line 95, in __call__
+    callback(self._get_authorization_headers(context), None)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/transport/grpc.py", line 81, in _get_authorization_headers
+    self._credentials.before_request(
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/credentials.py", line 239, in before_request
+    self._blocking_refresh(request)
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/credentials.py", line 202, in _blocking_refresh
+    self.refresh(request)
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/oauth2/credentials.py", line 409, in refresh
+    ) = reauth.refresh_grant(
+        ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/oauth2/reauth.py", line 349, in refresh_grant
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: Reauthentication is needed. Please run `gcloud auth application-default login` to reauthenticate.
+ERROR    cost_estimator_calc_service:spanner_client.py:85 Error executing async read-only query: Timeout of 30.0s exceeded, last exception: 503 Getting metadata from plugin failed with error: Reauthentication is needed. Please run `gcloud auth application-default login` to reauthenticate.
+ERROR    cost_estimator_calc_service:spanner_client.py:86 Query: SELECT DISTINCT PROVIDER_BUSINESS_GROUP_NBR, PRODUCT_CD, RATING_SYSTEM_CD, EPDB_GEOGRAPHIC_AREA_CD
+FROM CET_PROVIDERS
+WHERE
+    PROVIDER_IDENTIFICATION_NBR = @provideridentificationnumber
+    AND NETWORK_ID = @networkid
+    AND SERVICE_LOCATION_NBR = @servicelocationnumber
+ERROR    cost_estimator_calc_service:spanner_client.py:87 Params: {'servicecd': '99214', 'provideridentificationnumber': '0004000317', 'placeofservice': '11', 'servicetype': 'CPT4', 'networkid': '58921', 'servicelocationnumber': '000761071'}
+ERROR    cost_estimator_calc_service:spanner_client.py:88 Exception type: <class 'google.api_core.exceptions.RetryError'>
+ERROR    cost_estimator_calc_service:spanner_client.py:89 Exception details: Timeout of 30.0s exceeded, last exception: 503 Getting metadata from plugin failed with error: Reauthentication is needed. Please run `gcloud auth application-default login` to reauthenticate.
+INFO     cost_estimator_calc_service:cost_estimator_repository_impl.py:72 Provider info result: []
+INFO     cost_estimator_calc_service:cost_estimator_repository_impl.py:233 No provider info results found
 ====================================================================================== short test summary info =======================================================================================
-FAILED tests/test_integration_real.py::test_real_service_integration - pydantic_core._pydantic_core.ValidationError: 5 validation errors for CostEstimatorRequest
-FAILED tests/test_integration_real.py::test_real_accumulator_service - pydantic_core._pydantic_core.ValidationError: 3 validation errors for CostEstimatorRequest
-FAILED tests/test_integration_real.py::test_real_database_integration - TypeError: CostEstimatorRateCriteria.__init__() missing 2 required positional arguments: 'providerSpecialtyCode' and 'providerType'
-==================================================================================== 3 failed, 46 passed in 8.78s ====================================================================================
+FAILED tests/test_integration_real.py::test_real_service_integration - pydantic_core._pydantic_core.ValidationError: 4 validation errors for CostEstimatorRequest
+FAILED tests/test_integration_real.py::test_real_accumulator_service - pydantic_core._pydantic_core.ValidationError: 4 validation errors for CostEstimatorRequest
+FAILED tests/test_integration_real.py::test_real_database_integration - assert ('error' in "assert false\n +  where false = isinstance('na', (<class 'int'>, <class 'float'>))" or 'unavailable' in "assert false\n +  where false = isinstance('na', (<class 'int'>, <cl...
+============================================================================== 3 failed, 46 passed in 61.46s (0:01:01) ===============================================================================
 N133723@MACL2KVFV33RR cost-estimator-calc-service % 
