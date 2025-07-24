@@ -1,0 +1,9 @@
+def load_payment_method_hierarchy(self):
+        query = "SELECT payment_method_cd, score FROM payment_method_hierarchy"
+        results = self.run_query(query, {})
+        # Convert to dictionary {payment_method_cd: score}
+        hierarchy_map = {row["payment_method_cd"]: row["score"] for row in results}
+        self.cache[PAYMENT_METHOD_HIERARCHY_CACHE_KEY] = hierarchy_map
+
+    def get_cached_payment_method_score(self, payment_method_cd):
+        return self.cache.get(PAYMENT_METHOD_HIERARCHY_CACHE_KEY, {}).get(payment_method_cd)
