@@ -1,0 +1,19 @@
+if rate is not None and str(rate).strip() != "" and self._is_float(rate) and float(rate) > 0:
+        return str(rate)
+    else:
+        logger.warning("Single rate row found but rate is invalid or empty")
+
+
+if rate is not None and str(rate).strip() != "" and self._is_float(rate) and float(rate) > 0:
+        return str(rate)
+    else:
+        logger.warning("Single non-standard rate row found but rate is invalid or empty")
+
+
+
+def _is_float(self, value: Any) -> bool:
+    try:
+        float(value)
+        return True
+    except (TypeError, ValueError):
+        return False
