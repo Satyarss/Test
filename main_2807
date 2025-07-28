@@ -1,0 +1,39 @@
+import asyncio
+from fastapi import FastAPI
+from app.api.router import router
+from app.core.exception_handler import include_exceptions
+from app.core.exception_responses import responses
+from contextlib import asynccontextmanager
+from app.repository.impl.cost_estimator_repository_impl import CostEstimatorRepositoryImpl
+
+
+app = FastAPI(
+    title="Cost Estimator API",
+    description="Handles input validation and formats structured error responses.",
+    version="1.0.0",
+    responses=responses,
+)
+
+app = include_exceptions(app)
+
+app.include_router(router)
+
+repository = CostEstimatorRepositoryImpl()
+
+async def refresh_cache_every_24_hours():
+    while True:
+        await asyncio.sleep(86400)  # 24 hours in seconds
+        await repository.load_payment_method_hierarchy()
+
+# FastAPI lifespan event
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    
+    await repository.load_payment_method_hierarchy()
+
+    
+    asyncio.create_task(refresh_cache_every_24_hours())
+
+    yield  # Wait for the app to shut down
+
+app.router.lifespan_context = lifespan
