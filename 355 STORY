@@ -1,0 +1,18 @@
+Access Spanner or BigQuery.
+
+Navigate to the CET_RATES table.
+
+Identify entries with the same PBG number but multiple payment methods.
+
+Extract the corresponding Service Code and Service Type.
+
+Go to the CET_PROVIDERS table.
+
+Locate the matching PBG number.
+
+Retrieve the associated PIN Number, Service Location Number, and Network Id. 
+
+
+
+
+Reply
