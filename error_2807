@@ -1,52 +1,21 @@
-Some things to try next:
 
-* Run `gcloud --help` to see the Cloud Platform services you can interact with. And run `gcloud help COMMAND` to get help on any gcloud command.
-* Run `gcloud topic --help` to learn about advanced features of the CLI like arg files and output formatting
-* Run `gcloud cheat-sheet` to see a roster of go-to `gcloud` commands.
-N133723@MACL2KVFV33RR cost-estimator-calc-service % python3 -m fastapi run app/main.py --reload
-
-   FastAPI   Starting production server 🚀
- 
-             Searching for package file structure from directories with __init__.py files
-2025-07-28 10:22:54,243 | INFO | cost_estimator_calc_service | Async SpannerClient initialized for database: projects/anbc-hcb-dev/instances/provider-de/databases/cost-estimator-secure
-2025-07-28 10:22:54,243 | INFO | cost_estimator_calc_service | Connection pool size: 10, Max workers: 20
-             Importing from /Users/N133723/Desktop/tlabchaat-355-24/cost-estimator-calc-service/app
- 
-    module   🐍 main.py
- 
-      code   Importing the FastAPI app object from the module with the following code:
- 
-             from main import app
- 
-       app   Using import string: main:app
- 
-    server   Server started at http://0.0.0.0:8000
-    server   Documentation at http://0.0.0.0:8000/docs
- 
-             Logs:
- 
       INFO   Will watch for changes in these directories: ['/Users/N133723/Desktop/tlabchaat-355-24/cost-estimator-calc-service']
       INFO   Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
-      INFO   Started reloader process [72806] using WatchFiles
-2025-07-28 10:22:54,843 | INFO | cost_estimator_calc_service | Async SpannerClient initialized for database: projects/anbc-hcb-dev/instances/provider-de/databases/cost-estimator-secure
-2025-07-28 10:22:54,843 | INFO | cost_estimator_calc_service | Connection pool size: 10, Max workers: 20
-      INFO   Started server process [72808]
+      INFO   Started reloader process [89112] using WatchFiles
+2025-07-28 11:03:10,419 | INFO | cost_estimator_calc_service | Async SpannerClient initialized for database: projects/anbc-hcb-dev/instances/provider-de/databases/cost-estimator-secure
+2025-07-28 11:03:10,419 | INFO | cost_estimator_calc_service | Connection pool size: 10, Max workers: 20
+      INFO   Started server process [89114]
       INFO   Waiting for application startup.
-2025-07-28 10:22:54,843 | INFO | cost_estimator_calc_service | Executing async query: SELECT payment_method_cd, score FROM payment_method_hierarchy
-2025-07-28 10:22:54,843 | INFO | cost_estimator_calc_service | Query params: None
-2025-07-28 10:23:25,592 | ERROR | cost_estimator_calc_service | Error executing async read-only query: Timeout of 30.0s exceeded, last exception: 503 Getting metadata from plugin failed with error: Reauthentication is needed. Please run `gcloud auth application-default login` to reauthenticate.
-2025-07-28 10:23:25,593 | ERROR | cost_estimator_calc_service | Query: SELECT payment_method_cd, score FROM payment_method_hierarchy
-2025-07-28 10:23:25,593 | ERROR | cost_estimator_calc_service | Params: None
-2025-07-28 10:23:25,594 | ERROR | cost_estimator_calc_service | Exception type: <class 'google.api_core.exceptions.RetryError'>
-2025-07-28 10:23:25,594 | ERROR | cost_estimator_calc_service | Exception details: Timeout of 30.0s exceeded, last exception: 503 Getting metadata from plugin failed with error: Reauthentication is needed. Please run `gcloud auth application-default login` to reauthenticate.
-2025-07-28 10:23:25,594 | INFO | cost_estimator_calc_service | Cached payment_method_hierarchy with 0 entries.
+2025-07-28 11:03:10,419 | INFO | cost_estimator_calc_service | Executing async query: SELECT payment_method_cd, score FROM payment_method_hierarchy
+2025-07-28 11:03:10,419 | INFO | cost_estimator_calc_service | Query params: None
+2025-07-28 11:03:13,032 | ERROR | cost_estimator_calc_service | Failed to load payment method hierarchy: list indices must be integers
       INFO   Application startup complete.
-2025-07-28 10:24:08,946 | INFO | cost_estimator_calc_service | Async SpannerClient initialized for database: projects/anbc-hcb-dev/instances/provider-de/databases/cost-estimator-secure
-2025-07-28 10:24:08,947 | INFO | cost_estimator_calc_service | Connection pool size: 10, Max workers: 20
+2025-07-28 11:03:47,501 | INFO | cost_estimator_calc_service | Async SpannerClient initialized for database: projects/anbc-hcb-dev/instances/provider-de/databases/cost-estimator-secure
+2025-07-28 11:03:47,501 | INFO | cost_estimator_calc_service | Connection pool size: 10, Max workers: 20
 benefit_request benefitProductType='Medical' membershipID='5~265642286+34+44+20250101+784461+AM+39' planIdentifier='3~' serviceInfo=[ServiceInfo(serviceCodeInfo=ServiceCodeInfo(providerType=[ProviderType(code='PH')], placeOfService=[PlaceOfService(code='11')], providerSpecialty=[ProviderSpecialty(code='10301')], code='0003U', type='CPT4'))]
 CostEstimatorRateCriteria fields: {'providerIdentificationNumber': <class 'str'>, 'serviceCode': <class 'str'>, 'serviceType': <class 'str'>, 'serviceLocationNumber': typing.Optional[str], 'networkId': typing.Optional[str], 'placeOfService': <class 'str'>, 'zipCode': <class 'str'>, 'isOutofNetwork': <class 'bool'>, 'providerSpecialtyCode': typing.Optional[str], 'providerType': typing.Optional[str]}
 rate_criteria CostEstimatorRateCriteria(providerIdentificationNumber='9448211', serviceCode='0003U', serviceType='CPT4', serviceLocationNumber='2065447', networkId='08943', placeOfService='11', zipCode='02215', isOutofNetwork=False, providerSpecialtyCode='10301', providerType='PH')
-2025-07-28 10:24:08,950 | INFO | cost_estimator_calc_service | Executing async query: SELECT MAX(RATE) AS RATE
+2025-07-28 11:03:47,505 | INFO | cost_estimator_calc_service | Executing async query: SELECT MAX(RATE) AS RATE
 FROM CET_CLAIM_BASED_AMOUNTS
 WHERE
     PROVIDER_IDENTIFICATION_NBR = @provideridentificationnumber
@@ -54,45 +23,57 @@ WHERE
     AND PLACE_OF_SERVICE_CD = @placeofservice
     AND SERVICE_CD = @servicecd
     AND SERVICE_TYPE_CD = @servicetype
-2025-07-28 10:24:08,950 | INFO | cost_estimator_calc_service | Query params: {'servicecd': '0003U', 'provideridentificationnumber': '9448211', 'placeofservice': '11', 'servicetype': 'CPT4', 'networkid': '08943', 'servicelocationnumber': '2065447'}
+2025-07-28 11:03:47,505 | INFO | cost_estimator_calc_service | Query params: {'servicecd': '0003U', 'provideridentificationnumber': '9448211', 'placeofservice': '11', 'servicetype': 'CPT4', 'networkid': '08943', 'servicelocationnumber': '2065447'}
+2025-07-28 11:03:48,958 | INFO | cost_estimator_calc_service | Successfully retrieved new token
+2025-07-28 11:03:48,974 | INFO | cost_estimator_calc_service | Successfully retrieved new token
+2025-07-28 11:03:50,012 | INFO | cost_estimator_calc_service | Claim-based rate result: [[None]]
+2025-07-28 11:03:50,012 | WARNING | cost_estimator_calc_service | Empty or malformed result
+2025-07-28 11:03:50,012 | INFO | cost_estimator_calc_service | No claim-based rate found, proceeding to get provider info
+2025-07-28 11:03:50,012 | INFO | cost_estimator_calc_service | Executing async query: SELECT DISTINCT PROVIDER_BUSINESS_GROUP_NBR, PRODUCT_CD, RATING_SYSTEM_CD, EPDB_GEOGRAPHIC_AREA_CD
+FROM CET_PROVIDERS
+WHERE
+    PROVIDER_IDENTIFICATION_NBR = @provideridentificationnumber
+    AND NETWORK_ID = @networkid
+    AND SERVICE_LOCATION_NBR = @servicelocationnumber
+2025-07-28 11:03:50,012 | INFO | cost_estimator_calc_service | Query params: {'servicecd': '0003U', 'provideridentificationnumber': '9448211', 'placeofservice': '11', 'servicetype': 'CPT4', 'networkid': '08943', 'servicelocationnumber': '2065447'}
 WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
-I0000 00:00:1753716248.952102 10970929 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
-2025-07-28 10:24:10,475 | INFO | cost_estimator_calc_service | Successfully retrieved new token
-2025-07-28 10:24:10,566 | INFO | cost_estimator_calc_service | Successfully retrieved new token
-2025-07-28 10:24:30,095 | ERROR | cost_estimator_calc_service | Error executing async read-only query: Timeout of 30.0s exceeded, last exception: 503 Getting metadata from plugin failed with error: Reauthentication is needed. Please run `gcloud auth application-default login` to reauthenticate.
-2025-07-28 10:24:30,095 | ERROR | cost_estimator_calc_service | Query: SELECT MAX(RATE) AS RATE
-FROM CET_CLAIM_BASED_AMOUNTS
+I0000 00:00:1753718630.017344 11050956 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+2025-07-28 11:03:53,197 | INFO | cost_estimator_calc_service | Provider info result: [['574558132', 'MC', 'REF', 'NE01']]
+2025-07-28 11:03:53,198 | INFO | cost_estimator_calc_service | Executing default rate query: SELECT payment_method_cd, RATE
+FROM CET_RATES
 WHERE
-    PROVIDER_IDENTIFICATION_NBR = @provideridentificationnumber
-    AND NETWORK_ID = @networkid
-    AND PLACE_OF_SERVICE_CD = @placeofservice
-    AND SERVICE_CD = @servicecd
+    SERVICE_CD = @servicecd
     AND SERVICE_TYPE_CD = @servicetype
-2025-07-28 10:24:30,095 | ERROR | cost_estimator_calc_service | Params: {'servicecd': '0003U', 'provideridentificationnumber': '9448211', 'placeofservice': '11', 'servicetype': 'CPT4', 'networkid': '08943', 'servicelocationnumber': '2065447'}
-2025-07-28 10:24:30,095 | ERROR | cost_estimator_calc_service | Exception type: <class 'google.api_core.exceptions.RetryError'>
-2025-07-28 10:24:30,095 | ERROR | cost_estimator_calc_service | Exception details: Timeout of 30.0s exceeded, last exception: 503 Getting metadata from plugin failed with error: Reauthentication is needed. Please run `gcloud auth application-default login` to reauthenticate.
-2025-07-28 10:24:30,095 | INFO | cost_estimator_calc_service | Claim-based rate result: []
-2025-07-28 10:24:30,096 | WARNING | cost_estimator_calc_service | Empty or malformed result
-2025-07-28 10:24:30,096 | INFO | cost_estimator_calc_service | No claim-based rate found, proceeding to get provider info
-2025-07-28 10:24:30,096 | INFO | cost_estimator_calc_service | Executing async query: SELECT DISTINCT PROVIDER_BUSINESS_GROUP_NBR, PRODUCT_CD, RATING_SYSTEM_CD, EPDB_GEOGRAPHIC_AREA_CD
-FROM CET_PROVIDERS
+    AND PLACE_OF_SERVICE_CD = @placeofservice
+    AND PRODUCT_CD = @productcd
+    AND PROVIDER_BUSINESS_GROUP_NBR IN UNNEST(@providerbusinessgroupnbr)
+    AND CONTRACT_TYPE = 'D' with params: {'servicecd': '0003U', 'placeofservice': '11', 'servicetype': 'CPT4', 'productcd': 'MC', 'ratesystemcd': 'REF', 'geographicareacd': 'NE01', 'providerbusinessgroupnbr': ['574558132']}
+2025-07-28 11:03:53,198 | INFO | cost_estimator_calc_service | Executing async query: SELECT payment_method_cd, RATE
+FROM CET_RATES
 WHERE
-    PROVIDER_IDENTIFICATION_NBR = @provideridentificationnumber
-    AND NETWORK_ID = @networkid
-    AND SERVICE_LOCATION_NBR = @servicelocationnumber
-2025-07-28 10:24:30,096 | INFO | cost_estimator_calc_service | Query params: {'servicecd': '0003U', 'provideridentificationnumber': '9448211', 'placeofservice': '11', 'servicetype': 'CPT4', 'networkid': '08943', 'servicelocationnumber': '2065447'}
-I0000 00:00:1753716270.112643 10970929 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
-2025-07-28 10:25:01,435 | ERROR | cost_estimator_calc_service | Error executing async read-only query: Timeout of 30.0s exceeded, last exception: 503 Getting metadata from plugin failed with error: Reauthentication is needed. Please run `gcloud auth application-default login` to reauthenticate.
-2025-07-28 10:25:01,435 | ERROR | cost_estimator_calc_service | Query: SELECT DISTINCT PROVIDER_BUSINESS_GROUP_NBR, PRODUCT_CD, RATING_SYSTEM_CD, EPDB_GEOGRAPHIC_AREA_CD
-FROM CET_PROVIDERS
+    SERVICE_CD = @servicecd
+    AND SERVICE_TYPE_CD = @servicetype
+    AND PLACE_OF_SERVICE_CD = @placeofservice
+    AND PRODUCT_CD = @productcd
+    AND PROVIDER_BUSINESS_GROUP_NBR IN UNNEST(@providerbusinessgroupnbr)
+    AND CONTRACT_TYPE = 'D'
+2025-07-28 11:03:53,198 | INFO | cost_estimator_calc_service | Query params: {'servicecd': '0003U', 'placeofservice': '11', 'servicetype': 'CPT4', 'productcd': 'MC', 'ratesystemcd': 'REF', 'geographicareacd': 'NE01', 'providerbusinessgroupnbr': ['574558132']}
+I0000 00:00:1753718633.200806 11050956 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+2025-07-28 11:03:55,837 | INFO | cost_estimator_calc_service | return rows: [['PERBIL', '65.0']]
+2025-07-28 11:03:55,838 | WARNING | cost_estimator_calc_service | Empty or malformed result
+2025-07-28 11:03:55,838 | WARNING | cost_estimator_calc_service | Single rate row found but rate is invalid or empty
+2025-07-28 11:03:55,838 | INFO | cost_estimator_calc_service | Evaluating 1 payment methods using hierarchy
+2025-07-28 11:03:55,838 | WARNING | cost_estimator_calc_service | No valid payment method found in cache hierarchy
+2025-07-28 11:03:55,838 | INFO | cost_estimator_calc_service | Executing async query: SELECT payment_method_cd, RATE
+FROM CET_RATES
 WHERE
-    PROVIDER_IDENTIFICATION_NBR = @provideridentificationnumber
-    AND NETWORK_ID = @networkid
-    AND SERVICE_LOCATION_NBR = @servicelocationnumber
-2025-07-28 10:25:01,435 | ERROR | cost_estimator_calc_service | Params: {'servicecd': '0003U', 'provideridentificationnumber': '9448211', 'placeofservice': '11', 'servicetype': 'CPT4', 'networkid': '08943', 'servicelocationnumber': '2065447'}
-2025-07-28 10:25:01,435 | ERROR | cost_estimator_calc_service | Exception type: <class 'google.api_core.exceptions.RetryError'>
-2025-07-28 10:25:01,435 | ERROR | cost_estimator_calc_service | Exception details: Timeout of 30.0s exceeded, last exception: 503 Getting metadata from plugin failed with error: Reauthentication is needed. Please run `gcloud auth application-default login` to reauthenticate.
-2025-07-28 10:25:01,435 | INFO | cost_estimator_calc_service | Provider info result: []
-2025-07-28 10:25:01,435 | INFO | cost_estimator_calc_service | No provider info results found
-2025-07-28 10:25:01,435 | ERROR | cost_estimator_calc_service | Error in get_rate: float() argument must be a string or a real number, not 'NoneType'
-      INFO   127.0.0.1:57280 - "POST /costestimator/v1/rate HTTP/1.1" 200
+    SERVICE_CD = @servicecd
+    AND SERVICE_TYPE_CD = @servicetype
+    AND PLACE_OF_SERVICE_CD = @placeofservice
+    AND PRODUCT_CD = @productcd
+    AND PROVIDER_BUSINESS_GROUP_NBR IN UNNEST(@providerbusinessgroupnbr)
+    AND CONTRACT_TYPE IN ('C', 'N')
+2025-07-28 11:03:55,838 | INFO | cost_estimator_calc_service | Query params: {'servicecd': '0003U', 'placeofservice': '11', 'servicetype': 'CPT4', 'productcd': 'MC', 'ratesystemcd': 'REF', 'geographicareacd': 'NE01', 'providerbusinessgroupnbr': ['574558132']}
+I0000 00:00:1753718636.165288 11050956 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+2025-07-28 11:03:59,150 | INFO | cost_estimator_calc_service | No rate rows found for non-standard payment methods
+      INFO   127.0.0.1:61199 - "POST /costestimator/v1/rate HTTP/1.1" 200
