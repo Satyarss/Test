@@ -42,3 +42,22 @@ def _get_best_payment_method(self, rate_rows):
 
     logger.info(f"Selected payment method: {selected_row[0]} with rate: {selected_row[1]}")
     return selected_row
+
+
+
+
+async def load_payment_method_hierarchy(self):
+    """Load payment method hierarchy from Spanner into cache."""
+    query = "SELECT payment_method_cd, score FROM payment_method_hierarchy"
+    try:
+        result = await self.db.execute_query(query)
+        # ✅ Updated parsing from list-of-lists (not list-of-dicts)
+        hierarchy = {
+            row[0]: row[1]
+            for row in result
+            if row[0] is not None and row[1] is not None
+        }
+        self.db._cache[PAYMENT_METHOD_HIERARCHY_CACHE_KEY] = hierarchy
+        logger.info(f"Cached payment_method_hierarchy with {len(hierarchy)} entries.")
+    except Exception as e:
+        logger.error(f"Failed to load payment method hierarchy: {str(e)}")
