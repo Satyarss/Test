@@ -232,15 +232,14 @@ class CostEstimatorRepositoryImpl(CostEstimatorRepositoryInterface):
         Returns:
             Extracted value or NA
         """
-        if not result or len(result) == 0:
-            logger.info("No results found")
+        if not result or not isinstance(result, list) or not result[0]:
+            logger.warning("Empty or malformed result")
             return "NA"
 
         first_row = result[0]
+
         if column_index >= len(first_row):
-            logger.warning(
-                f"Column index {column_index} out of range for row {first_row}"
-            )
+            logger.warning(f"Column index {column_index} out of range for row {first_row}")
             return "NA"
 
         value = first_row[column_index]
@@ -252,7 +251,8 @@ class CostEstimatorRepositoryImpl(CostEstimatorRepositoryInterface):
 
         try:
             return str(value)
-        except (ValueError, TypeError):
+        except Exception as e:
+            logger.warning(f"Error converting value to string: {e}")
             return "NA"
 
     def _extract_provider_info_and_update_params(self, result, params):
