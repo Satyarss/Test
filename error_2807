@@ -1,39 +1,10 @@
-
-             Searching for package file structure from directories with __init__.py files
-2025-07-28 12:30:09,885 | INFO | cost_estimator_calc_service | Async SpannerClient initialized for database: projects/anbc-hcb-dev/instances/provider-de/databases/cost-estimator-secure
-2025-07-28 12:30:09,885 | INFO | cost_estimator_calc_service | Connection pool size: 10, Max workers: 20
-             Importing from /Users/N133723/Desktop/tlabchaat-355-24/cost-estimator-calc-service/app
- 
-    module   🐍 main.py
- 
-      code   Importing the FastAPI app object from the module with the following code:
- 
-             from main import app
- 
-       app   Using import string: main:app
- 
-    server   Server started at http://0.0.0.0:8000
-    server   Documentation at http://0.0.0.0:8000/docs
- 
-             Logs:
- 
-      INFO   Will watch for changes in these directories: ['/Users/N133723/Desktop/tlabchaat-355-24/cost-estimator-calc-service']
-      INFO   Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
-      INFO   Started reloader process [34495] using WatchFiles
-2025-07-28 12:30:10,591 | INFO | cost_estimator_calc_service | Async SpannerClient initialized for database: projects/anbc-hcb-dev/instances/provider-de/databases/cost-estimator-secure
-2025-07-28 12:30:10,592 | INFO | cost_estimator_calc_service | Connection pool size: 10, Max workers: 20
-      INFO   Started server process [34497]
-      INFO   Waiting for application startup.
-2025-07-28 12:30:10,592 | INFO | cost_estimator_calc_service | Executing async query: SELECT payment_method_cd, score FROM payment_method_hierarchy
-2025-07-28 12:30:10,592 | INFO | cost_estimator_calc_service | Query params: None
-2025-07-28 12:30:13,104 | ERROR | cost_estimator_calc_service | Failed to load payment method hierarchy: list indices must be integers
-      INFO   Application startup complete.
-2025-07-28 12:30:30,029 | INFO | cost_estimator_calc_service | Async SpannerClient initialized for database: projects/anbc-hcb-dev/instances/provider-de/databases/cost-estimator-secure
-2025-07-28 12:30:30,029 | INFO | cost_estimator_calc_service | Connection pool size: 10, Max workers: 20
-benefit_request benefitProductType='Medical' membershipID='5~265642286+34+44+20250101+784461+AM+39' planIdentifier='3~' serviceInfo=[ServiceInfo(serviceCodeInfo=ServiceCodeInfo(providerType=[ProviderType(code='HO')], placeOfService=[PlaceOfService(code='21')], providerSpecialty=[ProviderSpecialty(code='10301')], code='257', type='DRG'))]
+  INFO   Application startup complete.
+2025-07-28 12:45:52,201 | INFO | cost_estimator_calc_service | Async SpannerClient initialized for database: projects/anbc-hcb-dev/instances/provider-de/databases/cost-estimator-secure
+2025-07-28 12:45:52,201 | INFO | cost_estimator_calc_service | Connection pool size: 10, Max workers: 20
+benefit_request benefitProductType='Medical' membershipID='5~265642286+34+44+20250101+784461+AM+39' planIdentifier='3~' serviceInfo=[ServiceInfo(serviceCodeInfo=ServiceCodeInfo(providerType=[ProviderType(code='HO')], placeOfService=[PlaceOfService(code='21')], providerSpecialty=[ProviderSpecialty(code=' ')], code='257', type='DRG'))]
 CostEstimatorRateCriteria fields: {'providerIdentificationNumber': <class 'str'>, 'serviceCode': <class 'str'>, 'serviceType': <class 'str'>, 'serviceLocationNumber': typing.Optional[str], 'networkId': typing.Optional[str], 'placeOfService': <class 'str'>, 'zipCode': <class 'str'>, 'isOutofNetwork': <class 'bool'>, 'providerSpecialtyCode': typing.Optional[str], 'providerType': typing.Optional[str]}
-rate_criteria CostEstimatorRateCriteria(providerIdentificationNumber='6210290', serviceCode='257', serviceType='DRG', serviceLocationNumber='5430252', networkId='08933', placeOfService='21', zipCode='30901', isOutofNetwork=False, providerSpecialtyCode='10301', providerType='HO')
-2025-07-28 12:30:30,032 | INFO | cost_estimator_calc_service | Executing async query: SELECT MAX(RATE) AS RATE
+rate_criteria CostEstimatorRateCriteria(providerIdentificationNumber='6210290', serviceCode='257', serviceType='DRG', serviceLocationNumber='5430252', networkId='08933', placeOfService='21', zipCode='30901', isOutofNetwork=False, providerSpecialtyCode=' ', providerType='HO')
+2025-07-28 12:45:52,204 | INFO | cost_estimator_calc_service | Executing async query: SELECT MAX(RATE) AS RATE
 FROM CET_CLAIM_BASED_AMOUNTS
 WHERE
     PROVIDER_IDENTIFICATION_NBR = @provideridentificationnumber
@@ -41,23 +12,23 @@ WHERE
     AND PLACE_OF_SERVICE_CD = @placeofservice
     AND SERVICE_CD = @servicecd
     AND SERVICE_TYPE_CD = @servicetype
-2025-07-28 12:30:30,032 | INFO | cost_estimator_calc_service | Query params: {'servicecd': '257', 'provideridentificationnumber': '6210290', 'placeofservice': '21', 'servicetype': 'DRG', 'networkid': '08933', 'servicelocationnumber': '5430252'}
-2025-07-28 12:30:31,461 | INFO | cost_estimator_calc_service | Successfully retrieved new token
-2025-07-28 12:30:31,461 | INFO | cost_estimator_calc_service | Successfully retrieved new token
-2025-07-28 12:30:32,533 | INFO | cost_estimator_calc_service | Claim-based rate result: [[None]]
-2025-07-28 12:30:32,533 | WARNING | cost_estimator_calc_service | Empty or malformed result
-2025-07-28 12:30:32,533 | INFO | cost_estimator_calc_service | No claim-based rate found, proceeding to get provider info
-2025-07-28 12:30:32,533 | INFO | cost_estimator_calc_service | Executing async query: SELECT DISTINCT PROVIDER_BUSINESS_GROUP_NBR, PRODUCT_CD, RATING_SYSTEM_CD, EPDB_GEOGRAPHIC_AREA_CD
+2025-07-28 12:45:52,205 | INFO | cost_estimator_calc_service | Query params: {'servicecd': '257', 'provideridentificationnumber': '6210290', 'placeofservice': '21', 'servicetype': 'DRG', 'networkid': '08933', 'servicelocationnumber': '5430252'}
+2025-07-28 12:45:53,735 | INFO | cost_estimator_calc_service | Successfully retrieved new token
+2025-07-28 12:45:53,736 | INFO | cost_estimator_calc_service | Successfully retrieved new token
+2025-07-28 12:45:54,825 | INFO | cost_estimator_calc_service | Claim-based rate result: [[None]]
+2025-07-28 12:45:54,826 | WARNING | cost_estimator_calc_service | Empty or malformed result
+2025-07-28 12:45:54,826 | INFO | cost_estimator_calc_service | No claim-based rate found, proceeding to get provider info
+2025-07-28 12:45:54,826 | INFO | cost_estimator_calc_service | Executing async query: SELECT DISTINCT PROVIDER_BUSINESS_GROUP_NBR, PRODUCT_CD, RATING_SYSTEM_CD, EPDB_GEOGRAPHIC_AREA_CD
 FROM CET_PROVIDERS
 WHERE
     PROVIDER_IDENTIFICATION_NBR = @provideridentificationnumber
     AND NETWORK_ID = @networkid
     AND SERVICE_LOCATION_NBR = @servicelocationnumber
-2025-07-28 12:30:32,533 | INFO | cost_estimator_calc_service | Query params: {'servicecd': '257', 'provideridentificationnumber': '6210290', 'placeofservice': '21', 'servicetype': 'DRG', 'networkid': '08933', 'servicelocationnumber': '5430252'}
+2025-07-28 12:45:54,826 | INFO | cost_estimator_calc_service | Query params: {'servicecd': '257', 'provideridentificationnumber': '6210290', 'placeofservice': '21', 'servicetype': 'DRG', 'networkid': '08933', 'servicelocationnumber': '5430252'}
 WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
-I0000 00:00:1753723832.536301  180484 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
-2025-07-28 12:30:35,174 | INFO | cost_estimator_calc_service | Provider info result: [['71915839', 'MC', 'REF', 'GA03']]
-2025-07-28 12:30:35,174 | INFO | cost_estimator_calc_service | Executing default rate query: SELECT payment_method_cd, RATE
+I0000 00:00:1753724754.829218  220325 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+2025-07-28 12:45:57,431 | INFO | cost_estimator_calc_service | Provider info result: [['71915839', 'MC', 'REF', 'GA03']]
+2025-07-28 12:45:57,432 | INFO | cost_estimator_calc_service | Executing default rate query: SELECT payment_method_cd, RATE
 FROM CET_RATES
 WHERE
     SERVICE_CD = @servicecd
@@ -66,7 +37,7 @@ WHERE
     AND PRODUCT_CD = @productcd
     AND PROVIDER_BUSINESS_GROUP_NBR IN UNNEST(@providerbusinessgroupnbr)
     AND CONTRACT_TYPE = 'D' with params: {'servicecd': '257', 'placeofservice': '21', 'servicetype': 'DRG', 'productcd': 'MC', 'ratesystemcd': 'REF', 'geographicareacd': 'GA03', 'providerbusinessgroupnbr': ['71915839']}
-2025-07-28 12:30:35,174 | INFO | cost_estimator_calc_service | Executing async query: SELECT payment_method_cd, RATE
+2025-07-28 12:45:57,432 | INFO | cost_estimator_calc_service | Executing async query: SELECT payment_method_cd, RATE
 FROM CET_RATES
 WHERE
     SERVICE_CD = @servicecd
@@ -75,11 +46,11 @@ WHERE
     AND PRODUCT_CD = @productcd
     AND PROVIDER_BUSINESS_GROUP_NBR IN UNNEST(@providerbusinessgroupnbr)
     AND CONTRACT_TYPE = 'D'
-2025-07-28 12:30:35,174 | INFO | cost_estimator_calc_service | Query params: {'servicecd': '257', 'placeofservice': '21', 'servicetype': 'DRG', 'productcd': 'MC', 'ratesystemcd': 'REF', 'geographicareacd': 'GA03', 'providerbusinessgroupnbr': ['71915839']}
-I0000 00:00:1753723835.176571  180484 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
-2025-07-28 12:30:37,583 | INFO | cost_estimator_calc_service | return rows: []
-2025-07-28 12:30:37,584 | INFO | cost_estimator_calc_service | No rate rows found for default payment methods
-2025-07-28 12:30:37,584 | INFO | cost_estimator_calc_service | Executing async query: SELECT payment_method_cd, RATE
+2025-07-28 12:45:57,432 | INFO | cost_estimator_calc_service | Query params: {'servicecd': '257', 'placeofservice': '21', 'servicetype': 'DRG', 'productcd': 'MC', 'ratesystemcd': 'REF', 'geographicareacd': 'GA03', 'providerbusinessgroupnbr': ['71915839']}
+I0000 00:00:1753724757.435873  220325 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+2025-07-28 12:46:00,131 | INFO | cost_estimator_calc_service | return rows: []
+2025-07-28 12:46:00,132 | INFO | cost_estimator_calc_service | No rate rows found for default payment methods
+2025-07-28 12:46:00,132 | INFO | cost_estimator_calc_service | Executing async query: SELECT payment_method_cd, RATE
 FROM CET_RATES
 WHERE
     SERVICE_CD = @servicecd
@@ -88,10 +59,10 @@ WHERE
     AND PRODUCT_CD = @productcd
     AND PROVIDER_BUSINESS_GROUP_NBR IN UNNEST(@providerbusinessgroupnbr)
     AND CONTRACT_TYPE IN ('C', 'N')
-2025-07-28 12:30:37,584 | INFO | cost_estimator_calc_service | Query params: {'servicecd': '257', 'placeofservice': '21', 'servicetype': 'DRG', 'productcd': 'MC', 'ratesystemcd': 'REF', 'geographicareacd': 'GA03', 'providerbusinessgroupnbr': ['71915839']}
-I0000 00:00:1753723837.605869  180484 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
-2025-07-28 12:30:40,348 | WARNING | cost_estimator_calc_service | Empty or malformed result
-2025-07-28 12:30:40,349 | WARNING | cost_estimator_calc_service | Single non-standard rate row found but rate is invalid or empty
-2025-07-28 12:30:40,349 | INFO | cost_estimator_calc_service | Evaluating 1 payment methods using hierarchy
-2025-07-28 12:30:40,349 | WARNING | cost_estimator_calc_service | No valid payment method found in cache hierarchy
-      INFO   127.0.0.1:55711 - "POST /costestimator/v1/rate HTTP/1.1" 200
+2025-07-28 12:46:00,132 | INFO | cost_estimator_calc_service | Query params: {'servicecd': '257', 'placeofservice': '21', 'servicetype': 'DRG', 'productcd': 'MC', 'ratesystemcd': 'REF', 'geographicareacd': 'GA03', 'providerbusinessgroupnbr': ['71915839']}
+I0000 00:00:1753724760.135597  220325 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+2025-07-28 12:46:02,771 | WARNING | cost_estimator_calc_service | Empty or malformed result
+2025-07-28 12:46:02,772 | WARNING | cost_estimator_calc_service | Single non-standard rate row found but rate is invalid or empty
+2025-07-28 12:46:02,772 | INFO | cost_estimator_calc_service | Evaluating 1 payment methods using hierarchy
+2025-07-28 12:46:02,772 | WARNING | cost_estimator_calc_service | No valid payment method found in cache hierarchy
+      INFO   127.0.0.1:56916 - "POST /costestimator/v1/rate HTTP/1.1" 200
