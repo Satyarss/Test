@@ -1,0 +1,85 @@
+{
+
+  "membershipId": "5~265642286+34+44+20250101+784461+AM+39",
+
+  "zipCode": "33907",
+
+  "benefitProductType": "Medical",
+
+  "languageCode": "11",
+
+  "service": {
+
+    "code": " 0905",
+
+    "type": "REV",
+
+    "description": "Adult Office visit Age 30-39",
+
+    "supportingService": {
+
+      "code": "470",
+
+      "type": "DRG"
+
+    },
+
+    "modifier": {
+
+      "modifierCode": "E1"
+
+    },
+
+    "diagnosisCode": "F33 40",
+
+    "placeOfService": {
+
+      "code": "22 "
+
+    }
+
+  },
+
+  "providerInfo": [
+
+    {
+
+      "serviceLocation": "6316091",
+
+      "providerType": "IO",
+
+      "speciality": {
+
+        "code": "None"
+
+      },
+
+      "taxIdentificationNumber":  “814684657”
+
+
+",
+
+      "taxIdQualifier": "SN",
+
+      "providerNetworks": {
+
+        "networkID": "00445"
+
+      },
+
+      "providerIdentificationNumber": "6850830",
+
+      "nationalProviderId": "0000000000",
+
+      "providerNetworkParticipation": {
+
+        "providerTier": "1"
+
+      }
+
+    }
+
+  ]
+
+}
+ 
