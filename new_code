@@ -17,3 +17,28 @@ def _is_float(self, value: Any) -> bool:
         return True
     except (TypeError, ValueError):
         return False
+
+def _get_best_payment_method(self, rate_rows):
+    """
+    Returns the best (lowest score) payment method and rate based on cached hierarchy.
+    Args:
+        rate_rows: List of [payment_method_cd, rate]
+
+    Returns:
+        Tuple(payment_method_cd, rate) or None
+    """
+    if not rate_rows:
+        return None
+
+    hierarchy = self.db._cache.get(PAYMENT_METHOD_HIERARCHY_CACHE_KEY, {})
+    logger.info(f"Evaluating {len(rate_rows)} payment methods using hierarchy")
+
+    valid_rows = [row for row in rate_rows if row[0] in hierarchy]
+    if not valid_rows:
+        logger.warning("No valid payment method found in cache hierarchy")
+        return None
+
+    selected_row = min(valid_rows, key=lambda r: hierarchy.get(r[0], float("inf")))
+
+    logger.info(f"Selected payment method: {selected_row[0]} with rate: {selected_row[1]}")
+    return selected_row
