@@ -169,3 +169,15 @@ WHERE
 I0000 00:00:1753761383.586160   36325 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
 2025-07-28 22:56:26,291 | INFO | cost_estimator_calc_service | No rate rows found for non-standard payment methods
       INFO   127.0.0.1:53569 - "POST /costestimator/v1/rate HTTP/1.1" 200
+
+
+
+SELECT payment_method_cd, RATE
+FROM CET_RATES
+WHERE
+    SERVICE_CD = 'H0015'
+    AND SERVICE_TYPE_CD = 'HCPC'
+    AND PLACE_OF_SERVICE_CD = '11'
+    AND PRODUCT_CD = 'MPPO'
+    AND PROVIDER_BUSINESS_GROUP_NBR IN ('334586129')
+    AND CONTRACT_TYPE = 'D';
