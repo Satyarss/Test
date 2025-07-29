@@ -1,0 +1,171 @@
+2025-07-28 22:39:02,802 | INFO | cost_estimator_calc_service | Provider info result: [['95316869', 'MHMO', 'REF', 'FL03'], ['133098869', 'MHMO', 'REF', 'FL03']]
+2025-07-28 22:39:02,803 | INFO | cost_estimator_calc_service | Executing default rate query: SELECT payment_method_cd, RATE
+FROM CET_RATES
+WHERE
+    SERVICE_CD = @servicecd
+    AND SERVICE_TYPE_CD = @servicetype
+    AND PLACE_OF_SERVICE_CD = @placeofservice
+    AND PRODUCT_CD = @productcd
+    AND PROVIDER_BUSINESS_GROUP_NBR IN UNNEST(@providerbusinessgroupnbr)
+    AND CONTRACT_TYPE = 'D' with params: {'servicecd': '0905', 'placeofservice': '11', 'servicetype': 'REV', 'productcd': 'MHMO', 'ratesystemcd': 'REF', 'geographicareacd': 'FL03', 'providerbusinessgroupnbr': ['95316869', '133098869']}
+2025-07-28 22:39:02,803 | INFO | cost_estimator_calc_service | Executing async query: SELECT payment_method_cd, RATE
+FROM CET_RATES
+WHERE
+    SERVICE_CD = @servicecd
+    AND SERVICE_TYPE_CD = @servicetype
+    AND PLACE_OF_SERVICE_CD = @placeofservice
+    AND PRODUCT_CD = @productcd
+    AND PROVIDER_BUSINESS_GROUP_NBR IN UNNEST(@providerbusinessgroupnbr)
+    AND CONTRACT_TYPE = 'D'
+2025-07-28 22:39:02,803 | INFO | cost_estimator_calc_service | Query params: {'servicecd': '0905', 'placeofservice': '11', 'servicetype': 'REV', 'productcd': 'MHMO', 'ratesystemcd': 'REF', 'geographicareacd': 'FL03', 'providerbusinessgroupnbr': ['95316869', '133098869']}
+I0000 00:00:1753760344.338635   36325 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+E0000 00:00:1753760344.405636   36437 ssl_transport_security_utils.cc:114] Corruption detected.
+E0000 00:00:1753760344.405673   36437 ssl_transport_security_utils.cc:71] error:100003fc:SSL routines:OPENSSL_internal:SSLV3_ALERT_BAD_RECORD_MAC
+E0000 00:00:1753760344.405676   36437 secure_endpoint.cc:234] Decryption error: TSI_DATA_CORRUPTED
+2025-07-28 22:39:06,929 | INFO | cost_estimator_calc_service | return rows: []
+2025-07-28 22:39:06,930 | INFO | cost_estimator_calc_service | No rate rows found for default payment methods
+2025-07-28 22:39:06,930 | INFO | cost_estimator_calc_service | Executing async query: SELECT payment_method_cd, RATE
+FROM CET_RATES
+WHERE
+    SERVICE_CD = @servicecd
+    AND SERVICE_TYPE_CD = @servicetype
+    AND PLACE_OF_SERVICE_CD = @placeofservice
+    AND PRODUCT_CD = @productcd
+    AND PROVIDER_BUSINESS_GROUP_NBR IN UNNEST(@providerbusinessgroupnbr)
+    AND CONTRACT_TYPE IN ('C', 'N')
+2025-07-28 22:39:06,930 | INFO | cost_estimator_calc_service | Query params: {'servicecd': '0905', 'placeofservice': '11', 'servicetype': 'REV', 'productcd': 'MHMO', 'ratesystemcd': 'REF', 'geographicareacd': 'FL03', 'providerbusinessgroupnbr': ['95316869', '133098869']}
+I0000 00:00:1753760348.465078   36325 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+E0000 00:00:1753760348.533043   36437 ssl_transport_security_utils.cc:114] Corruption detected.
+E0000 00:00:1753760348.533059   36437 ssl_transport_security_utils.cc:71] error:100003fc:SSL routines:OPENSSL_internal:SSLV3_ALERT_BAD_RECORD_MAC
+E0000 00:00:1753760348.533062   36437 secure_endpoint.cc:234] Decryption error: TSI_DATA_CORRUPTED
+2025-07-28 22:39:11,007 | INFO | cost_estimator_calc_service | No rate rows found for non-standard payment methods
+2025-07-28 22:53:29,160 | INFO | cost_estimator_calc_service | Async SpannerClient initialized for database: projects/anbc-hcb-dev/instances/provider-de/databases/cost-estimator-secure
+2025-07-28 22:53:29,160 | INFO | cost_estimator_calc_service | Connection pool size: 10, Max workers: 20
+benefit_request benefitProductType='Medical' membershipID='5~265642286+34+44+20250101+784461+AM+39' planIdentifier='3~' serviceInfo=[ServiceInfo(serviceCodeInfo=ServiceCodeInfo(providerType=[ProviderType(code='IO')], placeOfService=[PlaceOfService(code='11')], providerSpecialty=[ProviderSpecialty(code='None')], code='H0015', type='HCPC'))]
+CostEstimatorRateCriteria fields: {'providerIdentificationNumber': <class 'str'>, 'serviceCode': <class 'str'>, 'serviceType': <class 'str'>, 'serviceLocationNumber': typing.Optional[str], 'networkId': typing.Optional[str], 'placeOfService': <class 'str'>, 'zipCode': <class 'str'>, 'isOutofNetwork': <class 'bool'>, 'providerSpecialtyCode': typing.Optional[str], 'providerType': typing.Optional[str]}
+rate_criteria CostEstimatorRateCriteria(providerIdentificationNumber='9831824', serviceCode='H0015', serviceType='HCPC', serviceLocationNumber='6564382', networkId='08336', placeOfService='11', zipCode='67156', isOutofNetwork=False, providerSpecialtyCode='None', providerType='IO')
+2025-07-28 22:53:29,163 | INFO | cost_estimator_calc_service | Executing async query: SELECT MAX(RATE) AS RATE
+FROM CET_CLAIM_BASED_AMOUNTS
+WHERE
+    PROVIDER_IDENTIFICATION_NBR = @provideridentificationnumber
+    AND NETWORK_ID = @networkid
+    AND PLACE_OF_SERVICE_CD = @placeofservice
+    AND SERVICE_CD = @servicecd
+    AND SERVICE_TYPE_CD = @servicetype
+2025-07-28 22:53:29,163 | INFO | cost_estimator_calc_service | Query params: {'servicecd': 'H0015', 'provideridentificationnumber': '9831824', 'placeofservice': '11', 'servicetype': 'HCPC', 'networkid': '08336', 'servicelocationnumber': '6564382'}
+I0000 00:00:1753761209.165035   36325 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+2025-07-28 22:53:31,985 | INFO | cost_estimator_calc_service | Claim-based rate result: [[None]]
+2025-07-28 22:53:31,985 | WARNING | cost_estimator_calc_service | Empty or malformed result
+2025-07-28 22:53:31,985 | INFO | cost_estimator_calc_service | No claim-based rate found, proceeding to get provider info
+2025-07-28 22:53:31,985 | INFO | cost_estimator_calc_service | Executing async query: SELECT DISTINCT PROVIDER_BUSINESS_GROUP_NBR, PRODUCT_CD, RATING_SYSTEM_CD, EPDB_GEOGRAPHIC_AREA_CD
+FROM CET_PROVIDERS
+WHERE
+    PROVIDER_IDENTIFICATION_NBR = @provideridentificationnumber
+    AND NETWORK_ID = @networkid
+    AND SERVICE_LOCATION_NBR = @servicelocationnumber
+2025-07-28 22:53:31,986 | INFO | cost_estimator_calc_service | Query params: {'servicecd': 'H0015', 'provideridentificationnumber': '9831824', 'placeofservice': '11', 'servicetype': 'HCPC', 'networkid': '08336', 'servicelocationnumber': '6564382'}
+I0000 00:00:1753761211.988804   36325 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+2025-07-28 22:53:34,617 | INFO | cost_estimator_calc_service | Provider info result: [['334586129', 'MPPO', 'REF', 'KS02']]
+2025-07-28 22:53:34,618 | INFO | cost_estimator_calc_service | Executing default rate query: SELECT payment_method_cd, RATE
+FROM CET_RATES
+WHERE
+    SERVICE_CD = @servicecd
+    AND SERVICE_TYPE_CD = @servicetype
+    AND PLACE_OF_SERVICE_CD = @placeofservice
+    AND PRODUCT_CD = @productcd
+    AND PROVIDER_BUSINESS_GROUP_NBR IN UNNEST(@providerbusinessgroupnbr)
+    AND CONTRACT_TYPE = 'D' with params: {'servicecd': 'H0015', 'placeofservice': '11', 'servicetype': 'HCPC', 'productcd': 'MPPO', 'ratesystemcd': 'REF', 'geographicareacd': 'KS02', 'providerbusinessgroupnbr': ['334586129']}
+2025-07-28 22:53:34,618 | INFO | cost_estimator_calc_service | Executing async query: SELECT payment_method_cd, RATE
+FROM CET_RATES
+WHERE
+    SERVICE_CD = @servicecd
+    AND SERVICE_TYPE_CD = @servicetype
+    AND PLACE_OF_SERVICE_CD = @placeofservice
+    AND PRODUCT_CD = @productcd
+    AND PROVIDER_BUSINESS_GROUP_NBR IN UNNEST(@providerbusinessgroupnbr)
+    AND CONTRACT_TYPE = 'D'
+2025-07-28 22:53:34,618 | INFO | cost_estimator_calc_service | Query params: {'servicecd': 'H0015', 'placeofservice': '11', 'servicetype': 'HCPC', 'productcd': 'MPPO', 'ratesystemcd': 'REF', 'geographicareacd': 'KS02', 'providerbusinessgroupnbr': ['334586129']}
+I0000 00:00:1753761214.621091   36325 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+2025-07-28 22:53:37,364 | INFO | cost_estimator_calc_service | return rows: []
+2025-07-28 22:53:37,364 | INFO | cost_estimator_calc_service | No rate rows found for default payment methods
+2025-07-28 22:53:37,364 | INFO | cost_estimator_calc_service | Executing async query: SELECT payment_method_cd, RATE
+FROM CET_RATES
+WHERE
+    SERVICE_CD = @servicecd
+    AND SERVICE_TYPE_CD = @servicetype
+    AND PLACE_OF_SERVICE_CD = @placeofservice
+    AND PRODUCT_CD = @productcd
+    AND PROVIDER_BUSINESS_GROUP_NBR IN UNNEST(@providerbusinessgroupnbr)
+    AND CONTRACT_TYPE IN ('C', 'N')
+2025-07-28 22:53:37,364 | INFO | cost_estimator_calc_service | Query params: {'servicecd': 'H0015', 'placeofservice': '11', 'servicetype': 'HCPC', 'productcd': 'MPPO', 'ratesystemcd': 'REF', 'geographicareacd': 'KS02', 'providerbusinessgroupnbr': ['334586129']}
+I0000 00:00:1753761218.894841   36325 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+E0000 00:00:1753761218.961295   36437 ssl_transport_security_utils.cc:114] Corruption detected.
+E0000 00:00:1753761218.961331   36437 ssl_transport_security_utils.cc:71] error:100003fc:SSL routines:OPENSSL_internal:SSLV3_ALERT_BAD_RECORD_MAC
+E0000 00:00:1753761218.961336   36437 secure_endpoint.cc:234] Decryption error: TSI_DATA_CORRUPTED
+2025-07-28 22:53:41,573 | INFO | cost_estimator_calc_service | No rate rows found for non-standard payment methods
+      INFO   127.0.0.1:53431 - "POST /costestimator/v1/rate HTTP/1.1" 200
+2025-07-28 22:56:12,766 | INFO | cost_estimator_calc_service | Async SpannerClient initialized for database: projects/anbc-hcb-dev/instances/provider-de/databases/cost-estimator-secure
+2025-07-28 22:56:12,766 | INFO | cost_estimator_calc_service | Connection pool size: 10, Max workers: 20
+benefit_request benefitProductType='Medical' membershipID='5~265642286+34+44+20250101+784461+AM+39' planIdentifier='3~' serviceInfo=[ServiceInfo(serviceCodeInfo=ServiceCodeInfo(providerType=[ProviderType(code='IO')], placeOfService=[PlaceOfService(code='11')], providerSpecialty=[ProviderSpecialty(code='None')], code='H0015', type='HCPC'))]
+CostEstimatorRateCriteria fields: {'providerIdentificationNumber': <class 'str'>, 'serviceCode': <class 'str'>, 'serviceType': <class 'str'>, 'serviceLocationNumber': typing.Optional[str], 'networkId': typing.Optional[str], 'placeOfService': <class 'str'>, 'zipCode': <class 'str'>, 'isOutofNetwork': <class 'bool'>, 'providerSpecialtyCode': typing.Optional[str], 'providerType': typing.Optional[str]}
+rate_criteria CostEstimatorRateCriteria(providerIdentificationNumber='9831824', serviceCode='H0015', serviceType='HCPC', serviceLocationNumber='6564382', networkId='08336', placeOfService='11', zipCode='67156', isOutofNetwork=False, providerSpecialtyCode='None', providerType='IO')
+2025-07-28 22:56:12,769 | INFO | cost_estimator_calc_service | Executing async query: SELECT MAX(RATE) AS RATE
+FROM CET_CLAIM_BASED_AMOUNTS
+WHERE
+    PROVIDER_IDENTIFICATION_NBR = @provideridentificationnumber
+    AND NETWORK_ID = @networkid
+    AND PLACE_OF_SERVICE_CD = @placeofservice
+    AND SERVICE_CD = @servicecd
+    AND SERVICE_TYPE_CD = @servicetype
+2025-07-28 22:56:12,769 | INFO | cost_estimator_calc_service | Query params: {'servicecd': 'H0015', 'provideridentificationnumber': '9831824', 'placeofservice': '11', 'servicetype': 'HCPC', 'networkid': '08336', 'servicelocationnumber': '6564382'}
+I0000 00:00:1753761375.771976   36325 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+2025-07-28 22:56:17,420 | INFO | cost_estimator_calc_service | Claim-based rate result: [[None]]
+2025-07-28 22:56:17,420 | WARNING | cost_estimator_calc_service | Empty or malformed result
+2025-07-28 22:56:17,421 | INFO | cost_estimator_calc_service | No claim-based rate found, proceeding to get provider info
+2025-07-28 22:56:17,421 | INFO | cost_estimator_calc_service | Executing async query: SELECT DISTINCT PROVIDER_BUSINESS_GROUP_NBR, PRODUCT_CD, RATING_SYSTEM_CD, EPDB_GEOGRAPHIC_AREA_CD
+FROM CET_PROVIDERS
+WHERE
+    PROVIDER_IDENTIFICATION_NBR = @provideridentificationnumber
+    AND NETWORK_ID = @networkid
+    AND SERVICE_LOCATION_NBR = @servicelocationnumber
+2025-07-28 22:56:17,421 | INFO | cost_estimator_calc_service | Query params: {'servicecd': 'H0015', 'provideridentificationnumber': '9831824', 'placeofservice': '11', 'servicetype': 'HCPC', 'networkid': '08336', 'servicelocationnumber': '6564382'}
+I0000 00:00:1753761378.126087   36325 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+E0000 00:00:1753761378.192205   36437 ssl_transport_security_utils.cc:114] Corruption detected.
+E0000 00:00:1753761378.192238   36437 ssl_transport_security_utils.cc:71] error:100003fc:SSL routines:OPENSSL_internal:SSLV3_ALERT_BAD_RECORD_MAC
+E0000 00:00:1753761378.192242   36437 secure_endpoint.cc:234] Decryption error: TSI_DATA_CORRUPTED
+2025-07-28 22:56:20,873 | INFO | cost_estimator_calc_service | Provider info result: [['334586129', 'MPPO', 'REF', 'KS02']]
+2025-07-28 22:56:20,874 | INFO | cost_estimator_calc_service | Executing default rate query: SELECT payment_method_cd, RATE
+FROM CET_RATES
+WHERE
+    SERVICE_CD = @servicecd
+    AND SERVICE_TYPE_CD = @servicetype
+    AND PLACE_OF_SERVICE_CD = @placeofservice
+    AND PRODUCT_CD = @productcd
+    AND PROVIDER_BUSINESS_GROUP_NBR IN UNNEST(@providerbusinessgroupnbr)
+    AND CONTRACT_TYPE = 'D' with params: {'servicecd': 'H0015', 'placeofservice': '11', 'servicetype': 'HCPC', 'productcd': 'MPPO', 'ratesystemcd': 'REF', 'geographicareacd': 'KS02', 'providerbusinessgroupnbr': ['334586129']}
+2025-07-28 22:56:20,874 | INFO | cost_estimator_calc_service | Executing async query: SELECT payment_method_cd, RATE
+FROM CET_RATES
+WHERE
+    SERVICE_CD = @servicecd
+    AND SERVICE_TYPE_CD = @servicetype
+    AND PLACE_OF_SERVICE_CD = @placeofservice
+    AND PRODUCT_CD = @productcd
+    AND PROVIDER_BUSINESS_GROUP_NBR IN UNNEST(@providerbusinessgroupnbr)
+    AND CONTRACT_TYPE = 'D'
+2025-07-28 22:56:20,874 | INFO | cost_estimator_calc_service | Query params: {'servicecd': 'H0015', 'placeofservice': '11', 'servicetype': 'HCPC', 'productcd': 'MPPO', 'ratesystemcd': 'REF', 'geographicareacd': 'KS02', 'providerbusinessgroupnbr': ['334586129']}
+I0000 00:00:1753761380.878131   36325 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+2025-07-28 22:56:23,582 | INFO | cost_estimator_calc_service | return rows: []
+2025-07-28 22:56:23,582 | INFO | cost_estimator_calc_service | No rate rows found for default payment methods
+2025-07-28 22:56:23,582 | INFO | cost_estimator_calc_service | Executing async query: SELECT payment_method_cd, RATE
+FROM CET_RATES
+WHERE
+    SERVICE_CD = @servicecd
+    AND SERVICE_TYPE_CD = @servicetype
+    AND PLACE_OF_SERVICE_CD = @placeofservice
+    AND PRODUCT_CD = @productcd
+    AND PROVIDER_BUSINESS_GROUP_NBR IN UNNEST(@providerbusinessgroupnbr)
+    AND CONTRACT_TYPE IN ('C', 'N')
+2025-07-28 22:56:23,583 | INFO | cost_estimator_calc_service | Query params: {'servicecd': 'H0015', 'placeofservice': '11', 'servicetype': 'HCPC', 'productcd': 'MPPO', 'ratesystemcd': 'REF', 'geographicareacd': 'KS02', 'providerbusinessgroupnbr': ['334586129']}
+I0000 00:00:1753761383.586160   36325 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+2025-07-28 22:56:26,291 | INFO | cost_estimator_calc_service | No rate rows found for non-standard payment methods
+      INFO   127.0.0.1:53569 - "POST /costestimator/v1/rate HTTP/1.1" 200
