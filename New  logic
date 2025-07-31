@@ -1,30 +1,49 @@
-multi_rate_query = RATE_QUERIES.get("get_rate_with_payment_methods")
-        if not multi_rate_query:
-            logger.error("get_rate_with_payment_methods not found in RATE_QUERIES")
+default_rate_query = RATE_QUERIES.get("get_default_rate")
+        if not default_rate_query:
+            logger.error("get_default_rate not found in RATE_QUERIES")
             return "NA"
-
-        rate_rows = await self.db.execute_query(multi_rate_query, updated_params)
-
-        if not rate_rows:
-            logger.info("No rate rows found for payment methods")
-            return "NA"
-
-        if len(rate_rows) == 1:
+        rate_rows = await self.db.execute_query(default_rate_query, params)
+        if rate_rows and len(rate_rows) == 1:
             rate = self._extract_single_value(rate_rows, column_index=1)
-            return rate
+            if rate != "NA" and float(rate) > 0:
+                return str(rate)
 
-        # Multiple payment methods found — use hierarchy
-        hierarchy = self.db.cache.get("payment_method_hierarchy", {})
-        selected_method = min(
-            (row[0] for row in rate_rows if row[0] in hierarchy),
-            key=lambda x: hierarchy.get(x, float("inf")),
-            default=None,
+        selected_method = self._get_best_payment_method(rate_rows)
+        if selected_method:
+            return str(selected_method[1])
+
+        # 4. Fallback to non-standard contract
+        non_standard_rate_query = RATE_QUERIES.get("get_non_standard_rate")
+        if not non_standard_rate_query:
+            logger.error("get_non_standard_rate not found in RATE_QUERIES")
+            return "NA"
+        rate_rows = await self.db.execute_query(non_standard_rate_query, params)
+        if rate_rows and len(rate_rows) == 1:
+            rate = self._extract_single_value(rate_rows, column_index=1)
+            if rate != "NA" and float(rate) > 0:
+                return str(rate)
+
+        selected_method = self._get_best_payment_method(rate_rows)
+        if selected_method:
+            return str(selected_method[1])
+
+        # 5. If still no rate, try CET provider info
+        provider_info_result = await self._get_provider_info(params)
+        if "providerspecialtycode" in params:
+            del params["providerspecialtycode"]
+        if "providertype" in params:
+            del params["providertype"]
+
+        updated_params = self._extract_provider_info_and_update_params(
+            provider_info_result, params
         )
 
-        if selected_method is None:
-            logger.warning("No matching payment method found in hierarchy")
-            return "NA"
+        if updated_params and "contracttype" in updated_params:
+            contract_type = updated_params.pop("contracttype")
+            if contract_type == "S":
+                updated_params.pop("providerbusinessgroupnbr", None)
+                get_standard_rate = await self._get_standard_rate(updated_params)
+                rate = self._extract_single_value(get_standard_rate, column_index=0)
+                return rate
 
-        for row in rate_rows:
-            if row[0] == selected_method:
-                return str(row[1])
+        return "NA"
