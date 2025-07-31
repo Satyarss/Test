@@ -1,11 +1,10 @@
--07-30 23:36:22,969 | INFO | cost_estimator_calc_service | Cached payment_method_hierarchy with 42 entries.
-      INFO   Application startup complete.
-2025-07-30 23:36:29,950 | INFO | cost_estimator_calc_service | Async SpannerClient initialized for database: projects/anbc-hcb-dev/instances/provider-de/databases/cost-estimator-secure
-2025-07-30 23:36:29,950 | INFO | cost_estimator_calc_service | Connection pool size: 10, Max workers: 20
+  INFO   Application startup complete.
+2025-07-31 00:16:43,431 | INFO | cost_estimator_calc_service | Async SpannerClient initialized for database: projects/anbc-hcb-dev/instances/provider-de/databases/cost-estimator-secure
+2025-07-31 00:16:43,431 | INFO | cost_estimator_calc_service | Connection pool size: 10, Max workers: 20
 benefit_request benefitProductType='Medical' membershipID='5~265642286+34+44+20250101+784461+AM+39' planIdentifier='3~' serviceInfo=[ServiceInfo(serviceCodeInfo=ServiceCodeInfo(providerType=[ProviderType(code='IO')], placeOfService=[PlaceOfService(code='21')], providerSpecialty=[ProviderSpecialty(code=' ')], code='28054', type='CPT4'))]
 CostEstimatorRateCriteria fields: {'providerIdentificationNumber': <class 'str'>, 'serviceCode': <class 'str'>, 'serviceType': <class 'str'>, 'serviceLocationNumber': typing.Optional[str], 'networkId': typing.Optional[str], 'placeOfService': <class 'str'>, 'zipCode': <class 'str'>, 'isOutofNetwork': <class 'bool'>, 'providerSpecialtyCode': typing.Optional[str], 'providerType': typing.Optional[str]}
 rate_criteria CostEstimatorRateCriteria(providerIdentificationNumber='9394609', serviceCode='28054', serviceType='CPT4', serviceLocationNumber='10701', networkId='12395', placeOfService='21', zipCode='07083', isOutofNetwork=False, providerSpecialtyCode=' ', providerType='IO')
-2025-07-30 23:36:29,954 | INFO | cost_estimator_calc_service | Executing async query: SELECT MAX(RATE) AS RATE
+2025-07-31 00:16:43,435 | INFO | cost_estimator_calc_service | Executing async query: SELECT MAX(RATE) AS RATE
 FROM CET_CLAIM_BASED_AMOUNTS
 WHERE
     PROVIDER_IDENTIFICATION_NBR = @provideridentificationnumber
@@ -13,27 +12,57 @@ WHERE
     AND PLACE_OF_SERVICE_CD = @placeofservice
     AND SERVICE_CD = @servicecd
     AND SERVICE_TYPE_CD = @servicetype
-2025-07-30 23:36:29,954 | INFO | cost_estimator_calc_service | Query params: {'servicecd': '28054', 'provideridentificationnumber': '9394609', 'placeofservice': '21', 'servicetype': 'CPT4', 'networkid': '12395', 'servicelocationnumber': '10701'}
+2025-07-31 00:16:43,435 | INFO | cost_estimator_calc_service | Query params: {'servicecd': '28054', 'provideridentificationnumber': '9394609', 'placeofservice': '21', 'servicetype': 'CPT4', 'networkid': '12395', 'servicelocationnumber': '10701'}
 /Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/_default.py:76: UserWarning: Your application has authenticated using end user credentials from Google Cloud SDK without a quota project. You might receive a "quota exceeded" or "API not enabled" error. See the following page for troubleshooting: https://cloud.google.com/docs/authentication/adc-troubleshooting/user-creds. 
   warnings.warn(_CLOUD_SDK_CREDENTIALS_WARNING)
-2025-07-30 23:36:31,883 | INFO | cost_estimator_calc_service | Successfully retrieved new token
-2025-07-30 23:36:32,017 | INFO | cost_estimator_calc_service | Successfully retrieved new token
-2025-07-30 23:36:32,387 | INFO | cost_estimator_calc_service | Claim-based rate result: [[None]]
-2025-07-30 23:36:32,387 | WARNING | cost_estimator_calc_service | Empty or malformed result
-2025-07-30 23:36:32,387 | INFO | cost_estimator_calc_service | No claim-based rate found, proceeding to get provider info
-2025-07-30 23:36:32,387 | INFO | cost_estimator_calc_service | Executing async query: SELECT DISTINCT PROVIDER_BUSINESS_GROUP_NBR, PRODUCT_CD, RATING_SYSTEM_CD, EPDB_GEOGRAPHIC_AREA_CD
+2025-07-31 00:16:45,887 | INFO | cost_estimator_calc_service | Claim-based rate result: [[None]]
+2025-07-31 00:16:45,888 | WARNING | cost_estimator_calc_service | Empty or malformed result
+2025-07-31 00:16:45,888 | INFO | cost_estimator_calc_service | No claim-based rate found, proceeding to get provider info
+2025-07-31 00:16:45,888 | INFO | cost_estimator_calc_service | Executing async query: 
+                    SELECT DISTINCT PRODUCT_CD, PROVIDER_BUSINESS_GROUP_NBR
+                    FROM CET_RATES
+                    WHERE SERVICE_CD = @servicecd
+                      AND SERVICE_TYPE_CD = @servicetype
+                      AND PLACE_OF_SERVICE_CD = @placeofservice
+                      AND PROVIDER_IDENTIFICATION_NBR = @provideridentificationnumber
+                
+2025-07-31 00:16:45,888 | INFO | cost_estimator_calc_service | Query params: {'servicecd': '28054', 'provideridentificationnumber': '9394609', 'placeofservice': '21', 'servicetype': 'CPT4', 'networkid': '12395', 'servicelocationnumber': '10701'}
+/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/_default.py:76: UserWarning: Your application has authenticated using end user credentials from Google Cloud SDK without a quota project. You might receive a "quota exceeded" or "API not enabled" error. See the following page for troubleshooting: https://cloud.google.com/docs/authentication/adc-troubleshooting/user-creds. 
+  warnings.warn(_CLOUD_SDK_CREDENTIALS_WARNING)
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1753939006.594200 2488076 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+2025-07-31 00:16:47,044 | INFO | cost_estimator_calc_service | Successfully retrieved new token
+2025-07-31 00:16:47,045 | INFO | cost_estimator_calc_service | Successfully retrieved new token
+2025-07-31 00:16:49,061 | ERROR | cost_estimator_calc_service | Error executing async read-only query: 400 Unrecognized name: PROVIDER_IDENTIFICATION_NBR [at 7:27]\n                      AND PROVIDER_IDENTIFICATION_NBR = @provideridentificati...\n                          ^ [locale: "en-US"
+message: "Unrecognized name: PROVIDER_IDENTIFICATION_NBR [at 7:27]\n                      AND PROVIDER_IDENTIFICATION_NBR = @provideridentificati...\n                          ^"
+]
+2025-07-31 00:16:49,061 | ERROR | cost_estimator_calc_service | Query: 
+                    SELECT DISTINCT PRODUCT_CD, PROVIDER_BUSINESS_GROUP_NBR
+                    FROM CET_RATES
+                    WHERE SERVICE_CD = @servicecd
+                      AND SERVICE_TYPE_CD = @servicetype
+                      AND PLACE_OF_SERVICE_CD = @placeofservice
+                      AND PROVIDER_IDENTIFICATION_NBR = @provideridentificationnumber
+                
+2025-07-31 00:16:49,061 | ERROR | cost_estimator_calc_service | Params: {'servicecd': '28054', 'provideridentificationnumber': '9394609', 'placeofservice': '21', 'servicetype': 'CPT4', 'networkid': '12395', 'servicelocationnumber': '10701'}
+2025-07-31 00:16:49,061 | ERROR | cost_estimator_calc_service | Exception type: <class 'google.api_core.exceptions.InvalidArgument'>
+2025-07-31 00:16:49,061 | ERROR | cost_estimator_calc_service | Exception details: 400 Unrecognized name: PROVIDER_IDENTIFICATION_NBR [at 7:27]\n                      AND PROVIDER_IDENTIFICATION_NBR = @provideridentificati...\n                          ^ [locale: "en-US"
+message: "Unrecognized name: PROVIDER_IDENTIFICATION_NBR [at 7:27]\n                      AND PROVIDER_IDENTIFICATION_NBR = @provideridentificati...\n                          ^"
+]
+2025-07-31 00:16:49,061 | INFO | cost_estimator_calc_service | Extraction result from CET_RATES: []
+2025-07-31 00:16:49,061 | WARNING | cost_estimator_calc_service | Could not get provider info from CET_RATES, falling back to _get_provider_info: CET_RATES did not return any product/provider info
+2025-07-31 00:16:49,062 | INFO | cost_estimator_calc_service | Executing async query: SELECT DISTINCT PROVIDER_BUSINESS_GROUP_NBR, PRODUCT_CD, RATING_SYSTEM_CD, EPDB_GEOGRAPHIC_AREA_CD
 FROM CET_PROVIDERS
 WHERE
     PROVIDER_IDENTIFICATION_NBR = @provideridentificationnumber
     AND NETWORK_ID = @networkid
     AND SERVICE_LOCATION_NBR = @servicelocationnumber
-2025-07-30 23:36:32,387 | INFO | cost_estimator_calc_service | Query params: {'servicecd': '28054', 'provideridentificationnumber': '9394609', 'placeofservice': '21', 'servicetype': 'CPT4', 'networkid': '12395', 'servicelocationnumber': '10701'}
+2025-07-31 00:16:49,062 | INFO | cost_estimator_calc_service | Query params: {'servicecd': '28054', 'provideridentificationnumber': '9394609', 'placeofservice': '21', 'servicetype': 'CPT4', 'networkid': '12395', 'servicelocationnumber': '10701'}
 /Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/_default.py:76: UserWarning: Your application has authenticated using end user credentials from Google Cloud SDK without a quota project. You might receive a "quota exceeded" or "API not enabled" error. See the following page for troubleshooting: https://cloud.google.com/docs/authentication/adc-troubleshooting/user-creds. 
   warnings.warn(_CLOUD_SDK_CREDENTIALS_WARNING)
-WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
-I0000 00:00:1753936592.391821 2425450 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
-2025-07-30 23:36:34,766 | INFO | cost_estimator_calc_service | Provider info result: [['100004781', 'MC', 'REF', 'GN02']]
-2025-07-30 23:36:34,766 | INFO | cost_estimator_calc_service | Executing default rate query: SELECT payment_method_cd, RATE
+I0000 00:00:1753939009.064917 2488076 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+2025-07-31 00:16:51,430 | INFO | cost_estimator_calc_service | Provider info result: [['100004781', 'MC', 'REF', 'GN02']]
+2025-07-31 00:16:51,431 | INFO | cost_estimator_calc_service | Executing default rate query: SELECT payment_method_cd, RATE
 FROM CET_RATES
 WHERE
     SERVICE_CD = @servicecd
@@ -42,7 +71,7 @@ WHERE
     AND PRODUCT_CD = @productcd
     AND PROVIDER_BUSINESS_GROUP_NBR IN UNNEST(@providerbusinessgroupnbr)
     AND CONTRACT_TYPE = 'D' with params: {'servicecd': '28054', 'placeofservice': '21', 'servicetype': 'CPT4', 'productcd': 'MC', 'ratesystemcd': 'REF', 'geographicareacd': 'GN02', 'providerbusinessgroupnbr': ['100004781']}
-2025-07-30 23:36:34,767 | INFO | cost_estimator_calc_service | Executing async query: SELECT payment_method_cd, RATE
+2025-07-31 00:16:51,431 | INFO | cost_estimator_calc_service | Executing async query: SELECT payment_method_cd, RATE
 FROM CET_RATES
 WHERE
     SERVICE_CD = @servicecd
@@ -51,13 +80,13 @@ WHERE
     AND PRODUCT_CD = @productcd
     AND PROVIDER_BUSINESS_GROUP_NBR IN UNNEST(@providerbusinessgroupnbr)
     AND CONTRACT_TYPE = 'D'
-2025-07-30 23:36:34,767 | INFO | cost_estimator_calc_service | Query params: {'servicecd': '28054', 'placeofservice': '21', 'servicetype': 'CPT4', 'productcd': 'MC', 'ratesystemcd': 'REF', 'geographicareacd': 'GN02', 'providerbusinessgroupnbr': ['100004781']}
+2025-07-31 00:16:51,431 | INFO | cost_estimator_calc_service | Query params: {'servicecd': '28054', 'placeofservice': '21', 'servicetype': 'CPT4', 'productcd': 'MC', 'ratesystemcd': 'REF', 'geographicareacd': 'GN02', 'providerbusinessgroupnbr': ['100004781']}
 /Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/_default.py:76: UserWarning: Your application has authenticated using end user credentials from Google Cloud SDK without a quota project. You might receive a "quota exceeded" or "API not enabled" error. See the following page for troubleshooting: https://cloud.google.com/docs/authentication/adc-troubleshooting/user-creds. 
   warnings.warn(_CLOUD_SDK_CREDENTIALS_WARNING)
-I0000 00:00:1753936595.946082 2425450 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
-2025-07-30 23:36:38,457 | INFO | cost_estimator_calc_service | return rows: []
-2025-07-30 23:36:38,457 | INFO | cost_estimator_calc_service | No rate rows found for default payment methods
-2025-07-30 23:36:38,458 | INFO | cost_estimator_calc_service | Executing async query: SELECT payment_method_cd, RATE
+I0000 00:00:1753939011.434975 2488076 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+2025-07-31 00:16:53,695 | INFO | cost_estimator_calc_service | return rows: []
+2025-07-31 00:16:53,695 | INFO | cost_estimator_calc_service | No rate rows found for default payment methods
+2025-07-31 00:16:53,695 | INFO | cost_estimator_calc_service | Executing async query: SELECT payment_method_cd, RATE
 FROM CET_RATES
 WHERE
     SERVICE_CD = @servicecd
@@ -66,9 +95,9 @@ WHERE
     AND PRODUCT_CD = @productcd
     AND PROVIDER_BUSINESS_GROUP_NBR IN UNNEST(@providerbusinessgroupnbr)
     AND CONTRACT_TYPE IN ('C', 'N')
-2025-07-30 23:36:38,458 | INFO | cost_estimator_calc_service | Query params: {'servicecd': '28054', 'placeofservice': '21', 'servicetype': 'CPT4', 'productcd': 'MC', 'ratesystemcd': 'REF', 'geographicareacd': 'GN02', 'providerbusinessgroupnbr': ['100004781']}
+2025-07-31 00:16:53,695 | INFO | cost_estimator_calc_service | Query params: {'servicecd': '28054', 'placeofservice': '21', 'servicetype': 'CPT4', 'productcd': 'MC', 'ratesystemcd': 'REF', 'geographicareacd': 'GN02', 'providerbusinessgroupnbr': ['100004781']}
 /Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/_default.py:76: UserWarning: Your application has authenticated using end user credentials from Google Cloud SDK without a quota project. You might receive a "quota exceeded" or "API not enabled" error. See the following page for troubleshooting: https://cloud.google.com/docs/authentication/adc-troubleshooting/user-creds. 
   warnings.warn(_CLOUD_SDK_CREDENTIALS_WARNING)
-I0000 00:00:1753936598.482746 2425450 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
-2025-07-30 23:36:40,806 | INFO | cost_estimator_calc_service | No rate rows found for non-standard payment methods
-      INFO   127.0.0.1:55808 - "POST /costestimator/v1/rate HTTP/1.1" 200
+I0000 00:00:1753939013.699495 2488076 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+2025-07-31 00:16:56,290 | INFO | cost_estimator_calc_service | No rate rows found for non-standard payment methods
+      INFO   127.0.0.1:58278 - "POST /costestimator/v1/rate HTTP/1.1" 200
