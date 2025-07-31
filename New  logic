@@ -1,56 +1,23 @@
-        default_rate_query = RATE_QUERIES.get("get_default_rate")
-        if not default_rate_query:
-            logger.error("get_default_rate not found in RATE_QUERIES")
-            return "NA"
-        logger.info(f"Executing default rate query: {default_rate_query} with params: {params}")
-
-        rate_rows = await self.db.execute_query(default_rate_query, params)
-        logger.info(f"return rows: {rate_rows}")
-        if not rate_rows:
-            logger.info("No rate rows found for default payment methods")
+    try:
+        extraction_query = """
+            SELECT DISTINCT PRODUCT_CD, PROVIDER_BUSINESS_GROUP_NBR
+            FROM CET_RATES
+            WHERE SERVICE_CD = @servicecd
+              AND SERVICE_TYPE_CD = @servicetype
+              AND PLACE_OF_SERVICE_CD = @placeofservice
+              AND PROVIDER_IDENTIFICATION_NBR = @provideridentificationnumber
+        """
+        extraction_result = await self.db.execute_query(extraction_query, params)
+        logger.info(f"Extraction result from CET_RATES: {extraction_result}")
+        
+        if extraction_result:
+            updated_params = params.copy()
+            updated_params["productcd"] = extraction_result[0][0]
+            updated_params["providerbusinessgroupnbr"] = [extraction_result[0][1]]
+            updated_params["contracttype"] = "N"  # default contract type as fallback
+            logger.info("Successfully populated productcd and providerbusinessgroupnbr from CET_RATES")
         else:
-            if len(rate_rows) == 1:
-                rate = self._extract_single_value(rate_rows, column_index=1)
-                if rate is not None and str(rate).strip() != "" and self._is_float(rate) and float(rate) > 0:
-                    return str(rate)
-                else:
-                    logger.warning("Single rate row found but rate is invalid or empty")
+            raise Exception("CET_RATES did not return any product/provider info")
 
-        selected_method = self._get_best_payment_method(rate_rows)
-        if selected_method:
-            return str(selected_method[1])
-
-        # Fallback to non-standard rate
-        non_standard_rate_query = RATE_QUERIES.get("get_non_standard_rate")
-        if not non_standard_rate_query:
-            logger.error("get_non_standard_rate not found in RATE_QUERIES")
-            return "NA"
-
-        rate_rows = await self.db.execute_query(non_standard_rate_query, params)
-        if not rate_rows:
-            logger.info("No rate rows found for non-standard payment methods")
-            return "NA"
-
-        if len(rate_rows) == 1:
-            rate = self._extract_single_value(rate_rows, column_index=1)
-            if rate is not None and str(rate).strip() != "" and self._is_float(rate) and float(rate) > 0:
-                return str(rate)
-            else:
-                logger.warning("Single non-standard rate row found but rate is invalid or empty")
-
-        selected_method = self._get_best_payment_method(rate_rows)
-        if selected_method:
-            return str(selected_method[1])
-
-
-
-        if "productcd" not in params or "providerbusinessgroupnbr" not in params:
-            logger.info("Missing productcd or providerbusinessgroupnbr; calling _get_provider_info()")
-            provider_info_result = await self._get_provider_info(params)
-            logger.info(f"Provider info result: {provider_info_result}")
-            updated_params = self._extract_provider_info_and_update_params(provider_info_result, params)
-            if not updated_params:
-                logger.warning("Unable to extract provider info; returning NA")
-                return "NA"
-        else:
-            updated_params = params
+    except Exception as e:
+        logger.warning(f"Could not get provider info from CET_RATES, falling back to _get_provider_info: {str(e)}")
