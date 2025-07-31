@@ -1,23 +1,14 @@
-    try:
-        extraction_query = """
-            SELECT DISTINCT PRODUCT_CD, PROVIDER_BUSINESS_GROUP_NBR
-            FROM CET_RATES
-            WHERE SERVICE_CD = @servicecd
-              AND SERVICE_TYPE_CD = @servicetype
-              AND PLACE_OF_SERVICE_CD = @placeofservice
-              AND PROVIDER_IDENTIFICATION_NBR = @provideridentificationnumber
-        """
-        extraction_result = await self.db.execute_query(extraction_query, params)
-        logger.info(f"Extraction result from CET_RATES: {extraction_result}")
-        
-        if extraction_result:
-            updated_params = params.copy()
-            updated_params["productcd"] = extraction_result[0][0]
-            updated_params["providerbusinessgroupnbr"] = [extraction_result[0][1]]
-            updated_params["contracttype"] = "N"  # default contract type as fallback
-            logger.info("Successfully populated productcd and providerbusinessgroupnbr from CET_RATES")
-        else:
-            raise Exception("CET_RATES did not return any product/provider info")
+    if "productcd" not in params or "providerbusinessgroupnbr" not in params:
+        try_query = RATE_QUERIES.get("try_extract_default_params")
+        if try_query:
+            try_result = await self.db.execute_query(try_query, params)
+            logger.info(f"Fallback CET_RATES result for default params: {try_result}")
 
-    except Exception as e:
-        logger.warning(f"Could not get provider info from CET_RATES, falling back to _get_provider_info: {str(e)}")
+            if try_result and len(try_result[0]) >= 2:
+                params["productcd"] = try_result[0][0]
+                params["providerbusinessgroupnbr"] = [try_result[0][1]]  # list for UNNEST
+                logger.info("Extracted productcd and providerbusinessgroupnbr from CET_RATES")
+            else:
+                logger.warning("Fallback CET_RATES did not return valid values")
+        else:
+            logger.error("try_extract_default_params not found in RATE_QUERIES")
