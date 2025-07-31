@@ -1,4 +1,4 @@
-default_rate_query = RATE_QUERIES.get("get_default_rate")
+        default_rate_query = RATE_QUERIES.get("get_default_rate")
         if not default_rate_query:
             logger.error("get_default_rate not found in RATE_QUERIES")
             return "NA"
