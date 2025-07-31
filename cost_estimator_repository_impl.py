@@ -4,122 +4,418 @@ from app.config.database_config import spanner_config
 from app.config.queries import RATE_QUERIES
 from app.core.logger import logger
 from app.models.rate_criteria import CostEstimatorRateCriteria
+from typing import Any, Union, Optional
+from app.core.constants import PAYMENT_METHOD_HIERARCHY_CACHE_KEY
+
+
 
 class CostEstimatorRepositoryImpl(CostEstimatorRepositoryInterface):
     def __init__(self):
         """Initialize repository with Spanner client."""
         if not spanner_config.is_valid():
-            raise ValueError("Invalid Spanner configuration. Please check environment variables.")
-        
+            raise ValueError(
+                "Invalid Spanner configuration. Please check environment variables."
+            )
+
         self.db = SpannerClient(
             project_id=spanner_config.project_id,
             instance_id=spanner_config.instance_id,
-            database_id=spanner_config.database_id
+            database_id=spanner_config.database_id,
+            max_workers=20,  # Increase for better parallelism
+            pool_size=10,  # More connections for concurrent requests
         )
-   
-  #  async def get_rate(self, is_out_of_network: bool, rate_criteria: CostEstimatorRateCriteria, *args, **kwargs) -> float:
+
+    async def get_rate(
+        self, rate_criteria: CostEstimatorRateCriteria, *args, **kwargs
+    ) -> str:
         """
         Retrieve the rate based on network status and criteria.
-        
+
         Args:
             is_out_of_network: Whether to get out-of-network rate
             rate_criteria: Criteria for rate lookup
             *args: Variable length argument list
             **kwargs: Arbitrary keyword arguments
-            
+
         Returns:
             float: The calculated rate
         """
-        # Try claim-based rate first
-        """
-        params = {
-            "service_cd": rate_criteria.service_cd,
-            "provider_business_group_nbr": rate_criteria.provider_business_group_nbr,
-            "place_of_service_cd": rate_criteria.place_of_service_cd,
-            "product_cd": rate_criteria.product_cd,
-        }
-         
 
-        # Try claim-based rate first
-        claim_result = await self._get_claim_based_rate(params)
-        if claim_result and len(claim_result) > 0 and claim_result[0].get("RATE") is not None:
-            return float(claim_result[0]["RATE"])
+        # Try claim-based rate first - provide default values for missing parameters
+        params = self._build_rate_params(rate_criteria)
 
-        # If not found, try non-standard rate
-        non_standard_result = await self._get_non_standard_rate(params)
-        if non_standard_result and len(non_standard_result) > 0 and non_standard_result[0].get("RATE") is not None:
-            return float(non_standard_result[0]["RATE"])
-
-        # If still not found, try standard rate
-        standard_result = await self._get_standard_rate(params)
-        if standard_result and len(standard_result) > 0 and standard_result[0].get("RATE") is not None:
-            return float(standard_result[0]["RATE"])
-
-        async def _get_claim_based_rate(self, params):
-            claim_query = RATE_QUERIES.get("get_claim_based_rate")
-            return await self.db.execute_query(claim_query, params)
-
-        async def _get_non_standard_rate(self, params):
-            non_standard_query = RATE_QUERIES.get("get_non_standard_rate")
-            return await self.db.execute_query(non_standard_query, params)
-
-        async def _get_standard_rate(self, params):
-            standard_query = RATE_QUERIES.get("get_standard_rate")
-            return await self.db.execute_query(standard_query, params)
-
-       
-        return 100.0  # Default rate if no match found
-    
-        """
-    
-    async def get_rate(self, is_out_of_network: bool, rate_criteria: CostEstimatorRateCriteria, *args, **kwargs) -> float:
-    # STEP 1: Pull provider data directly (no separate method)
-        provider_query = RATE_QUERIES.get("get_provider_info")
-        provider_params = {
-            "provider_identification_nbr": rate_criteria.provider_identification_nbr,
-            "network_id": rate_criteria.networkId,
-            "service_location_nbr": rate_criteria.serviceLocationNumber
-        }
-        provider_info = await self.db.execute_query(provider_query, provider_params)
-        if provider_info and len(provider_info) > 0:
-            rate_criteria.provider_business_group_nbr = provider_info[0].get("PROVIDER_BUSINESS_GROUP_NBR")
-            rate_criteria.product_cd = provider_info[0].get("PRODUCT_CD")
-            rate_criteria.rating_system_cd = provider_info[0].get("RATING_SYSTEM_CD")
-            rate_criteria.geographic_area_cd = provider_info[0].get("GEOGRAPHIC_AREA_CD")
-
-        # STEP 2: Claim-based rate
-        claim_query = RATE_QUERIES.get("get_claim_based_rate")
-        claim_result = await self.db.execute_query(claim_query, vars(rate_criteria))
-        if claim_result and claim_result[0].get("RATE") is not None:
-            return float(claim_result[0]["RATE"])
-
-        # STEP 3: Non-standard rate
-        if rate_criteria.provider_business_group_nbr:
-            non_standard_query = RATE_QUERIES.get("get_non_standard_rate")
-            non_standard_result = await self.db.execute_query(non_standard_query, vars(rate_criteria))
-            if non_standard_result and non_standard_result[0].get("RATE") is not None:
-                return float(non_standard_result[0]["RATE"])
-
-        # STEP 4: Standard rate
-        if rate_criteria.provider_business_group_nbr:
-            standard_query = RATE_QUERIES.get("get_standard_rate")
+        # Try out-of-network rate first
+        if rate_criteria.isOutofNetwork:
+            out_of_network_result = await self._get_out_of_network_rate(params)
+            logger.info(f"Out-of-network rate result: {out_of_network_result}")
+            rate = self._extract_single_value(out_of_network_result, column_index=0)
+            if rate != "NA" and rate is not None and self._is_float(rate) and float(rate) > 0:
+                logger.info(f"Successfully extracted out-of-network rate: {rate}")
+                return rate
+            else:
+                logger.info("No out-of-network rate found")
         else:
-            standard_query = RATE_QUERIES.get("get_standard_rate_without_pbg")
+            # Try claim-based rate next
+            claim_result = await self._get_claim_based_rate(params)
+            logger.info(f"Claim-based rate result: {claim_result}")
 
-        standard_result = await self.db.execute_query(standard_query, vars(rate_criteria))
-        if standard_result and standard_result[0].get("RATE") is not None:
-            return float(standard_result[0]["RATE"])
+            # Check if claim-based rate was found
+            rate = self._extract_single_value(claim_result, column_index=0)
+            if rate != "NA" and rate is not None and self._is_float(rate) and float(rate) > 0:
+                logger.info(f"Successfully extracted claim-based rate: {rate}")
+                return rate
+            else:
+                logger.info(
+                    "No claim-based rate found, proceeding to get provider info"
+                )
 
-        # STEP 5: Default contract rate (embedded, not as a separate function)
-        default_query = RATE_QUERIES.get("get_default_contract_rate")
-        default_result = await self.db.execute_query(default_query, vars(rate_criteria))
-        if default_result and default_result[0].get("RATE") is not None:
-            return float(default_result[0]["RATE"])
+            # Initialize updated_params before try block
+            updated_params = None
+            
+            try:
+                extraction_query = """
+                    SELECT DISTINCT PRODUCT_CD, PROVIDER_BUSINESS_GROUP_NBR
+                    FROM CET_RATES
+                    WHERE SERVICE_CD = @servicecd
+                      AND SERVICE_TYPE_CD = @servicetype
+                      AND PLACE_OF_SERVICE_CD = @placeofservice
+                      AND PROVIDER_BUSINESS_GROUP_NBR = @providerbusinessgroupnbr
+                """
+        
+                extraction_result = await self.db.execute_query(extraction_query, params)
+                logger.info(f"Extraction result from CET_RATES: {extraction_result}")
+        
+                if extraction_result:
+                    updated_params = params.copy()
+                    updated_params["productcd"] = extraction_result[0][0]
+                    updated_params["providerbusinessgroupnbr"] = [extraction_result[0][1]]
+                    updated_params["contracttype"] = "N"  # default contract type as fallback
+                    logger.info("Successfully populated productcd and providerbusinessgroupnbr from CET_RATES")
+                else:
+                    raise Exception("CET_RATES did not return any product/provider info")
 
-        # Final fallback
-        return 0.0
+            except Exception as e:
+                logger.warning(f"Could not get provider info from CET_RATES, falling back to _get_provider_info: {str(e)}")
+                params = self._add_optional_provider_params(rate_criteria, params)
+                provider_info_result = await self._get_provider_info(params)
+                logger.info(f"Provider info result: {provider_info_result}")
+                if "providerspecialtycode" in params:
+                    del params["providerspecialtycode"]
+                if "providertype" in params:
+                    del params["providertype"]
 
+                # Extract provider information and update params
+                updated_params = self._extract_provider_info_and_update_params(
+                    provider_info_result, params
+                )
 
+            if updated_params and "contracttype" in updated_params:
+                contract_type = updated_params["contracttype"]
+                del updated_params["contracttype"]
+                if contract_type == "S":
+                    del updated_params["providerbusinessgroupnbr"]
+                    get_standard_rate = await self._get_standard_rate(updated_params)
+                    rate = self._extract_single_value(get_standard_rate, column_index=0)
+                    if rate != "NA" and rate is not None and self._is_float(rate) and float(rate) > 0:
+                        return rate
+                    else:
+                        logger.warning("Standard rate is invalid or empty, returning NA")
+                        return "NA"
+                else:
+                    # Get default rate and non-standard rate with proper fallback logic
+                    default_rate_query = RATE_QUERIES.get("get_default_rate")
+                    if not default_rate_query:
+                        logger.error("get_default_rate not found in RATE_QUERIES")
+                        return "NA"
+                    logger.info(f"Executing default rate query: {default_rate_query} with params: {updated_params}")
+                    
+                    rate_rows = await self.db.execute_query(default_rate_query, updated_params)
+                    logger.info(f"return rows: {rate_rows}")
+                    if not rate_rows:
+                        logger.info("No rate rows found for default payment methods")
+                        # Fallback to non-standard rate
+                        non_standard_rate_query = RATE_QUERIES.get("get_non_standard_rate")
+                        if not non_standard_rate_query:
+                            logger.error("get_non_standard_rate not found in RATE_QUERIES")
+                            return "NA"
 
+                        rate_rows = await self.db.execute_query(non_standard_rate_query, updated_params)
+                        if not rate_rows:
+                            logger.info("No rate rows found for non-standard payment methods")
+                            return "NA"
+                    
+                    if len(rate_rows) == 1:
+                        rate = self._extract_single_value(rate_rows, column_index=1)
+                        if rate is not None and str(rate).strip() != "" and self._is_float(rate) and float(rate) > 0:
+                            return str(rate)
+                        else:
+                            logger.warning("Single rate row found but rate is invalid or empty")
+                    
+                    # Use hierarchy if multiple payment methods found
+                    selected_method = self._get_best_payment_method(rate_rows)
+                    if selected_method and len(selected_method) > 1:
+                        rate_value = selected_method[1]
+                        if rate_value is not None and self._is_float(rate_value) and float(rate_value) > 0:
+                            return str(rate_value)
+                        else:
+                            logger.warning("Selected payment method has invalid rate")
 
+                    return "NA"
+                    
+                return "NA"
+
+    async def _get_provider_info(self, params):
+        try:
+            provider_info_query = RATE_QUERIES.get("get_provider_info")
+            if not provider_info_query:
+                logger.error("get_provider_info not found in RATE_QUERIES")
+                return []
+            if "providerspecialtycode" in params:
+                provider_info_query += "\n\tAND SPECIALTY_CD = @providerspecialtycode"
+            if "providertype" in params:
+                provider_info_query += "\n\tAND PROVIDER_TYPE_CD = @providertype"
+            result = await self.db.execute_query(provider_info_query, params)
+            return result
+        except Exception as e:
+            logger.error(f"Error in _get_provider_info: {str(e)}")
+            return []
+
+    async def _get_out_of_network_rate(self, params):
+        try:
+            out_of_network_query = RATE_QUERIES.get("get_out_of_network_rate")
+            if not out_of_network_query:
+                logger.error("get_out_of_network_rate not found in RATE_QUERIES")
+                return []
+            result = await self.db.execute_query(out_of_network_query, params)
+            return result
+        except Exception as e:
+            logger.error(f"Error in _get_out_of_network_rate: {str(e)}")
+            return []
+
+    async def _get_claim_based_rate(self, params):
+        try:
+
+            claim_query = RATE_QUERIES.get("get_claim_based_rate")
+            if not claim_query:
+                logger.error("get_claim_based_rate not found in RATE_QUERIES")
+                return []
+            # Execute the actual query with parameters
+            result = await self.db.execute_query(claim_query, params)
+
+            return result
+        except Exception as e:
+            logger.error(f"Error in _get_claim_based_rate: {str(e)}")
+            return []
+
+    async def _get_non_standard_rate(self, params):
+        try:
+            non_standard_query = RATE_QUERIES.get("get_non_standard_rate")
+            if not non_standard_query:
+                logger.error("get_non_standard_rate not found in RATE_QUERIES")
+                return []
+            result = await self.db.execute_query(non_standard_query, params)
+            return result
+        except Exception as e:
+            logger.error(f"Error in _get_non_standard_rate: {str(e)}")
+            return []
+
+    async def _get_standard_rate(self, params):
+        try:
+            standard_query = RATE_QUERIES.get("get_standard_rate")
+            if not standard_query:
+                logger.error("get_standard_rate not found in RATE_QUERIES")
+                return []
+            result = await self.db.execute_query(standard_query, params)
+            return result
+        except Exception as e:
+            logger.error(f"Error in _get_standard_rate: {str(e)}")
+            return []
+
+    async def _get_default_rate(self, params):
+        try:
+            default_query = RATE_QUERIES.get("get_default_rate")
+            if not default_query:
+                logger.error("get_default_rate not found in RATE_QUERIES")
+                return []
+            result = await self.db.execute_query(default_query, params)
+            return result
+        except Exception as e:
+            logger.error(f"Error in _get_default_rate: {str(e)}")
+            return []
+
+    def _get_best_payment_method(self, rate_rows):
    
+        if not rate_rows:
+            return None
+
+        hierarchy = self.db._cache.get(PAYMENT_METHOD_HIERARCHY_CACHE_KEY, {})
+        logger.info(f"Evaluating {len(rate_rows)} payment methods using hierarchy")
+
+        valid_rows = [row for row in rate_rows if row[0] in hierarchy]
+        if not valid_rows:
+            logger.warning("No valid payment method found in cache hierarchy")
+            return None
+
+        selected_row = min(valid_rows, key=lambda r: hierarchy.get(r[0], float("inf")))
+
+        logger.info(f"Selected payment method: {selected_row[0]} with rate: {selected_row[1]}")
+        return selected_row
+    
+    def _extract_single_value(self, result, column_index=0) -> str:
+        """
+        Extract a single value from query result.
+
+        Args:
+            result: Query result (list of lists)
+            column_index: Index of the column to extract (default 0)
+
+        Returns:
+            Extracted value or NA
+        """
+        if not result or not isinstance(result, list) or not result[0]:
+            logger.warning("Empty or malformed result")
+            return "NA"
+
+        first_row = result[0]
+
+        if column_index >= len(first_row):
+            logger.warning(f"Column index {column_index} out of range for row {first_row}")
+            return "NA"
+
+        value = first_row[column_index]
+        logger.info(f"Extracted value: {value}")
+
+        if value is None:
+            logger.info("Value is None, returning NA")
+            return "NA"
+
+        try:
+            return str(value)
+        except Exception as e:
+            logger.warning(f"Error converting value to string: {e}")
+            return "NA"
+
+    def _extract_provider_info_and_update_params(self, result, params):
+        """
+        Extract provider information and update query parameters.
+
+        Args:
+            result: Query result with format [['PBG_NUMBER', 'PRODUCT_CD', 'RATING_SYSTEM_CD', 'GEOGRAPHIC_AREA_CD'], ...]
+            params: Original query parameters
+
+        Returns:
+            Updated parameters dictionary with provider data, or None if no provider data found
+        """
+        if not result or len(result) == 0:
+            logger.info("No provider info results found")
+            return None
+
+        updated_params = params.copy()
+
+        # Remove keys from dictionary using del
+        if "provideridentificationnumber" in updated_params:
+            del updated_params["provideridentificationnumber"]
+        if "networkid" in updated_params:
+            del updated_params["networkid"]
+        if "servicelocationnumber" in updated_params:
+            del updated_params["servicelocationnumber"]
+
+        # Get first row of provider data
+        providerbusinessgroupnbr_list = []
+        for i, row in enumerate(result):
+            if i == 0:
+                if len(row) >= 4:
+                    # Determine contract type based on provider_business_group_nbr
+                    if row[0] == "None" or row[0] == "" or not row[0]:
+                        contract_type = "S"
+                    else:
+                        contract_type = "N"
+                    updated_params.update(
+                        {
+                            "productcd": row[1],  # Product Code
+                            "ratesystemcd": row[2],  # Rating System Code
+                            "geographicareacd": row[3],  # Geographic Area Code
+                            "contracttype": contract_type,
+                        }
+                    )
+                else:
+                    logger.warning(f"Row has insufficient columns: {row}")
+                    return None
+            providerbusinessgroupnbr_list.append(row[0])
+
+        updated_params.update(
+            {"providerbusinessgroupnbr": providerbusinessgroupnbr_list}
+        )
+
+        return updated_params
+
+    def _build_rate_params(self, rate_criteria: CostEstimatorRateCriteria) -> dict:
+        """
+        Build rate parameters from rate criteria.
+
+        Args:
+            rate_criteria: Rate criteria object
+
+        Returns:
+            Dictionary of rate parameters
+        """
+        if rate_criteria.isOutofNetwork:
+            return {
+                "servicecd": rate_criteria.serviceCode,
+                "placeofservice": rate_criteria.placeOfService,
+                "servicetype": rate_criteria.serviceType,
+                "zipcode": rate_criteria.zipCode,
+            }
+        else:
+            return {
+                "servicecd": rate_criteria.serviceCode,
+                "provideridentificationnumber": rate_criteria.providerIdentificationNumber,
+                "placeofservice": rate_criteria.placeOfService,
+                "servicetype": rate_criteria.serviceType,
+                "networkid": rate_criteria.networkId,
+                "servicelocationnumber": rate_criteria.serviceLocationNumber,
+                "providerbusinessgroupnbr": getattr(rate_criteria, 'providerBusinessGroupNumber', ''),
+            }
+        
+    def _add_optional_provider_params(
+        self, rate_criteria: CostEstimatorRateCriteria, params
+    ) -> dict:
+        if (
+            rate_criteria.providerSpecialtyCode
+            and rate_criteria.providerSpecialtyCode != ""
+        ):
+            params["providerspecialtycode"] = rate_criteria.providerSpecialtyCode
+            logger.info("added providerspecialtycode")
+        if rate_criteria.providerType and rate_criteria.providerType != "":
+            params["providertype"] = rate_criteria.providerType
+            logger.info("added providertype param")
+        return params
+    
+    async def load_payment_method_hierarchy(self):
+        """Load payment method hierarchy from Spanner into cache."""
+        query = "SELECT payment_method_cd, score FROM payment_method_hierarchy"
+        try:
+            result = await self.db.execute_query(query)
+            
+            hierarchy = {
+                row[0]: row[1]
+                for row in result
+                if row[0] is not None and row[1] is not None
+            }
+            self.db._cache[PAYMENT_METHOD_HIERARCHY_CACHE_KEY] = hierarchy
+            logger.info(f"Cached payment_method_hierarchy with {len(hierarchy)} entries.")
+        except Exception as e:
+            logger.error(f"Failed to load payment method hierarchy: {str(e)}")
+
+    def get_cached_payment_method_score(self, payment_method_cd: str) -> Optional[int]:
+        return self.db._cache.get(PAYMENT_METHOD_HIERARCHY_CACHE_KEY, {}).get(payment_method_cd)
+    
+    def _is_float(self, value: Any) -> bool:
+        try:
+            float(value)
+            return True
+        except (TypeError, ValueError):
+            return False
+        
+
+    
