@@ -1,0 +1,72 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Enable inline plotting (if using Jupyter Notebook)
+%matplotlib inline
+
+file_path = "C:/Desktop/Analysis/20250618_Top_Kyruss_Search_Sample Dataset.csv"
+df = pd.read_csv(file_path)
+df.columns = df.columns.str.strip().str.lower()
+
+df["allowed_amt_zero"] = df["allowed_amt"] == 0
+df["billed_gt_allowed"] = df["billed_amt"] > df["allowed_amt"]
+
+# Outlier detection using 1st and 99th percentiles
+lower_bound = df["allowed_amt"].quantile(0.01)
+upper_bound = df["allowed_amt"].quantile(0.99)
+df["allowed_amt_outlier"] = (df["allowed_amt"] < lower_bound) | (df["allowed_amt"] > upper_bound)
+
+total_records = len(df)
+allowed_zero = df["allowed_amt_zero"].sum()
+billed_gt_allowed = df["billed_gt_allowed"].sum()
+outliers = df["allowed_amt_outlier"].sum()
+clean_records = total_records - df[["allowed_amt_zero", "billed_gt_allowed", "allowed_amt_outlier"]].any(axis=1).sum()
+
+summary = {
+    "Total Records": total_records,
+    "Allowed Amount = 0": allowed_zero,
+    "Billed > Allowed": billed_gt_allowed,
+    "Allowed Amount Outliers": outliers,
+    "Clean Records": clean_records
+}
+summary_df = pd.DataFrame([summary])
+display(summary_df)
+
+plt.figure(figsize=(6, 6))
+plt.pie([allowed_zero, billed_gt_allowed, outliers, clean_records],
+        labels=["Allowed = 0", "Billed > Allowed", "Outliers", "Clean"],
+        autopct='%1.1f%%', startangle=140)
+plt.title("Validation Summary - Kyruss Dataset")
+plt.tight_layout()
+plt.show()
+plt.savefig("C:/Desktop/Analysis/kyruss/validation_summary.png")
+
+flag_counts = pd.Series({
+    "Allowed = 0": allowed_zero,
+    "Billed > Allowed": billed_gt_allowed,
+    "Outliers": outliers,
+    "Clean": clean_records
+})
+plt.figure(figsize=(8, 5))
+sns.barplot(x=flag_counts.index, y=flag_counts.values)
+plt.title("Flag Counts - Kyruss Dataset")
+plt.ylabel("Number of Records")
+plt.xticks(rotation=15)
+plt.tight_layout()
+plt.show()
+plt.savefig("C:/Desktop/Analysis/kyruss/Flag_counts.png")
+
+top_services = df['service_cd'].value_counts().head(10)
+plt.figure(figsize=(8, 5))
+sns.barplot(x=top_services.index.astype(str), y=top_services.values)
+plt.title("Top 10 Service Codes in Kyruss Dataset")
+plt.xlabel("Service Code")
+plt.ylabel("Record Count")
+plt.tight_layout()
+plt.show()
+plt.savefig("C:/Desktop/Analysis/kyruss/Top_service_cd.png")
+
+output_dir = "C:/Desktop/Analysis/kyruss/"
+df[df[["allowed_amt_zero", "billed_gt_allowed", "allowed_amt_outlier"]].any(axis=1)].to_csv(output_dir + "kyruss_flagged_records.csv", index=False)
+summary_df.to_csv(output_dir + "kyruss_summary.csv", index=False)
