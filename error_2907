@@ -130,3 +130,7 @@ WHERE
 2025-07-30 23:15:49,745 | ERROR | cost_estimator_calc_service | Exception details: 400 No parameter found for binding: productcd
 2025-07-30 23:15:49,745 | INFO | cost_estimator_calc_service | No rate rows found for non-standard payment methods
       INFO   127.0.0.1:54060 - "POST /costestimator/v1/rate HTTP/1.1" 200
+
+
+select * from  cet_rates where provider_business_group_nbr in ('164116000')
+and service_cd = '28054' and service_type_cd = 'CPT4' and product_cd = 'CAIVL' and contract_type in ('N','C')
