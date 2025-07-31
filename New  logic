@@ -2,48 +2,42 @@
         if not default_rate_query:
             logger.error("get_default_rate not found in RATE_QUERIES")
             return "NA"
+        logger.info(f"Executing default rate query: {default_rate_query} with params: {params}")
+
         rate_rows = await self.db.execute_query(default_rate_query, params)
-        if rate_rows and len(rate_rows) == 1:
-            rate = self._extract_single_value(rate_rows, column_index=1)
-            if rate != "NA" and float(rate) > 0:
-                return str(rate)
+        logger.info(f"return rows: {rate_rows}")
+        if not rate_rows:
+            logger.info("No rate rows found for default payment methods")
+        else:
+            if len(rate_rows) == 1:
+                rate = self._extract_single_value(rate_rows, column_index=1)
+                if rate is not None and str(rate).strip() != "" and self._is_float(rate) and float(rate) > 0:
+                    return str(rate)
+                else:
+                    logger.warning("Single rate row found but rate is invalid or empty")
 
         selected_method = self._get_best_payment_method(rate_rows)
         if selected_method:
             return str(selected_method[1])
 
-        # 4. Fallback to non-standard contract
+        # Fallback to non-standard rate
         non_standard_rate_query = RATE_QUERIES.get("get_non_standard_rate")
         if not non_standard_rate_query:
             logger.error("get_non_standard_rate not found in RATE_QUERIES")
             return "NA"
+
         rate_rows = await self.db.execute_query(non_standard_rate_query, params)
-        if rate_rows and len(rate_rows) == 1:
+        if not rate_rows:
+            logger.info("No rate rows found for non-standard payment methods")
+            return "NA"
+
+        if len(rate_rows) == 1:
             rate = self._extract_single_value(rate_rows, column_index=1)
-            if rate != "NA" and float(rate) > 0:
+            if rate is not None and str(rate).strip() != "" and self._is_float(rate) and float(rate) > 0:
                 return str(rate)
+            else:
+                logger.warning("Single non-standard rate row found but rate is invalid or empty")
 
         selected_method = self._get_best_payment_method(rate_rows)
         if selected_method:
             return str(selected_method[1])
-
-        # 5. If still no rate, try CET provider info
-        provider_info_result = await self._get_provider_info(params)
-        if "providerspecialtycode" in params:
-            del params["providerspecialtycode"]
-        if "providertype" in params:
-            del params["providertype"]
-
-        updated_params = self._extract_provider_info_and_update_params(
-            provider_info_result, params
-        )
-
-        if updated_params and "contracttype" in updated_params:
-            contract_type = updated_params.pop("contracttype")
-            if contract_type == "S":
-                updated_params.pop("providerbusinessgroupnbr", None)
-                get_standard_rate = await self._get_standard_rate(updated_params)
-                rate = self._extract_single_value(get_standard_rate, column_index=0)
-                return rate
-
-        return "NA"
