@@ -41,3 +41,16 @@
         selected_method = self._get_best_payment_method(rate_rows)
         if selected_method:
             return str(selected_method[1])
+
+
+
+        if "productcd" not in params or "providerbusinessgroupnbr" not in params:
+            logger.info("Missing productcd or providerbusinessgroupnbr; calling _get_provider_info()")
+            provider_info_result = await self._get_provider_info(params)
+            logger.info(f"Provider info result: {provider_info_result}")
+            updated_params = self._extract_provider_info_and_update_params(provider_info_result, params)
+            if not updated_params:
+                logger.warning("Unable to extract provider info; returning NA")
+                return "NA"
+        else:
+            updated_params = params
