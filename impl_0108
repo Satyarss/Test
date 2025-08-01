@@ -6,6 +6,7 @@ from app.core.logger import logger
 from app.models.rate_criteria import CostEstimatorRateCriteria
 from typing import Any, Union, Optional
 from app.core.constants import PAYMENT_METHOD_HIERARCHY_CACHE_KEY
+import asyncio
 
 
 
@@ -24,6 +25,14 @@ class CostEstimatorRepositoryImpl(CostEstimatorRepositoryInterface):
             max_workers=20,  # Increase for better parallelism
             pool_size=10,  # More connections for concurrent requests
         )
+
+        try:
+            asyncio.get_event_loop().run_until_complete(self.load_payment_method_hierarchy())
+        except RuntimeError:
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            loop.run_until_complete(self.load_payment_method_hierarchy())
+
 
     async def get_rate(
         self, rate_criteria: CostEstimatorRateCriteria, *args, **kwargs
@@ -114,7 +123,8 @@ class CostEstimatorRepositoryImpl(CostEstimatorRepositoryInterface):
                                 return str(rate)
                             else:
                                 logger.warning("Single rate row found but rate is invalid or empty")
-                    # Check if payment method hierarchy is cached
+
+                    logger.info(f"Returned {len(rate_rows)} payment methods from default query: {[row[0] for row in rate_rows]}")
 
                     # Use hierarchy if multiple payment methods found
                     selected_method = self._get_best_payment_method(rate_rows)
@@ -128,6 +138,8 @@ class CostEstimatorRepositoryImpl(CostEstimatorRepositoryInterface):
                         return "NA"
 
                     rate_rows = await self.db.execute_query(non_standard_rate_query, updated_params)
+                    logger.info(f"Non-standard rate rows: {rate_rows}") 
+
                     if not rate_rows:
                         logger.info("No rate rows found for non-standard payment methods")
                         return "NA"
@@ -236,11 +248,18 @@ class CostEstimatorRepositoryImpl(CostEstimatorRepositoryInterface):
             return None
 
         hierarchy = self.db._cache.get(PAYMENT_METHOD_HIERARCHY_CACHE_KEY, {})
-        logger.info(f"Evaluating {len(rate_rows)} payment methods using hierarchy")
 
         if not hierarchy:
-            logger.warning("Cached payment method hierarchy is empty!")
+            logger.warning("Cached payment method hierarchy is empty! Reloading now.")
+            try:
+                asyncio.get_event_loop().run_until_complete(self.load_payment_method_hierarchy())
+            except RuntimeError:
+                loop = asyncio.new_event_loop()
+                asyncio.set_event_loop(loop)
+                loop.run_until_complete(self.load_payment_method_hierarchy())
+            hierarchy = self.db._cache.get(PAYMENT_METHOD_HIERARCHY_CACHE_KEY, {})
 
+        logger.info(f"Evaluating {len(rate_rows)} payment methods using hierarchy")
         logger.debug(f"Hierarchy keys: {list(hierarchy.keys())}")
         logger.debug(f"Rate row methods: {[row[0] for row in rate_rows]}")
 
@@ -255,6 +274,8 @@ class CostEstimatorRepositoryImpl(CostEstimatorRepositoryInterface):
                 logger.warning(f"Payment Method {pm_code} not found in hierarchy")
 
         if not valid_rows:
+            for row in rate_rows:
+                logger.warning(f"Payment Method {row[0]} not found in hierarchy")
             logger.warning("No valid payment method found in cache hierarchy")
             return None
 
