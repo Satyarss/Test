@@ -1,0 +1,80 @@
+In .vscode/settings.json:
+
+> @@ -1,4 +1,27 @@
+ {
+     "python.formatting.provider": "black",
+-    "editor.formatOnSave": true
++    "python.formatting.blackArgs": [
+please do not commit this file
+
+In app/repository/impl/cost_estimator_repository_impl.py:
+
+> @@ -87,23 +97,70 @@ async def get_rate(
+                     del updated_params["providerbusinessgroupnbr"]
+                     get_standard_rate = await self._get_standard_rate(updated_params)
+                     rate = self._extract_single_value(get_standard_rate, column_index=0)
+-                    return rate
++                    if rate != "NA" and self._is_float(rate) and float(rate) > 0:
+Why we are doing this?
+
+In app/repository/impl/cost_estimator_repository_impl.py:
+
+>              return []
+ 
++    async def _get_best_payment_method(self, rate_rows):
+variable name is result
+
+In app/repository/impl/cost_estimator_repository_impl.py:
+
+>              return []
+ 
++    async def _get_best_payment_method(self, rate_rows):
++   
++        if not rate_rows:
+we don't have to check here
+
+In app/repository/impl/cost_estimator_repository_impl.py:
+
+>              return []
+ 
++    async def _get_best_payment_method(self, rate_rows):
++   
++        if not rate_rows:
++            return None
++
++        # Try to get hierarchy from cache
++        hierarchy = self.db._cache.get(PAYMENT_METHOD_HIERARCHY_CACHE_KEY, {})
+create seperate method to validate cache
+
+In app/repository/impl/cost_estimator_repository_impl.py:
+
+> +
++        # If hierarchy is empty, load it from database
++        if not hierarchy:
++            logger.warning("Cached payment method hierarchy is empty! Loading from database...")
++            await self.load_payment_method_hierarchy()
++            hierarchy = self.db._cache.get(PAYMENT_METHOD_HIERARCHY_CACHE_KEY, {})
++            
++            # If still empty after loading, log error and return None
++            if not hierarchy:
++                logger.error("Failed to load payment method hierarchy from database")
++                return None
++
++        logger.info("Evaluating %s payment methods using hierarchy", len(rate_rows))
++        logger.debug("Hierarchy keys: %s", list(hierarchy.keys()))
++        logger.debug("Rate row methods: %s", [row[0] for row in rate_rows])
++
+you need to call get_cached_payment_method_score for each payment method and you need to map and then high score method.
+in result , return select method
+
+Below is result
+
+PM1, 15
+PM2, 20
+PM3, 30
+
+extract payment and find which one highest one. if you found record number 3 and then you need to send result back.
+
+—
+Reply to this email directly, view it on GitHub, or unsubscribe.
+You are receiving this because you authored the thread.
