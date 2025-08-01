@@ -1,27 +1,21 @@
-INFO   Will watch for changes in these directories: ['/Users/N133723/Desktop/tlabchaat-355-24/cost-estimator-calc-service']
+ 
+      INFO   Will watch for changes in these directories: ['/Users/N133723/Desktop/tlabchaat-355-24/cost-estimator-calc-service']
       INFO   Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
-      INFO   Started reloader process [90600] using WatchFiles
-2025-07-31 23:59:47,585 | INFO | cost_estimator_calc_service | Async SpannerClient initialized for database: projects/anbc-hcb-dev/instances/provider-de/databases/cost-estimator-secure
-2025-07-31 23:59:47,585 | INFO | cost_estimator_calc_service | Connection pool size: 10, Max workers: 20
-      INFO   Started server process [90602]
+      INFO   Started reloader process [13711] using WatchFiles
+2025-08-01 00:24:36,078 | INFO | cost_estimator_calc_service | Async SpannerClient initialized for database: projects/anbc-hcb-dev/instances/provider-de/databases/cost-estimator-secure
+2025-08-01 00:24:36,078 | INFO | cost_estimator_calc_service | Connection pool size: 10, Max workers: 20
+      INFO   Started server process [13713]
       INFO   Waiting for application startup.
-2025-07-31 23:59:47,585 | INFO | cost_estimator_calc_service | Executing async query: SELECT payment_method_cd, score FROM payment_method_hierarchy
-2025-07-31 23:59:47,585 | INFO | cost_estimator_calc_service | Query params: None
-/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/_default.py:76: UserWarning: Your application has authenticated using end user credentials from Google Cloud SDK without a quota project. You might receive a "quota exceeded" or "API not enabled" error. See the following page for troubleshooting: https://cloud.google.com/docs/authentication/adc-troubleshooting/user-creds. 
-  warnings.warn(_CLOUD_SDK_CREDENTIALS_WARNING)
-2025-08-01 00:00:15,516 | ERROR | cost_estimator_calc_service | Error executing async read-only query: Timeout of 30.0s exceeded, last exception: 503 Getting metadata from plugin failed with error: Reauthentication is needed. Please run `gcloud auth application-default login` to reauthenticate.
-2025-08-01 00:00:15,517 | ERROR | cost_estimator_calc_service | Query: SELECT payment_method_cd, score FROM payment_method_hierarchy
-2025-08-01 00:00:15,517 | ERROR | cost_estimator_calc_service | Params: None
-2025-08-01 00:00:15,517 | ERROR | cost_estimator_calc_service | Exception type: <class 'google.api_core.exceptions.RetryError'>
-2025-08-01 00:00:15,517 | ERROR | cost_estimator_calc_service | Exception details: Timeout of 30.0s exceeded, last exception: 503 Getting metadata from plugin failed with error: Reauthentication is needed. Please run `gcloud auth application-default login` to reauthenticate.
-2025-08-01 00:00:15,517 | INFO | cost_estimator_calc_service | Cached payment_method_hierarchy with 0 entries.
+2025-08-01 00:24:36,079 | INFO | cost_estimator_calc_service | Executing async query: SELECT payment_method_cd, score FROM payment_method_hierarchy
+2025-08-01 00:24:36,079 | INFO | cost_estimator_calc_service | Query params: None
+2025-08-01 00:24:38,812 | INFO | cost_estimator_calc_service | Cached payment_method_hierarchy with 42 entries.
       INFO   Application startup complete.
-2025-08-01 00:00:17,070 | INFO | cost_estimator_calc_service | Async SpannerClient initialized for database: projects/anbc-hcb-dev/instances/provider-de/databases/cost-estimator-secure
-2025-08-01 00:00:17,070 | INFO | cost_estimator_calc_service | Connection pool size: 10, Max workers: 20
+2025-08-01 00:24:53,712 | INFO | cost_estimator_calc_service | Async SpannerClient initialized for database: projects/anbc-hcb-dev/instances/provider-de/databases/cost-estimator-secure
+2025-08-01 00:24:53,712 | INFO | cost_estimator_calc_service | Connection pool size: 10, Max workers: 20
 benefit_request benefitProductType='Medical' membershipID='5~265642286+34+44+20250101+784461+AM+39' planIdentifier='3~' serviceInfo=[ServiceInfo(serviceCodeInfo=ServiceCodeInfo(providerType=[ProviderType(code='IO')], placeOfService=[PlaceOfService(code='22')], providerSpecialty=[ProviderSpecialty(code='12345')], code='28054', type='CPT4'))]
 CostEstimatorRateCriteria fields: {'providerIdentificationNumber': <class 'str'>, 'serviceCode': <class 'str'>, 'serviceType': <class 'str'>, 'serviceLocationNumber': typing.Optional[str], 'networkId': typing.Optional[str], 'placeOfService': <class 'str'>, 'zipCode': <class 'str'>, 'isOutofNetwork': <class 'bool'>, 'providerSpecialtyCode': typing.Optional[str], 'providerType': typing.Optional[str]}
 rate_criteria CostEstimatorRateCriteria(providerIdentificationNumber='7614094', serviceCode='28054', serviceType='CPT4', serviceLocationNumber='426176', networkId='12808', placeOfService='22', zipCode='07083', isOutofNetwork=False, providerSpecialtyCode='12345', providerType='IO')
-2025-08-01 00:00:17,074 | INFO | cost_estimator_calc_service | Executing async query: SELECT MAX(RATE) AS RATE
+2025-08-01 00:24:53,715 | INFO | cost_estimator_calc_service | Executing async query: SELECT MAX(RATE) AS RATE
 FROM CET_CLAIM_BASED_AMOUNTS
 WHERE
     PROVIDER_IDENTIFICATION_NBR = @provideridentificationnumber
@@ -29,49 +23,54 @@ WHERE
     AND PLACE_OF_SERVICE_CD = @placeofservice
     AND SERVICE_CD = @servicecd
     AND SERVICE_TYPE_CD = @servicetype
-2025-08-01 00:00:17,074 | INFO | cost_estimator_calc_service | Query params: {'servicecd': '28054', 'provideridentificationnumber': '7614094', 'placeofservice': '22', 'servicetype': 'CPT4', 'networkid': '12808', 'servicelocationnumber': '426176'}
-/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/_default.py:76: UserWarning: Your application has authenticated using end user credentials from Google Cloud SDK without a quota project. You might receive a "quota exceeded" or "API not enabled" error. See the following page for troubleshooting: https://cloud.google.com/docs/authentication/adc-troubleshooting/user-creds. 
-  warnings.warn(_CLOUD_SDK_CREDENTIALS_WARNING)
+2025-08-01 00:24:53,715 | INFO | cost_estimator_calc_service | Query params: {'servicecd': '28054', 'provideridentificationnumber': '7614094', 'placeofservice': '22', 'servicetype': 'CPT4', 'networkid': '12808', 'servicelocationnumber': '426176'}
+2025-08-01 00:24:55,591 | INFO | cost_estimator_calc_service | Successfully retrieved new token
+2025-08-01 00:24:55,611 | INFO | cost_estimator_calc_service | Successfully retrieved new token
+2025-08-01 00:24:56,267 | INFO | cost_estimator_calc_service | Claim-based rate result: [[None]]
+2025-08-01 00:24:56,267 | WARNING | cost_estimator_calc_service | Empty or malformed result
+2025-08-01 00:24:56,267 | INFO | cost_estimator_calc_service | No claim-based rate found, proceeding to get provider info
+2025-08-01 00:24:56,267 | INFO | cost_estimator_calc_service | Executing async query: SELECT DISTINCT PROVIDER_BUSINESS_GROUP_NBR, PRODUCT_CD, RATING_SYSTEM_CD, EPDB_GEOGRAPHIC_AREA_CD
+FROM CET_PROVIDERS
+WHERE
+    PROVIDER_IDENTIFICATION_NBR = @provideridentificationnumber
+    AND NETWORK_ID = @networkid
+    AND SERVICE_LOCATION_NBR = @servicelocationnumber
+2025-08-01 00:24:56,267 | INFO | cost_estimator_calc_service | Query params: {'servicecd': '28054', 'provideridentificationnumber': '7614094', 'placeofservice': '22', 'servicetype': 'CPT4', 'networkid': '12808', 'servicelocationnumber': '426176'}
 WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
-I0000 00:00:1754024417.077444 4050119 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
-2025-08-01 00:00:19,208 | INFO | cost_estimator_calc_service | Successfully retrieved new token
-2025-08-01 00:00:19,241 | INFO | cost_estimator_calc_service | Successfully retrieved new token
-2025-08-01 00:00:39,448 | ERROR | cost_estimator_calc_service | Error executing async read-only query: Timeout of 30.0s exceeded, last exception: 503 Getting metadata from plugin failed with error: Reauthentication is needed. Please run `gcloud auth application-default login` to reauthenticate.
-2025-08-01 00:00:39,449 | ERROR | cost_estimator_calc_service | Query: SELECT MAX(RATE) AS RATE
-FROM CET_CLAIM_BASED_AMOUNTS
+I0000 00:00:1754025896.270057   63369 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+2025-08-01 00:24:59,000 | INFO | cost_estimator_calc_service | Provider info result: [['164116000', 'MC', 'REF', 'CA05']]
+2025-08-01 00:24:59,000 | INFO | cost_estimator_calc_service | Executing default rate query: SELECT payment_method_cd, RATE
+FROM CET_RATES
 WHERE
-    PROVIDER_IDENTIFICATION_NBR = @provideridentificationnumber
-    AND NETWORK_ID = @networkid
-    AND PLACE_OF_SERVICE_CD = @placeofservice
-    AND SERVICE_CD = @servicecd
+    SERVICE_CD = @servicecd
     AND SERVICE_TYPE_CD = @servicetype
-2025-08-01 00:00:39,449 | ERROR | cost_estimator_calc_service | Params: {'servicecd': '28054', 'provideridentificationnumber': '7614094', 'placeofservice': '22', 'servicetype': 'CPT4', 'networkid': '12808', 'servicelocationnumber': '426176'}
-2025-08-01 00:00:39,449 | ERROR | cost_estimator_calc_service | Exception type: <class 'google.api_core.exceptions.RetryError'>
-2025-08-01 00:00:39,449 | ERROR | cost_estimator_calc_service | Exception details: Timeout of 30.0s exceeded, last exception: 503 Getting metadata from plugin failed with error: Reauthentication is needed. Please run `gcloud auth application-default login` to reauthenticate.
-2025-08-01 00:00:39,449 | INFO | cost_estimator_calc_service | Claim-based rate result: []
-2025-08-01 00:00:39,449 | WARNING | cost_estimator_calc_service | Empty or malformed result
-2025-08-01 00:00:39,449 | INFO | cost_estimator_calc_service | No claim-based rate found, proceeding to get provider info
-2025-08-01 00:00:39,449 | INFO | cost_estimator_calc_service | Executing async query: SELECT DISTINCT PROVIDER_BUSINESS_GROUP_NBR, PRODUCT_CD, RATING_SYSTEM_CD, EPDB_GEOGRAPHIC_AREA_CD
-FROM CET_PROVIDERS
+    AND PLACE_OF_SERVICE_CD = @placeofservice
+    AND PRODUCT_CD = @productcd
+    AND PROVIDER_BUSINESS_GROUP_NBR IN UNNEST(@providerbusinessgroupnbr)
+    AND CONTRACT_TYPE = 'D' with params: {'servicecd': '28054', 'placeofservice': '22', 'servicetype': 'CPT4', 'productcd': 'MC', 'ratesystemcd': 'REF', 'geographicareacd': 'CA05', 'providerbusinessgroupnbr': ['164116000']}
+2025-08-01 00:24:59,001 | INFO | cost_estimator_calc_service | Executing async query: SELECT payment_method_cd, RATE
+FROM CET_RATES
 WHERE
-    PROVIDER_IDENTIFICATION_NBR = @provideridentificationnumber
-    AND NETWORK_ID = @networkid
-    AND SERVICE_LOCATION_NBR = @servicelocationnumber
-2025-08-01 00:00:39,449 | INFO | cost_estimator_calc_service | Query params: {'servicecd': '28054', 'provideridentificationnumber': '7614094', 'placeofservice': '22', 'servicetype': 'CPT4', 'networkid': '12808', 'servicelocationnumber': '426176'}
-/Users/N133723/Library/Python/3.12/lib/python/site-packages/google/auth/_default.py:76: UserWarning: Your application has authenticated using end user credentials from Google Cloud SDK without a quota project. You might receive a "quota exceeded" or "API not enabled" error. See the following page for troubleshooting: https://cloud.google.com/docs/authentication/adc-troubleshooting/user-creds. 
-  warnings.warn(_CLOUD_SDK_CREDENTIALS_WARNING)
-I0000 00:00:1754024442.453815 4050119 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
-2025-08-01 00:01:04,605 | ERROR | cost_estimator_calc_service | Error executing async read-only query: Timeout of 30.0s exceeded, last exception: 503 Getting metadata from plugin failed with error: Reauthentication is needed. Please run `gcloud auth application-default login` to reauthenticate.
-2025-08-01 00:01:04,605 | ERROR | cost_estimator_calc_service | Query: SELECT DISTINCT PROVIDER_BUSINESS_GROUP_NBR, PRODUCT_CD, RATING_SYSTEM_CD, EPDB_GEOGRAPHIC_AREA_CD
-FROM CET_PROVIDERS
+    SERVICE_CD = @servicecd
+    AND SERVICE_TYPE_CD = @servicetype
+    AND PLACE_OF_SERVICE_CD = @placeofservice
+    AND PRODUCT_CD = @productcd
+    AND PROVIDER_BUSINESS_GROUP_NBR IN UNNEST(@providerbusinessgroupnbr)
+    AND CONTRACT_TYPE = 'D'
+2025-08-01 00:24:59,001 | INFO | cost_estimator_calc_service | Query params: {'servicecd': '28054', 'placeofservice': '22', 'servicetype': 'CPT4', 'productcd': 'MC', 'ratesystemcd': 'REF', 'geographicareacd': 'CA05', 'providerbusinessgroupnbr': ['164116000']}
+2025-08-01 00:25:01,644 | INFO | cost_estimator_calc_service | return rows: []
+2025-08-01 00:25:01,644 | INFO | cost_estimator_calc_service | No rate rows found for default payment methods
+2025-08-01 00:25:01,644 | INFO | cost_estimator_calc_service | Executing async query: SELECT payment_method_cd, RATE
+FROM CET_RATES
 WHERE
-    PROVIDER_IDENTIFICATION_NBR = @provideridentificationnumber
-    AND NETWORK_ID = @networkid
-    AND SERVICE_LOCATION_NBR = @servicelocationnumber
-2025-08-01 00:01:04,605 | ERROR | cost_estimator_calc_service | Params: {'servicecd': '28054', 'provideridentificationnumber': '7614094', 'placeofservice': '22', 'servicetype': 'CPT4', 'networkid': '12808', 'servicelocationnumber': '426176'}
-2025-08-01 00:01:04,605 | ERROR | cost_estimator_calc_service | Exception type: <class 'google.api_core.exceptions.RetryError'>
-2025-08-01 00:01:04,605 | ERROR | cost_estimator_calc_service | Exception details: Timeout of 30.0s exceeded, last exception: 503 Getting metadata from plugin failed with error: Reauthentication is needed. Please run `gcloud auth application-default login` to reauthenticate.
-2025-08-01 00:01:04,605 | INFO | cost_estimator_calc_service | Provider info result: []
-2025-08-01 00:01:04,605 | INFO | cost_estimator_calc_service | No provider info results found
-2025-08-01 00:01:04,605 | INFO | cost_estimator_calc_service | No provider info found or missing contract type
-      INFO   127.0.0.1:51030 - "POST /costestimator/v1/rate HTTP/1.1" 200
+    SERVICE_CD = @servicecd
+    AND SERVICE_TYPE_CD = @servicetype
+    AND PLACE_OF_SERVICE_CD = @placeofservice
+    AND PRODUCT_CD = @productcd
+    AND PROVIDER_BUSINESS_GROUP_NBR IN UNNEST(@providerbusinessgroupnbr)
+    AND CONTRACT_TYPE IN ('C', 'N')
+2025-08-01 00:25:01,644 | INFO | cost_estimator_calc_service | Query params: {'servicecd': '28054', 'placeofservice': '22', 'servicetype': 'CPT4', 'productcd': 'MC', 'ratesystemcd': 'REF', 'geographicareacd': 'CA05', 'providerbusinessgroupnbr': ['164116000']}
+I0000 00:00:1754025901.647685   63369 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+2025-08-01 00:25:04,362 | INFO | cost_estimator_calc_service | Evaluating 2 payment methods using hierarchy
+2025-08-01 00:25:04,362 | WARNING | cost_estimator_calc_service | No valid payment method found in cache hierarchy
+      INFO   127.0.0.1:52374 - "POST /costestimator/v1/rate HTTP/1.1" 200
