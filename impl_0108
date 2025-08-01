@@ -1,4 +1,4 @@
-from app.repository.cost_estimator_repository import CostEstimatorRepositoryInterface
+rom app.repository.cost_estimator_repository import CostEstimatorRepositoryInterface
 from app.database.spanner_client import SpannerClient
 from app.config.database_config import spanner_config
 from app.config.queries import RATE_QUERIES
@@ -49,7 +49,7 @@ class CostEstimatorRepositoryImpl(CostEstimatorRepositoryInterface):
             out_of_network_result = await self._get_out_of_network_rate(params)
             logger.info(f"Out-of-network rate result: {out_of_network_result}")
             rate = self._extract_single_value(out_of_network_result, column_index=0)
-            if rate != "NA" and float(rate) > 0:
+            if rate != "NA" and self._is_float(rate) and float(rate) > 0:
                 logger.info(f"Successfully extracted out-of-network rate: {rate}")
                 return rate
             else:
@@ -61,7 +61,7 @@ class CostEstimatorRepositoryImpl(CostEstimatorRepositoryInterface):
 
             # Check if claim-based rate was found
             rate = self._extract_single_value(claim_result, column_index=0)
-            if rate != "NA" and float(rate) > 0:
+            if rate != "NA" and self._is_float(rate) and float(rate) > 0:
                 logger.info(f"Successfully extracted claim-based rate: {rate}")
                 return rate
             else:
@@ -89,21 +89,14 @@ class CostEstimatorRepositoryImpl(CostEstimatorRepositoryInterface):
                     del updated_params["providerbusinessgroupnbr"]
                     get_standard_rate = await self._get_standard_rate(updated_params)
                     rate = self._extract_single_value(get_standard_rate, column_index=0)
-                    return rate
+                    if rate != "NA" and self._is_float(rate) and float(rate) > 0:
+                        logger.info(f"Successfully extracted standard rate: {rate}")
+                        return rate
+                    else:
+                        logger.info("No valid standard rate found, returning NA")
+                        return "NA"
                 else:
-                    # You need to get the rate from somewhere - this might need adjustment
-                    '''get_non_standard_rate = await self._get_non_standard_rate(
-                        updated_params
-                    )
-                    rate = self._extract_single_value(
-                        get_non_standard_rate, column_index=0
-                    )
-                    if rate == "NA":
-                        get_default_rate = await self._get_default_rate(updated_params)
-                        rate = self._extract_single_value(
-                            get_default_rate, column_index=0
-                        )
-                    return rate'''
+                    # Get default rate first, then fallback to non-standard if needed
                     default_rate_query = RATE_QUERIES.get("get_default_rate")
                     if not default_rate_query:
                         logger.error("get_default_rate not found in RATE_QUERIES")
@@ -153,6 +146,9 @@ class CostEstimatorRepositoryImpl(CostEstimatorRepositoryInterface):
                     if selected_method:
                         return str(selected_method[1])
                     
+                return "NA"
+            else:
+                logger.info("No provider info found or missing contract type")
                 return "NA"
 
     async def _get_provider_info(self, params):
@@ -380,20 +376,6 @@ class CostEstimatorRepositoryImpl(CostEstimatorRepositoryInterface):
             params["providertype"] = rate_criteria.providerType
             logger.info("added providertype param")
         return params
-    '''
-    async def load_payment_method_hierarchy(self):
-        """Load payment method hierarchy from Spanner into cache."""
-        query = "SELECT payment_method_cd, score FROM payment_method_hierarchy"
-        try:
-            result = await self.db.execute_query(query)
-            hierarchy = {
-                row["payment_method_cd"]: row["score"]
-                for row in result
-            }
-            self.db._cache[PAYMENT_METHOD_HIERARCHY_CACHE_KEY] = hierarchy
-            logger.info(f"Cached payment_method_hierarchy with {len(hierarchy)} entries.")
-        except Exception as e:
-            logger.error(f"Failed to load payment method hierarchy: {str(e)}")'''
 
     async def load_payment_method_hierarchy(self):
         """Load payment method hierarchy from Spanner into cache."""
