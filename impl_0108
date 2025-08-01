@@ -139,7 +139,7 @@ class CostEstimatorRepositoryImpl(CostEstimatorRepositoryInterface):
                         else:
                             logger.warning("Single non-standard rate row found but rate is invalid or empty")
                             
-                            
+                    logger.info(f"Returned {len(rate_rows)} payment methods from non-standard query: {[row[0] for row in rate_rows]}")        
 
                     # Use hierarchy if multiple payment methods found
                     selected_method = self._get_best_payment_method(rate_rows)
@@ -238,14 +238,29 @@ class CostEstimatorRepositoryImpl(CostEstimatorRepositoryInterface):
         hierarchy = self.db._cache.get(PAYMENT_METHOD_HIERARCHY_CACHE_KEY, {})
         logger.info(f"Evaluating {len(rate_rows)} payment methods using hierarchy")
 
-        valid_rows = [row for row in rate_rows if row[0] in hierarchy]
+        if not hierarchy:
+            logger.warning("Cached payment method hierarchy is empty!")
+
+        logger.debug(f"Hierarchy keys: {list(hierarchy.keys())}")
+        logger.debug(f"Rate row methods: {[row[0] for row in rate_rows]}")
+
+        valid_rows = []
+        for row in rate_rows:
+            pm_code = row[0]
+            if pm_code in hierarchy:
+                score = hierarchy[pm_code]
+                logger.info(f"Payment Method: {pm_code}, Score: {score}")
+                valid_rows.append(row)
+            else:
+                logger.warning(f"Payment Method {pm_code} not found in hierarchy")
+
         if not valid_rows:
             logger.warning("No valid payment method found in cache hierarchy")
             return None
 
         selected_row = min(valid_rows, key=lambda r: hierarchy.get(r[0], float("inf")))
 
-        logger.info(f"Selected payment method: {selected_row[0]} with rate: {selected_row[1]}")
+        logger.info(f"Selected payment method: {selected_row[0]} with rate: {selected_row[1]} and score: {hierarchy.get(selected_row[0])}")
         return selected_row
     
     def _extract_single_value(self, result, column_index=0) -> str:
