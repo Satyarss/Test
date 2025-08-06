@@ -9,6 +9,7 @@ from app.core.constants import PAYMENT_METHOD_HIERARCHY_CACHE_KEY
 
 
 
+
 class CostEstimatorRepositoryImpl(CostEstimatorRepositoryInterface):
     def __init__(self):
         """Initialize repository with Spanner client."""
@@ -24,6 +25,13 @@ class CostEstimatorRepositoryImpl(CostEstimatorRepositoryInterface):
             max_workers=20,  # Increase for better parallelism
             pool_size=10,  # More connections for concurrent requests
         )
+        
+        # Initialize empty cache to avoid issues
+        if not hasattr(self.db, '_cache'):
+            self.db._cache = {}
+
+       
+
 
     async def get_rate(
         self, rate_criteria: CostEstimatorRateCriteria, *args, **kwargs
@@ -47,67 +55,40 @@ class CostEstimatorRepositoryImpl(CostEstimatorRepositoryInterface):
         # Try out-of-network rate first
         if rate_criteria.isOutofNetwork:
             out_of_network_result = await self._get_out_of_network_rate(params)
-            logger.info(f"Out-of-network rate result: {out_of_network_result}")
+            logger.info("Out-of-network rate result: %s", out_of_network_result)
             rate = self._extract_single_value(out_of_network_result, column_index=0)
-            if rate != "NA" and rate is not None and self._is_float(rate) and float(rate) > 0:
-                logger.info(f"Successfully extracted out-of-network rate: {rate}")
+            if rate != "NA" and self._is_float(rate) and float(rate) > 0:
+                logger.info("Successfully extracted out-of-network rate: %s", rate)
                 return rate
             else:
                 logger.info("No out-of-network rate found")
         else:
             # Try claim-based rate next
             claim_result = await self._get_claim_based_rate(params)
-            logger.info(f"Claim-based rate result: {claim_result}")
+            logger.info("Claim-based rate result: %s", claim_result)
 
             # Check if claim-based rate was found
             rate = self._extract_single_value(claim_result, column_index=0)
-            if rate != "NA" and rate is not None and self._is_float(rate) and float(rate) > 0:
-                logger.info(f"Successfully extracted claim-based rate: {rate}")
+            if rate != "NA" and self._is_float(rate) and float(rate) > 0:
+                logger.info("Successfully extracted claim-based rate: %s", rate)
                 return rate
             else:
                 logger.info(
                     "No claim-based rate found, proceeding to get provider info"
                 )
 
-            # Initialize updated_params before try block
-            updated_params = None
-            
-            try:
-                extraction_query = """
-                    SELECT DISTINCT PRODUCT_CD, PROVIDER_BUSINESS_GROUP_NBR
-                    FROM CET_RATES
-                    WHERE SERVICE_CD = @servicecd
-                      AND SERVICE_TYPE_CD = @servicetype
-                      AND PLACE_OF_SERVICE_CD = @placeofservice
-                      AND PROVIDER_BUSINESS_GROUP_NBR = @providerbusinessgroupnbr
-                """
-        
-                extraction_result = await self.db.execute_query(extraction_query, params)
-                logger.info(f"Extraction result from CET_RATES: {extraction_result}")
-        
-                if extraction_result:
-                    updated_params = params.copy()
-                    updated_params["productcd"] = extraction_result[0][0]
-                    updated_params["providerbusinessgroupnbr"] = [extraction_result[0][1]]
-                    updated_params["contracttype"] = "N"  # default contract type as fallback
-                    logger.info("Successfully populated productcd and providerbusinessgroupnbr from CET_RATES")
-                else:
-                    raise Exception("CET_RATES did not return any product/provider info")
+            # params = self._add_optional_provider_params(rate_criteria, params)
+            provider_info_result = await self._get_provider_info(params)
+            logger.info("Provider info result: %s", provider_info_result)
+            if "providerspecialtycode" in params:
+                del params["providerspecialtycode"]
+            if "providertype" in params:
+                del params["providertype"]
 
-            except Exception as e:
-                logger.warning(f"Could not get provider info from CET_RATES, falling back to _get_provider_info: {str(e)}")
-                params = self._add_optional_provider_params(rate_criteria, params)
-                provider_info_result = await self._get_provider_info(params)
-                logger.info(f"Provider info result: {provider_info_result}")
-                if "providerspecialtycode" in params:
-                    del params["providerspecialtycode"]
-                if "providertype" in params:
-                    del params["providertype"]
-
-                # Extract provider information and update params
-                updated_params = self._extract_provider_info_and_update_params(
-                    provider_info_result, params
-                )
+            # Extract provider information and update params
+            updated_params = self._extract_provider_info_and_update_params(
+                provider_info_result, params
+            )
 
             if updated_params and "contracttype" in updated_params:
                 contract_type = updated_params["contracttype"]
@@ -116,52 +97,69 @@ class CostEstimatorRepositoryImpl(CostEstimatorRepositoryInterface):
                     del updated_params["providerbusinessgroupnbr"]
                     get_standard_rate = await self._get_standard_rate(updated_params)
                     rate = self._extract_single_value(get_standard_rate, column_index=0)
-                    if rate != "NA" and rate is not None and self._is_float(rate) and float(rate) > 0:
+                    if rate != "NA" and self._is_float(rate) and float(rate) > 0:
+                        logger.info("Successfully extracted standard rate: %s", rate)
                         return rate
                     else:
-                        logger.warning("Standard rate is invalid or empty, returning NA")
+                        logger.info("No valid standard rate found, returning NA")
                         return "NA"
                 else:
-                    # Get default rate and non-standard rate with proper fallback logic
+                    # Get default rate first, then fallback to non-standard if needed
                     default_rate_query = RATE_QUERIES.get("get_default_rate")
                     if not default_rate_query:
                         logger.error("get_default_rate not found in RATE_QUERIES")
                         return "NA"
-                    logger.info(f"Executing default rate query: {default_rate_query} with params: {updated_params}")
+                    logger.info("Executing default rate query: %s with params: %s", default_rate_query, updated_params)
                     
                     rate_rows = await self.db.execute_query(default_rate_query, updated_params)
-                    logger.info(f"return rows: {rate_rows}")
+                    logger.info("return rows: %s", rate_rows)
                     if not rate_rows:
                         logger.info("No rate rows found for default payment methods")
-                        # Fallback to non-standard rate
-                        non_standard_rate_query = RATE_QUERIES.get("get_non_standard_rate")
-                        if not non_standard_rate_query:
-                            logger.error("get_non_standard_rate not found in RATE_QUERIES")
-                            return "NA"
+                    else:
+                        if len(rate_rows) == 1:
+                            rate = self._extract_single_value(rate_rows, column_index=1)
+                            if rate is not None and str(rate).strip() != "" and self._is_float(rate) and float(rate) > 0:
+                                return str(rate)
+                            else:
+                                logger.warning("Single rate row found but rate is invalid or empty")
 
-                        rate_rows = await self.db.execute_query(non_standard_rate_query, updated_params)
-                        if not rate_rows:
-                            logger.info("No rate rows found for non-standard payment methods")
-                            return "NA"
-                    
+                    logger.info("Returned %s payment methods from default query: %s", len(rate_rows), [row[0] for row in rate_rows])
+
+                    # Use hierarchy if multiple payment methods found
+                    selected_method = await self._get_best_payment_method(rate_rows)
+                    if selected_method:
+                        return str(selected_method[1])
+
+                    # Fallback to non-standard rate
+                    non_standard_rate_query = RATE_QUERIES.get("get_non_standard_rate")
+                    if not non_standard_rate_query:
+                        logger.error("get_non_standard_rate not found in RATE_QUERIES")
+                        return "NA"
+
+                    rate_rows = await self.db.execute_query(non_standard_rate_query, updated_params)
+                    logger.info("Non-standard rate rows: %s", rate_rows) 
+
+                    if not rate_rows:
+                        logger.info("No rate rows found for non-standard payment methods")
+                        return "NA"
+
                     if len(rate_rows) == 1:
                         rate = self._extract_single_value(rate_rows, column_index=1)
                         if rate is not None and str(rate).strip() != "" and self._is_float(rate) and float(rate) > 0:
                             return str(rate)
                         else:
-                            logger.warning("Single rate row found but rate is invalid or empty")
-                    
-                    # Use hierarchy if multiple payment methods found
-                    selected_method = self._get_best_payment_method(rate_rows)
-                    if selected_method and len(selected_method) > 1:
-                        rate_value = selected_method[1]
-                        if rate_value is not None and self._is_float(rate_value) and float(rate_value) > 0:
-                            return str(rate_value)
-                        else:
-                            logger.warning("Selected payment method has invalid rate")
+                            logger.warning("Single non-standard rate row found but rate is invalid or empty")
+                            
+                    logger.info("Returned %s payment methods from non-standard query: %s", len(rate_rows), [row[0] for row in rate_rows])        
 
-                    return "NA"
+                    # Use hierarchy if multiple payment methods found
+                    selected_method = await self._get_best_payment_method(rate_rows)
+                    if selected_method:
+                        return str(selected_method[1])
                     
+                return "NA"
+            else:
+                logger.info("No provider info found or missing contract type")
                 return "NA"
 
     async def _get_provider_info(self, params):
@@ -177,7 +175,7 @@ class CostEstimatorRepositoryImpl(CostEstimatorRepositoryInterface):
             result = await self.db.execute_query(provider_info_query, params)
             return result
         except Exception as e:
-            logger.error(f"Error in _get_provider_info: {str(e)}")
+            logger.error("Error in _get_provider_info: %s", str(e))
             return []
 
     async def _get_out_of_network_rate(self, params):
@@ -189,7 +187,7 @@ class CostEstimatorRepositoryImpl(CostEstimatorRepositoryInterface):
             result = await self.db.execute_query(out_of_network_query, params)
             return result
         except Exception as e:
-            logger.error(f"Error in _get_out_of_network_rate: {str(e)}")
+            logger.error("Error in _get_out_of_network_rate: %s", str(e))
             return []
 
     async def _get_claim_based_rate(self, params):
@@ -204,7 +202,7 @@ class CostEstimatorRepositoryImpl(CostEstimatorRepositoryInterface):
 
             return result
         except Exception as e:
-            logger.error(f"Error in _get_claim_based_rate: {str(e)}")
+            logger.error("Error in _get_claim_based_rate: %s", str(e))
             return []
 
     async def _get_non_standard_rate(self, params):
@@ -216,7 +214,7 @@ class CostEstimatorRepositoryImpl(CostEstimatorRepositoryInterface):
             result = await self.db.execute_query(non_standard_query, params)
             return result
         except Exception as e:
-            logger.error(f"Error in _get_non_standard_rate: {str(e)}")
+            logger.error("Error in _get_non_standard_rate: %s", str(e))
             return []
 
     async def _get_standard_rate(self, params):
@@ -228,7 +226,7 @@ class CostEstimatorRepositoryImpl(CostEstimatorRepositoryInterface):
             result = await self.db.execute_query(standard_query, params)
             return result
         except Exception as e:
-            logger.error(f"Error in _get_standard_rate: {str(e)}")
+            logger.error("Error in _get_standard_rate: %s", str(e))
             return []
 
     async def _get_default_rate(self, params):
@@ -240,25 +238,52 @@ class CostEstimatorRepositoryImpl(CostEstimatorRepositoryInterface):
             result = await self.db.execute_query(default_query, params)
             return result
         except Exception as e:
-            logger.error(f"Error in _get_default_rate: {str(e)}")
+            logger.error("Error in _get_default_rate: %s", str(e))
             return []
 
-    def _get_best_payment_method(self, rate_rows):
+    async def _get_best_payment_method(self, rate_rows):
    
         if not rate_rows:
             return None
 
+        # Try to get hierarchy from cache
         hierarchy = self.db._cache.get(PAYMENT_METHOD_HIERARCHY_CACHE_KEY, {})
-        logger.info(f"Evaluating {len(rate_rows)} payment methods using hierarchy")
 
-        valid_rows = [row for row in rate_rows if row[0] in hierarchy]
+        # If hierarchy is empty, load it from database
+        if not hierarchy:
+            logger.warning("Cached payment method hierarchy is empty! Loading from database...")
+            await self.load_payment_method_hierarchy()
+            hierarchy = self.db._cache.get(PAYMENT_METHOD_HIERARCHY_CACHE_KEY, {})
+            
+            # If still empty after loading, log error and return None
+            if not hierarchy:
+                logger.error("Failed to load payment method hierarchy from database")
+                return None
+
+        logger.info("Evaluating %s payment methods using hierarchy", len(rate_rows))
+        logger.debug("Hierarchy keys: %s", list(hierarchy.keys()))
+        logger.debug("Rate row methods: %s", [row[0] for row in rate_rows])
+
+        valid_rows = []
+        for row in rate_rows:
+            pm_code = row[0]
+            if pm_code in hierarchy:
+                score = hierarchy[pm_code]
+                logger.info("Payment Method: %s, Score: %s", pm_code, score)
+                valid_rows.append(row)
+            else:
+                logger.warning("Payment Method %s not found in hierarchy", pm_code)
+
         if not valid_rows:
+            for row in rate_rows:
+                logger.warning("Payment Method %s not found in hierarchy", row[0])
             logger.warning("No valid payment method found in cache hierarchy")
             return None
 
         selected_row = min(valid_rows, key=lambda r: hierarchy.get(r[0], float("inf")))
 
-        logger.info(f"Selected payment method: {selected_row[0]} with rate: {selected_row[1]}")
+        logger.info("Selected payment method: %s with rate: %s and score: %s", 
+                   selected_row[0], selected_row[1], hierarchy.get(selected_row[0]))
         return selected_row
     
     def _extract_single_value(self, result, column_index=0) -> str:
@@ -279,11 +304,11 @@ class CostEstimatorRepositoryImpl(CostEstimatorRepositoryInterface):
         first_row = result[0]
 
         if column_index >= len(first_row):
-            logger.warning(f"Column index {column_index} out of range for row {first_row}")
+            logger.warning("Column index %s out of range for row %s", column_index, first_row)
             return "NA"
 
         value = first_row[column_index]
-        logger.info(f"Extracted value: {value}")
+        logger.info("Extracted value: %s", value)
 
         if value is None:
             logger.info("Value is None, returning NA")
@@ -292,7 +317,7 @@ class CostEstimatorRepositoryImpl(CostEstimatorRepositoryInterface):
         try:
             return str(value)
         except Exception as e:
-            logger.warning(f"Error converting value to string: {e}")
+            logger.warning("Error converting value to string: %s", e)
             return "NA"
 
     def _extract_provider_info_and_update_params(self, result, params):
@@ -339,7 +364,7 @@ class CostEstimatorRepositoryImpl(CostEstimatorRepositoryInterface):
                         }
                     )
                 else:
-                    logger.warning(f"Row has insufficient columns: {row}")
+                    logger.warning("Row has insufficient columns: %s", row)
                     return None
             providerbusinessgroupnbr_list.append(row[0])
 
@@ -374,7 +399,6 @@ class CostEstimatorRepositoryImpl(CostEstimatorRepositoryInterface):
                 "servicetype": rate_criteria.serviceType,
                 "networkid": rate_criteria.networkId,
                 "servicelocationnumber": rate_criteria.serviceLocationNumber,
-                "providerbusinessgroupnbr": getattr(rate_criteria, 'providerBusinessGroupNumber', ''),
             }
         
     def _add_optional_provider_params(
@@ -390,7 +414,7 @@ class CostEstimatorRepositoryImpl(CostEstimatorRepositoryInterface):
             params["providertype"] = rate_criteria.providerType
             logger.info("added providertype param")
         return params
-    
+
     async def load_payment_method_hierarchy(self):
         """Load payment method hierarchy from Spanner into cache."""
         query = "SELECT payment_method_cd, score FROM payment_method_hierarchy"
@@ -403,9 +427,9 @@ class CostEstimatorRepositoryImpl(CostEstimatorRepositoryInterface):
                 if row[0] is not None and row[1] is not None
             }
             self.db._cache[PAYMENT_METHOD_HIERARCHY_CACHE_KEY] = hierarchy
-            logger.info(f"Cached payment_method_hierarchy with {len(hierarchy)} entries.")
+            logger.info("Cached payment_method_hierarchy with %s entries.", len(hierarchy))
         except Exception as e:
-            logger.error(f"Failed to load payment method hierarchy: {str(e)}")
+            logger.error("Failed to load payment method hierarchy: %s", str(e))
 
     def get_cached_payment_method_score(self, payment_method_cd: str) -> Optional[int]:
         return self.db._cache.get(PAYMENT_METHOD_HIERARCHY_CACHE_KEY, {}).get(payment_method_cd)
