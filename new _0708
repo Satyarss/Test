@@ -1,0 +1,5 @@
+SELECT provider_business_group_nbr
+FROM cet_rates
+WHERE payment_method_cd IN ('PERRT', 'PERAMF')
+GROUP BY provider_business_group_nbr
+HAVING COUNT(DISTINCT payment_method_cd) = 2;
