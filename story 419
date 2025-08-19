@@ -1,0 +1,10 @@
+
+When there are multiple PBG numbers for a given PIN, Service Location, and Network ID, we should consider the PBG_SCORE value. Each PBG_Number have different score. 
+
+To determine the rate, we should select the one associated with the highest PBG_SCORE. 
+
+The query below returns two PBG numbers.
+
+
+
+select * from anbc-hcb-dev.prv_ps_ce_dec_hcb_dev.cet_providers where provider_identification_nbr = 6451645 and network_id = '00483' and service_location_nbr = 159093
