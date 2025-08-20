@@ -1,0 +1,10 @@
+if provider info is not there:
+	set out of network to be true
+	get the rate from CET_OON table
+else:
+	set out_of_network to be false
+	1. get rate from claim_based_amounts -> if found end here, else go to step 2
+	2. get optional params like provider_type and provider_speciality code. get provider info.
+	3. use the provider info and build updated params. here we determine the contract type (S or N), we build a list of all the pbg numbers
+	4. if contract type is "S": get standard rate, else get non-standard rate: if multiple results are returned, then go to payment hierarchy table and choose the one with the smallest 	   score.
+	5. At the end return negotiated rate
